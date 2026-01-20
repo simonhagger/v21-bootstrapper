@@ -47,26 +47,26 @@ pnpm verify
 
 ### Getting Started
 
-- **[POST_BOOTSTRAP_GUIDE.md](POST_BOOTSTRAP_GUIDE.md)** - Validation checklist and troubleshooting (START HERE after bootstrap)
-- **[VERIFICATION_SYSTEM.md](VERIFICATION_SYSTEM.md)** - How the verification system works
+- **[docs/POST_BOOTSTRAP_GUIDE.md](docs/POST_BOOTSTRAP_GUIDE.md)** - Validation checklist and troubleshooting (START HERE after bootstrap)
+- **[docs/VERIFICATION_SYSTEM.md](docs/VERIFICATION_SYSTEM.md)** - How the verification system works
 
 ### Architecture & Development
 
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Authoritative architectural rules and patterns
-- **[DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md)** - Day-to-day development workflows
-- **[TESTING_GUIDE.md](TESTING_GUIDE.md)** - Testing patterns and best practices
-- **[PATTERNS.md](PATTERNS.md)** - Common implementation patterns (errors, forms, pagination, etc.)
-- **[API_GUIDE.md](API_GUIDE.md)** - Backend integration (interceptors, environment, type safety)
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Authoritative architectural rules and patterns
+- **[docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)** - Day-to-day development workflows
+- **[docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** - Testing patterns and best practices
+- **[docs/PATTERNS.md](docs/PATTERNS.md)** - Common implementation patterns (errors, forms, pagination, etc.)
+- **[docs/API_GUIDE.md](docs/API_GUIDE.md)** - Backend integration (interceptors, environment, type safety)
 
 ### Design System & Theming
 
-- **[THEMING_GUIDE.md](THEMING_GUIDE.md)** - M3 + Tailwind integration strategy
+- **[docs/THEMING_GUIDE.md](docs/THEMING_GUIDE.md)** - M3 + Tailwind integration strategy
 - **[projects/tokens/README.md](projects/tokens/README.md)** - Token system documentation
 - **[projects/tokens/DIST_STRATEGY.md](projects/tokens/DIST_STRATEGY.md)** - Why token outputs are committed
 
 ### AI Agent Development
 
-- **[AI_AGENT_GUIDE.md](AI_AGENT_GUIDE.md)** - Quick orientation for AI-assisted development
+- **[docs/AI_AGENT_GUIDE.md](docs/AI_AGENT_GUIDE.md)** - Quick orientation for AI-assisted development
 
 ### Tools & Scripts
 

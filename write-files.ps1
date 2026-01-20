@@ -46,7 +46,37 @@ function Copy-TemplateFolder {
 }
 
 # --- Root files -------------------------------------------------------------
-Copy-TemplateFolder -SourceFolder (Join-Path $templatesDir "root") -DestinationFolder "."
+$rootTemplate = Join-Path $templatesDir "root"
+$rootConfigs = @(
+  ".editorconfig", ".gitattributes", ".gitmessage.txt", ".lint-stagedrc.json",
+  ".postcssrc.json", ".prettierignore", ".prettierrc.json", ".releaserc.cjs",
+  "commitlint.config.cjs", "eslint.config.mjs"
+)
+$docFiles = @(
+  "AI_AGENT_GUIDE.md", "API_GUIDE.md", "ARCHITECTURE.md", "DEVELOPMENT_GUIDE.md",
+  "PATTERNS.md", "POST_BOOTSTRAP_GUIDE.md", "TESTING_GUIDE.md", "THEMING_GUIDE.md",
+  "VERIFICATION_QUICK_REF.md", "VERIFICATION_SYSTEM.md"
+)
+
+if (-not (Test-Path $rootTemplate)) { throw "Missing root templates: $rootTemplate" }
+
+# Copy config files to root
+foreach ($f in $rootConfigs) {
+  Copy-TemplateFile -Source (Join-Path $rootTemplate $f) -Destination $f
+}
+
+# Copy .vscode folder
+Copy-TemplateFolder -SourceFolder (Join-Path $rootTemplate ".vscode") -DestinationFolder ".vscode"
+
+# Copy README.md to root only
+Copy-TemplateFile -Source (Join-Path $rootTemplate "README.md") -Destination "README.md"
+
+# Copy documentation into docs/
+$docsDest = "docs"
+if (-not (Test-Path $docsDest)) { New-Item -ItemType Directory -Force $docsDest | Out-Null }
+foreach ($doc in $docFiles) {
+  Copy-TemplateFile -Source (Join-Path $rootTemplate $doc) -Destination (Join-Path $docsDest $doc)
+}
 
 # --- GitHub files -----------------------------------------------------------
 Copy-TemplateFolder -SourceFolder (Join-Path $templatesDir "github") -DestinationFolder ".github"

@@ -1,10 +1,10 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import * as fs from "node:fs";
+import * as path from "node:path";
 
-import { readThemeTokens } from './token-io';
-import { writeScopedVarsCss, writeTailwindThemeCss, writeThemesCss } from './css-writers';
+import { readThemeTokens } from "./token-io";
+import { writeScopedVarsCss, writeTailwindThemeCss, writeThemesCss } from "./css-writers";
 
-import { getMappingFor, assertNoDuplicateTailwindVars, type MappingType } from '../mappings';
+import { getMappingFor, assertNoDuplicateTailwindVars, type MappingType } from "../mappings";
 
 /**
  * Ensure every referenced M3 var exists in *both* themes.
@@ -30,9 +30,7 @@ function validateMappingsAgainstThemes(params: {
   }
 
   if (missing.length) {
-    const msg =
-      `Token mapping validation failed. Missing M3 vars:\n` +
-      missing.map((m) => `  - ${m}`).join('\n');
+    const msg = `Token mapping validation failed. Missing M3 vars:\n` + missing.map((m) => `  - ${m}`).join("\n");
     throw new Error(msg);
   }
 }
@@ -44,13 +42,13 @@ function validateMappingsAgainstThemes(params: {
  *   node build-tokens.ts --only colors,radii
  */
 function parseOnlyArg(): MappingType[] | undefined {
-  const onlyIndex = process.argv.findIndex((a) => a === '--only');
+  const onlyIndex = process.argv.findIndex((a) => a === "--only");
   if (onlyIndex === -1) return undefined;
   const raw = process.argv[onlyIndex + 1];
   if (!raw) throw new Error(`--only requires a value, e.g. "--only colors,radii"`);
 
   const parts = raw
-    .split(',')
+    .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
   return parts as MappingType[];
@@ -61,7 +59,7 @@ function ensureDistDir(distDir: string) {
 }
 
 function writeFile(distDir: string, fileName: string, content: string) {
-  fs.writeFileSync(path.join(distDir, fileName), content, 'utf8');
+  fs.writeFileSync(path.join(distDir, fileName), content, "utf8");
 }
 
 function main() {
@@ -71,34 +69,34 @@ function main() {
   // If you want to enforce uniqueness of Tailwind vars across groups:
   assertNoDuplicateTailwindVars(mappings);
 
-  const light = readThemeTokens('light');
-  const dark = readThemeTokens('dark');
+  const light = readThemeTokens("light");
+  const dark = readThemeTokens("dark");
 
   validateMappingsAgainstThemes({ mappings, light, dark });
 
-  const distDir = path.resolve(process.cwd(), 'projects/tokens/dist');
+  const distDir = path.resolve(process.cwd(), "projects/tokens/dist");
   ensureDistDir(distDir);
 
   // themes.css
-  writeFile(distDir, 'themes.css', writeThemesCss());
+  writeFile(distDir, "themes.css", writeThemesCss());
 
   // m3.css (scoped vars)
   writeFile(
     distDir,
-    'm3.css',
+    "m3.css",
     writeScopedVarsCss([
-      { selector: '.theme-light', tokens: light },
-      { selector: '.theme-dark', tokens: dark },
+      { selector: ".theme-light", tokens: light },
+      { selector: ".theme-dark", tokens: dark },
     ]),
   );
 
   // tailwind.theme.css (narrowed by mapping types if --only used)
-  writeFile(distDir, 'tailwind.theme.css', writeTailwindThemeCss(mappings));
+  writeFile(distDir, "tailwind.theme.css", writeTailwindThemeCss(mappings));
 
   // optional README / manifest for debugging
   writeFile(
     distDir,
-    'manifest.json',
+    "manifest.json",
     JSON.stringify(
       {
         generatedAt: new Date().toISOString(),
@@ -113,7 +111,7 @@ function main() {
   console.log(
     `Generated tokens to ${distDir}\n` +
       `- themes.css\n- m3.css\n- tailwind.theme.css\n` +
-      `Mapping types: ${mappings.map((m) => m.type).join(', ')}`,
+      `Mapping types: ${mappings.map((m) => m.type).join(", ")}`,
   );
 }
 

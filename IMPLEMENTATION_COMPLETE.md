@@ -9,7 +9,6 @@ A complete, production-ready one-shot Angular workspace bootstrapping system has
 - **Total Files Created**: 27
   - Bootstrap scripts: 2 (bootstrap.ps1, write-files.ps1)
   - Template files: 25 (configs, workflows, verifiers, generators)
-  - Pre-existing: 2 (verify-env.ps1, setup-git.ps1)
 
 - **Lines of Code**:
   - bootstrap.ps1: ~130 lines (main orchestrator)
@@ -26,6 +25,7 @@ A complete, production-ready one-shot Angular workspace bootstrapping system has
 ### 🎯 Key Accomplishments
 
 ✅ **One-Command Bootstrap** – Creates production-ready Angular workspace in ~5 minutes
+
 ```powershell
 pwsh tools/bootstrap/bootstrap.ps1 -Name my-app -Cli 21
 ```
@@ -35,6 +35,7 @@ pwsh tools/bootstrap/bootstrap.ps1 -Name my-app -Cli 21
 ✅ **Workspace Discovery** – Verifiers auto-discover project layout via `_workspace.mjs`
 
 ✅ **6 Architectural Verifiers**:
+
 - Structure (feature folders have required files)
 - App routes (composition-only, no static imports)
 - Feature routes (have providers, load components)
@@ -46,22 +47,26 @@ pwsh tools/bootstrap/bootstrap.ps1 -Name my-app -Cli 21
 ✅ **Feature Generator** – `pnpm gen:feature Name --route path --register`
 
 ✅ **GitHub Automation**:
+
 - CI pipeline (lint, test, verify on PR)
 - Semantic release (auto-versioning, changelog, tags)
 - CODEOWNERS for team assignment
 
 ✅ **30+ npm Scripts**:
+
 - Code quality: format, lint, typecheck, test
 - Verification: structure, routes, imports, contracts
 - Generation: feature scaffolding
 - Lifecycle: verify (master gate), release, release:dry
 
 ✅ **Husky Pre-Push Gates**:
+
 - All verifiers run before push
 - Commit message validation
 - Pre-commit lint-staging
 
 ✅ **ESLint v9 Flat Config** with:
+
 - TypeScript strict checking
 - Angular-specific rules
 - Import boundary enforcement
@@ -74,8 +79,6 @@ pwsh tools/bootstrap/bootstrap.ps1 -Name my-app -Cli 21
 tools/bootstrap/
 ├── bootstrap.ps1                          ← Main coordinator
 ├── write-files.ps1                        ← Config deployer
-├── setup-git.ps1                          ← Git config (existing)
-├── verify-env.ps1                         ← Preflight (existing)
 │
 └── templates/
     ├── root/                              ← 9 config files
@@ -112,6 +115,7 @@ tools/bootstrap/
 ### 🚀 What Gets Installed
 
 **Framework & Tools**:
+
 - Angular CLI (configurable version, default v21)
 - pnpm (fast package manager)
 - TypeScript, Prettier, ESLint
@@ -120,6 +124,7 @@ tools/bootstrap/
 - Semantic-release (automated versioning)
 
 **Configuration**:
+
 - 9 root config files (editorconfig, prettier, eslint, etc.)
 - GitHub Actions workflows (CI + Release)
 - Husky hooks (pre-commit, commit-msg, pre-push)
@@ -128,22 +133,14 @@ tools/bootstrap/
 
 ### 📋 Usage
 
-**Step 1: Verify Environment**
-```powershell
-pwsh tools/bootstrap/verify-env.ps1
-```
+**Step 1: Bootstrap**
 
-**Step 2: Bootstrap**
 ```powershell
 pwsh tools/bootstrap/bootstrap.ps1 -Name my-app -Cli 21
 ```
 
-**Step 3: Configure Git**
-```powershell
-pwsh tools/bootstrap/setup-git.ps1
-```
+**Step 2: Use It**
 
-**Step 4: Use It**
 ```bash
 pnpm gen:feature Dashboard --route dashboard --register
 pnpm verify
@@ -186,6 +183,7 @@ This implementation is:
 ### 🔄 Next Steps
 
 1. **Create first feature**:
+
    ```bash
    pnpm gen:feature Dashboard --route dashboard --register
    pnpm verify
@@ -209,18 +207,21 @@ This implementation is:
 ### 📞 Implementation Notes
 
 **PowerShell Scripts** (`bootstrap.ps1`, `write-files.ps1`):
+
 - Work on Windows (PowerShell 5.1+) and cross-platform (pwsh)
 - Use `$ErrorActionPreference = "Stop"` for fail-fast
 - Proper directory creation with `-Force`
 - Template file copying with `-Force` override support
 
 **TypeScript Verifiers** (ESLint/TS AST):
+
 - Use `typescript` compiler API for AST parsing
 - Workspace-aware via `_workspace.mjs` helper
 - Exit code 1 on errors, 0 on success
 - Clear error messages with file paths
 
 **Feature Generator** (`generate-feature.mjs`):
+
 - Template-based rendering
 - Kebab-case folder naming convention
 - PascalCase class naming

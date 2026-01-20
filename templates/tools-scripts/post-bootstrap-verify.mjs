@@ -13,9 +13,9 @@
  * Usage: node tools/scripts/post-bootstrap-verify.mjs
  */
 
-import { execSync } from 'child_process';
-import { existsSync } from 'fs';
-import { join } from 'path';
+import { execSync } from "child_process";
+import { existsSync } from "fs";
+import { join } from "path";
 
 /**
  * @typedef {Object} VerificationStep
@@ -30,59 +30,58 @@ const workspaceRoot = process.cwd();
 /** @type {VerificationStep[]} */
 const steps = [
   {
-    name: 'Format',
-    command: 'pnpm format',
+    name: "Format",
+    command: "pnpm format",
     critical: true,
-    description: 'Auto-formatting code...',
+    description: "Auto-formatting code...",
   },
   {
-    name: 'ESLint Auto-fix',
-    command: 'pnpm lint:fix',
+    name: "ESLint Auto-fix",
+    command: "pnpm lint:fix",
     critical: true,
-    description: 'Auto-fixing linting issues...',
+    description: "Auto-fixing linting issues...",
   },
   {
-    name: 'Format Again',
-    command: 'pnpm format',
+    name: "Format Again",
+    command: "pnpm format",
     critical: true,
-    description: 'Re-formatting code after linting fixes...',
+    description: "Re-formatting code after linting fixes...",
   },
   {
-    name: 'Build',
-    command: 'pnpm build',
+    name: "Build",
+    command: "pnpm build",
     critical: true,
-    description: 'Building Angular application...',
+    description: "Building Angular application...",
   },
   {
-    name: 'Type Check',
-    command: 'pnpm typecheck',
+    name: "Type Check",
+    command: "pnpm typecheck",
     critical: true,
-    description: 'Type checking TypeScript...',
+    description: "Type checking TypeScript...",
   },
   {
-    name: 'Linting',
-    command: 'pnpm lint',
+    name: "Linting",
+    command: "pnpm lint",
     critical: true,
-    description: 'Linting code...',
+    description: "Linting code...",
   },
   {
-    name: 'Format Check',
-    command: 'pnpm format:check',
+    name: "Format Check",
+    command: "pnpm format:check",
     critical: true,
-    description: 'Checking code formatting...',
+    description: "Checking code formatting...",
   },
   {
-    name: 'Unit Tests',
-    command: 'pnpm test',
+    name: "Unit Tests",
+    command: "pnpm test",
     critical: false,
-    description: 'Running unit tests...',
+    description: "Running unit tests...",
   },
   {
-    name: 'Verification Gates',
-    command:
-      'pnpm verify:structure && pnpm verify:app-routes && pnpm verify:feature-routes && pnpm verify:no-cross-feature-imports',
+    name: "Verification Gates",
+    command: "pnpm verify:structure && pnpm verify:app-routes && pnpm verify:feature-routes && pnpm verify:no-cross-feature-imports",
     critical: false,
-    description: 'Running code structure verification gates...',
+    description: "Running code structure verification gates...",
   },
 ];
 
@@ -94,14 +93,14 @@ let warnings = 0;
  * @param {string} message - Message to log
  * @param {'info'|'success'|'warn'|'error'} [level='info'] - Log level
  */
-function log(message, level = 'info') {
+function log(message, level = "info") {
   const colors = {
-    info: '\x1b[36m', // cyan
-    success: '\x1b[32m', // green
-    warn: '\x1b[33m', // yellow
-    error: '\x1b[31m', // red
+    info: "\x1b[36m", // cyan
+    success: "\x1b[32m", // green
+    warn: "\x1b[33m", // yellow
+    error: "\x1b[31m", // red
   };
-  const reset = '\x1b[0m';
+  const reset = "\x1b[0m";
   console.log(`${colors[level]}${message}${reset}`);
 }
 
@@ -112,21 +111,21 @@ function log(message, level = 'info') {
  */
 function runStep(step) {
   try {
-    log(`\n▶ ${step.description}`, 'info');
+    log(`\n▶ ${step.description}`, "info");
     execSync(step.command, {
-      stdio: 'inherit',
+      stdio: "inherit",
       cwd: workspaceRoot,
       shell: true,
     });
-    log(`✓ ${step.name} passed`, 'success');
+    log(`✓ ${step.name} passed`, "success");
     return true;
   } catch {
     if (step.critical) {
-      log(`✗ ${step.name} failed (CRITICAL)`, 'error');
+      log(`✗ ${step.name} failed (CRITICAL)`, "error");
       failed++;
       return false;
     } else {
-      log(`⚠ ${step.name} failed (non-critical)`, 'warn');
+      log(`⚠ ${step.name} failed (non-critical)`, "warn");
       warnings++;
       return true;
     }
@@ -139,48 +138,42 @@ function runStep(step) {
  */
 function initializeGit() {
   try {
-    if (!existsSync(join(workspaceRoot, '.git'))) {
-      log('\n▶ Initializing git repository...', 'info');
+    if (!existsSync(join(workspaceRoot, ".git"))) {
+      log("\n▶ Initializing git repository...", "info");
       try {
-        execSync('git init -b main', { stdio: 'pipe', cwd: workspaceRoot });
-        execSync('git config user.email "dev@example.com"', { stdio: 'pipe', cwd: workspaceRoot });
-        execSync('git config user.name "Developer"', { stdio: 'pipe', cwd: workspaceRoot });
+        execSync("git init -b main", { stdio: "pipe", cwd: workspaceRoot });
+        execSync('git config user.email "dev@example.com"', { stdio: "pipe", cwd: workspaceRoot });
+        execSync('git config user.name "Developer"', { stdio: "pipe", cwd: workspaceRoot });
       } catch {
         // Git might already be initialized, continue
       }
-      log('✓ Git initialized', 'success');
+      log("✓ Git initialized", "success");
     }
 
     // Check if there are changes to commit
     try {
-      execSync('git diff --quiet', { stdio: 'pipe', cwd: workspaceRoot });
-      execSync('git diff --cached --quiet', { stdio: 'pipe', cwd: workspaceRoot });
+      execSync("git diff --quiet", { stdio: "pipe", cwd: workspaceRoot });
+      execSync("git diff --cached --quiet", { stdio: "pipe", cwd: workspaceRoot });
       // No changes
       return true;
     } catch {
       // There are changes to commit
-      log('\n▶ Making first commit...', 'info');
+      log("\n▶ Making first commit...", "info");
       try {
-        execSync('git add .', { stdio: 'pipe', cwd: workspaceRoot });
+        execSync("git add .", { stdio: "pipe", cwd: workspaceRoot });
         execSync('git commit -m "chore: initial bootstrap commit"', {
-          stdio: 'pipe',
+          stdio: "pipe",
           cwd: workspaceRoot,
         });
-        log('✓ First commit created', 'success');
+        log("✓ First commit created", "success");
         return true;
       } catch (commitError) {
-        log(
-          `⚠ Could not create commit: ${commitError instanceof Error ? commitError.message : 'Unknown error'}`,
-          'warn',
-        );
+        log(`⚠ Could not create commit: ${commitError instanceof Error ? commitError.message : "Unknown error"}`, "warn");
         return false;
       }
     }
   } catch (error) {
-    log(
-      `⚠ Could not initialize git: ${error instanceof Error ? error.message : String(error)}`,
-      'warn',
-    );
+    log(`⚠ Could not initialize git: ${error instanceof Error ? error.message : String(error)}`, "warn");
     return false;
   }
 }
@@ -190,30 +183,30 @@ function initializeGit() {
  * @returns {boolean} - Whether all critical checks passed
  */
 function printSummary() {
-  console.log('\n' + '='.repeat(60));
-  log('VERIFICATION SUMMARY', 'info');
-  console.log('='.repeat(60));
+  console.log("\n" + "=".repeat(60));
+  log("VERIFICATION SUMMARY", "info");
+  console.log("=".repeat(60));
 
   if (failed === 0) {
-    log(`\n✓ All critical checks passed!`, 'success');
+    log(`\n✓ All critical checks passed!`, "success");
     if (warnings > 0) {
-      log(`  (${warnings} non-critical warning(s))`, 'warn');
+      log(`  (${warnings} non-critical warning(s))`, "warn");
     }
-    log(`\n✓ Project is ready for development!`, 'success');
-    log('\nNext steps:', 'info');
-    log('  1. Start development: pnpm start', 'info');
-    log('  2. Generate features: pnpm gen:feature FeatureName', 'info');
-    log('  3. Check documentation:', 'info');
-    log('     - README.md - Project overview', 'info');
-    log('     - AI_AGENT_GUIDE.md - For AI-assisted development', 'info');
-    log('     - DEVELOPMENT_GUIDE.md - Daily workflows', 'info');
-    log('     - PATTERNS.md - Common patterns', 'info');
-    log('     - API_GUIDE.md - Backend integration', 'info');
+    log(`\n✓ Project is ready for development!`, "success");
+    log("\nNext steps:", "info");
+    log("  1. Start development: pnpm start", "info");
+    log("  2. Generate features: pnpm gen:feature FeatureName", "info");
+    log("  3. Check documentation:", "info");
+    log("     - README.md - Project overview", "info");
+    log("     - AI_AGENT_GUIDE.md - For AI-assisted development", "info");
+    log("     - DEVELOPMENT_GUIDE.md - Daily workflows", "info");
+    log("     - PATTERNS.md - Common patterns", "info");
+    log("     - API_GUIDE.md - Backend integration", "info");
     return true;
   } else {
-    log(`\n✗ ${failed} critical check(s) failed`, 'error');
-    log(`\nPlease fix the errors above and run verification again:`, 'error');
-    log('  pnpm verify:post-bootstrap', 'info');
+    log(`\n✗ ${failed} critical check(s) failed`, "error");
+    log(`\nPlease fix the errors above and run verification again:`, "error");
+    log("  pnpm verify:post-bootstrap", "info");
     return false;
   }
 }
@@ -222,15 +215,15 @@ function printSummary() {
  * Main verification entry point
  */
 async function main() {
-  log('\n╔════════════════════════════════════════════════════════════╗', 'info');
-  log('║          POST-BOOTSTRAP VERIFICATION SCRIPT                ║', 'info');
-  log('║                                                            ║', 'info');
-  log('║  This script validates that your Angular workspace is     ║', 'info');
-  log('║  ready for development.                                   ║', 'info');
-  log('╚════════════════════════════════════════════════════════════╝', 'info');
+  log("\n╔════════════════════════════════════════════════════════════╗", "info");
+  log("║          POST-BOOTSTRAP VERIFICATION SCRIPT                ║", "info");
+  log("║                                                            ║", "info");
+  log("║  This script validates that your Angular workspace is     ║", "info");
+  log("║  ready for development.                                   ║", "info");
+  log("╚════════════════════════════════════════════════════════════╝", "info");
 
-  log(`\nWorkspace: ${workspaceRoot}`, 'info');
-  log(`Total checks: ${steps.length}\n`, 'info');
+  log(`\nWorkspace: ${workspaceRoot}`, "info");
+  log(`Total checks: ${steps.length}\n`, "info");
 
   let continueVerification = true;
   for (const step of steps) {
@@ -252,6 +245,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  log(`\nUnexpected error: ${error instanceof Error ? error.message : String(error)}`, 'error');
+  log(`\nUnexpected error: ${error instanceof Error ? error.message : String(error)}`, "error");
   process.exit(1);
 });

@@ -9,4 +9,4 @@
  * - Checks that distributed tokens match source definitions
  */
 
-console.log('OK: token verification passed (placeholder).');
+console.log("OK: token verification passed (placeholder).");

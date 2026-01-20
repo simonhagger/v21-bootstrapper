@@ -1,14 +1,14 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import ts from 'typescript';
-import { getWorkspaceContext } from './_workspace.mjs';
+import fs from "node:fs";
+import path from "node:path";
+import ts from "typescript";
+import { getWorkspaceContext } from "./_workspace.mjs";
 
 function exists(p) {
   return fs.existsSync(p);
 }
 
 function parseSource(filePath) {
-  const text = fs.readFileSync(filePath, 'utf8');
+  const text = fs.readFileSync(filePath, "utf8");
   return ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 }
 
@@ -67,7 +67,7 @@ function loadComponentImportsPage(init) {
     if (ok) return;
     if (ts.isCallExpression(node) && ts.isImportKeyword(node.expression)) {
       const arg0 = node.arguments[0];
-      if (arg0 && ts.isStringLiteral(arg0) && arg0.text.endsWith('.page')) ok = true;
+      if (arg0 && ts.isStringLiteral(arg0) && arg0.text.endsWith(".page")) ok = true;
     }
     ts.forEachChild(node, visit);
   }
@@ -97,47 +97,36 @@ function validateFeatureRoutesFile(filePath) {
         return;
       }
 
-      if (objectHasProp(el, 'component')) {
-        errors.push(
-          `${filePath} export "${ex.name}" must not use "component:". Use loadComponent/loadChildren.`,
-        );
+      if (objectHasProp(el, "component")) {
+        errors.push(`${filePath} export "${ex.name}" must not use "component:". Use loadComponent/loadChildren.`);
       }
 
       if (idx === 0) {
-        const p = getPropInitializer(el, 'path');
+        const p = getPropInitializer(el, "path");
         const pv = p ? getStringLiteral(p) : null;
-        if (pv !== '')
-          errors.push(`${filePath} export "${ex.name}" first route must have path: ''`);
+        if (pv !== "") errors.push(`${filePath} export "${ex.name}" first route must have path: ''`);
 
-        if (!objectHasProp(el, 'providers')) {
-          errors.push(
-            `${filePath} export "${ex.name}" first route must declare providers: [ ... ]`,
-          );
+        if (!objectHasProp(el, "providers")) {
+          errors.push(`${filePath} export "${ex.name}" first route must declare providers: [ ... ]`);
         }
 
-        const hasLC = objectHasProp(el, 'loadComponent');
-        const hasLCh = objectHasProp(el, 'loadChildren');
+        const hasLC = objectHasProp(el, "loadComponent");
+        const hasLCh = objectHasProp(el, "loadChildren");
         if (!hasLC && !hasLCh) {
-          errors.push(
-            `${filePath} export "${ex.name}" first route must use loadComponent or loadChildren`,
-          );
+          errors.push(`${filePath} export "${ex.name}" first route must use loadComponent or loadChildren`);
         }
 
         if (hasLC) {
-          const init = getPropInitializer(el, 'loadComponent');
+          const init = getPropInitializer(el, "loadComponent");
           if (init && !loadComponentImportsPage(init)) {
-            errors.push(
-              `${filePath} export "${ex.name}" first route loadComponent should import a *.page file`,
-            );
+            errors.push(`${filePath} export "${ex.name}" first route loadComponent should import a *.page file`);
           }
         }
       }
 
-      const lc = getPropInitializer(el, 'loadComponent');
+      const lc = getPropInitializer(el, "loadComponent");
       if (lc && !loadComponentImportsPage(lc)) {
-        errors.push(
-          `${filePath} export "${ex.name}" has loadComponent not importing a *.page file`,
-        );
+        errors.push(`${filePath} export "${ex.name}" has loadComponent not importing a *.page file`);
       }
     });
   }
@@ -167,9 +156,7 @@ function main() {
     process.exit(1);
   }
 
-  console.log(
-    `OK: feature routes verified (${features.length} feature(s)) for ${path.relative(workspaceRoot, featuresDir)}.`,
-  );
+  console.log(`OK: feature routes verified (${features.length} feature(s)) for ${path.relative(workspaceRoot, featuresDir)}.`);
 }
 
 main();

@@ -135,6 +135,7 @@ Next steps:
 ## What You Get
 
 ### Git Repository
+
 ```bash
 $ git status
 On branch main
@@ -146,6 +147,7 @@ $ git log --oneline | head -1
 ```
 
 ### Project Structure
+
 ```
 my-app/
 ├── .git/                       # Git repository (initialized)
@@ -229,6 +231,7 @@ Please fix the errors above and run verification again:
 ```
 
 **Common fixes:**
+
 ```bash
 # Fix formatting
 pnpm format
@@ -242,35 +245,38 @@ pnpm verify:post-bootstrap
 
 ## Time Breakdown
 
-| Phase | Duration | What's Happening |
-|-------|----------|---|
-| Angular workspace creation | 30s | `ng new` creating base structure |
-| Library generation | 30s | Creating projects/* libraries |
-| pnpm install | 60-90s | Installing 300+ packages |
-| Dev tools installation | 30s | Installing ESLint, Prettier, Husky, etc. |
-| Template deployment | 20s | Copying configs, documentation, code |
-| Verification build | 45s | Angular build compilation |
-| Type checking | 30s | TypeScript compilation |
-| Linting | 30s | ESLint scan all files |
-| Formatting check | 10s | Prettier check |
-| Tests | 20s | Vitest execution |
-| Git initialization | 5s | Repository initialization |
-| **Total** | **~6-8 minutes** | End-to-end bootstrap + verification |
+| Phase                      | Duration         | What's Happening                         |
+| -------------------------- | ---------------- | ---------------------------------------- |
+| Angular workspace creation | 30s              | `ng new` creating base structure         |
+| Library generation         | 30s              | Creating projects/\* libraries           |
+| pnpm install               | 60-90s           | Installing 300+ packages                 |
+| Dev tools installation     | 30s              | Installing ESLint, Prettier, Husky, etc. |
+| Template deployment        | 20s              | Copying configs, documentation, code     |
+| Verification build         | 45s              | Angular build compilation                |
+| Type checking              | 30s              | TypeScript compilation                   |
+| Linting                    | 30s              | ESLint scan all files                    |
+| Formatting check           | 10s              | Prettier check                           |
+| Tests                      | 20s              | Vitest execution                         |
+| Git initialization         | 5s               | Repository initialization                |
+| **Total**                  | **~6-8 minutes** | End-to-end bootstrap + verification      |
 
 ## Success Criteria
 
 ✅ **Bootstrap completes without errors**
+
 ```
 ==> Bootstrap complete! Now verifying the workspace...
 ```
 
 ✅ **All verification gates pass**
+
 ```
 ✓ All critical checks passed!
 ✓ Project is ready for development!
 ```
 
 ✅ **Git repository initialized**
+
 ```bash
 $ git log --oneline | wc -l
 1  # One commit exists
@@ -281,6 +287,7 @@ nothing to commit, working tree clean
 ```
 
 ✅ **Can start development**
+
 ```bash
 pnpm start
 # ✔ Built successfully.
@@ -300,11 +307,13 @@ pnpm start
    - Look at theme service in projects/core/src/lib/theme/
 
 3. **Generate First Feature** (10 min)
+
    ```bash
    pnpm gen:feature Products --route products --register
    ```
 
 4. **Start Development** (5 min)
+
    ```bash
    pnpm start
    # Navigate to http://localhost:4200

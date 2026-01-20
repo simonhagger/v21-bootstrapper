@@ -1,7 +1,7 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import ts from 'typescript';
-import { getWorkspaceContext } from './_workspace.mjs';
+import fs from "node:fs";
+import path from "node:path";
+import ts from "typescript";
+import { getWorkspaceContext } from "./_workspace.mjs";
 
 function die(msg) {
   console.error(msg);
@@ -9,7 +9,7 @@ function die(msg) {
 }
 
 function parseSource(filePath) {
-  const text = fs.readFileSync(filePath, 'utf8');
+  const text = fs.readFileSync(filePath, "utf8");
   return ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 }
 
@@ -24,7 +24,7 @@ function findExportedRoutesArray(sf) {
 
       for (const decl of node.declarationList.declarations) {
         if (!ts.isIdentifier(decl.name)) continue;
-        if (decl.name.text !== 'APP_ROUTES') continue;
+        if (decl.name.text !== "APP_ROUTES") continue;
         if (!decl.initializer || !ts.isArrayLiteralExpression(decl.initializer)) continue;
         routesArray = decl.initializer;
         return;
@@ -67,7 +67,7 @@ function loadChildrenLooksLikeFeaturesImport(init) {
     if (ts.isCallExpression(node) && ts.isImportKeyword(node.expression)) {
       const arg0 = node.arguments[0];
       if (arg0 && ts.isStringLiteral(arg0)) {
-        if (arg0.text.startsWith('./features/') && arg0.text.endsWith('.routes')) ok = true;
+        if (arg0.text.startsWith("./features/") && arg0.text.endsWith(".routes")) ok = true;
       }
     }
     ts.forEachChild(node, visit);
@@ -83,7 +83,7 @@ function loadComponentLooksLikeNotFound(init) {
     if (ts.isCallExpression(node) && ts.isImportKeyword(node.expression)) {
       const arg0 = node.arguments[0];
       if (arg0 && ts.isStringLiteral(arg0)) {
-        if (arg0.text === './shared/pages/not-found.page') ok = true;
+        if (arg0.text === "./shared/pages/not-found.page") ok = true;
       }
     }
     ts.forEachChild(node, visit);
@@ -111,50 +111,46 @@ function main() {
       continue;
     }
 
-    if (objectHasProp(el, 'component')) {
+    if (objectHasProp(el, "component")) {
       errors.push(`app.routes.ts must not use "component:"; use loadChildren/loadComponent only.`);
     }
 
-    const pathInit = getPropInitializer(el, 'path');
+    const pathInit = getPropInitializer(el, "path");
     const pathValue = pathInit ? getStringValue(pathInit) : null;
     if (pathValue == null) {
       errors.push(`Every app route must have a literal string "path".`);
       continue;
     }
 
-    if (pathValue === '') {
-      if (!objectHasProp(el, 'redirectTo') || !objectHasProp(el, 'pathMatch')) {
+    if (pathValue === "") {
+      if (!objectHasProp(el, "redirectTo") || !objectHasProp(el, "pathMatch")) {
         errors.push(`Empty path route must be a redirect with redirectTo + pathMatch.`);
       }
       continue;
     }
 
-    if (pathValue === '**') {
+    if (pathValue === "**") {
       wildcardCount++;
-      const lc = getPropInitializer(el, 'loadComponent');
+      const lc = getPropInitializer(el, "loadComponent");
       if (!lc || !loadComponentLooksLikeNotFound(lc)) {
         errors.push(`Wildcard route must loadComponent from './shared/pages/not-found.page'.`);
       }
       continue;
     }
 
-    const loadChildren = getPropInitializer(el, 'loadChildren');
+    const loadChildren = getPropInitializer(el, "loadChildren");
     if (!loadChildren) {
       errors.push(`Route "${pathValue}" must use loadChildren for feature routes.`);
       continue;
     }
 
     if (!loadChildrenLooksLikeFeaturesImport(loadChildren)) {
-      errors.push(
-        `Route "${pathValue}" loadChildren must import './features/<feature>/<feature>.routes'.`,
-      );
+      errors.push(`Route "${pathValue}" loadChildren must import './features/<feature>/<feature>.routes'.`);
     }
   }
 
   if (wildcardCount !== 1) {
-    errors.push(
-      `APP_ROUTES must contain exactly one wildcard '**' route (found ${wildcardCount}).`,
-    );
+    errors.push(`APP_ROUTES must contain exactly one wildcard '**' route (found ${wildcardCount}).`);
   }
 
   if (errors.length) {

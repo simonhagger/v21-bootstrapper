@@ -1,0 +1,5 @@
+/* Application root styles */
+:host {
+  display: block;
+  height: 100%;
+}

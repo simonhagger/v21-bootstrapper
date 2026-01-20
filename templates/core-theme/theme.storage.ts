@@ -1,5 +1,5 @@
-import { InjectionToken, inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { InjectionToken, inject } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
 
 export interface KeyValueStorage {
   getItem(key: string): string | null;
@@ -11,7 +11,7 @@ export interface KeyValueStorage {
  * Default implementation uses localStorage when available.
  * Falls back to a no-op store in non-browser contexts.
  */
-export const THEME_STORAGE = new InjectionToken<KeyValueStorage>('THEME_STORAGE', {
+export const THEME_STORAGE = new InjectionToken<KeyValueStorage>("THEME_STORAGE", {
   factory: () => {
     const doc = inject(DOCUMENT);
 

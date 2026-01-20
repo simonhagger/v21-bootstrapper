@@ -69,67 +69,45 @@ if (-not (Test-Path "angular.json")) {
   try {
     # Generate the app directly in projects/web with correct structure
     Write-Host "==> Generating application in projects/web"
-    pnpm exec ng generate application $Name --project-root=projects/web --style=css --ssr=false --routing=false --skip-git --skip-install | Out-Null
+      pnpm exec ng generate application $Name --project-root=projects/web --style=css --ssr=false --routing=false --skip-install | Out-Null
   } finally {
     Pop-Location
   }
   Remove-Item -Recurse -Force $tmpPath
 }
 
-# Fix app.routes.ts export name and initial route structure (run always)
-Write-Host "==> Aligning app.routes.ts with architecture"
-$routesFile = Join-Path $repoRoot "projects/web/src/app/app.routes.ts"
-if (Test-Path $routesFile) {
-  $newContent = @"
-import type { Routes } from '@angular/router';
 
-export const APP_ROUTES: Routes = [
-  {
-    path: '**',
-    loadComponent: () =>
-      import('./shared/pages/not-found.page').then((m) => m.NotFoundPage),
-  },
-];
-"@
-  Set-Content $routesFile $newContent -Encoding UTF8
-}
+  # Copy pre-scaffolded app template (demonstrates key design aspects)
+  Write-Host "==> Installing pre-scaffolded app template"
+  $templateAppPath = Join-Path $scriptDir "templates/web-app/src/app"
+  $templateSrcPath = Join-Path $scriptDir "templates/web-app/src"
+  $targetAppPath = Join-Path $repoRoot "projects/web/src/app"
+  $targetSrcPath = Join-Path $repoRoot "projects/web/src"
 
-# Fix app.config.ts to import APP_ROUTES instead of routes (run always)
-Write-Host "==> Aligning app.config.ts with routes export"
-$configFile = Join-Path $repoRoot "projects/web/src/app/app.config.ts"
-if (Test-Path $configFile) {
-  $content = Get-Content $configFile -Raw
-  $content = $content -replace 'import { routes } from', 'import { APP_ROUTES } from'
-  $content = $content -replace 'provideRouter\(routes\)', 'provideRouter(APP_ROUTES)'
-  Set-Content $configFile $content -Encoding UTF8
-}
-
-# Create shared folder structure with not-found page (run always)
-Write-Host "==> Creating shared structure with not-found page"
-New-Item -ItemType Directory -Force -Path (Join-Path $repoRoot "projects/web/src/app/shared/pages") | Out-Null
-node -e @'
-const fs = require('fs');
-const path = require('path');
-
-const notFoundPageContent = `import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-@Component({
-  selector: 'app-not-found',
-  standalone: true,
-  imports: [CommonModule],
-  template: '<div class="p-8 text-center"><h1 class="text-2xl font-bold mb-4">Page Not Found</h1><p class="text-gray-600">The page you are looking for does not exist.</p></div>',
-})
-export class NotFoundPage {}
-`;
-
-fs.writeFileSync(
-  path.join('projects/web/src/app/shared/pages/not-found.page.ts'),
-  notFoundPageContent,
-  'utf8'
-);
-'@
-
+  if (Test-Path $templateAppPath) {
+    # Ensure target app directory exists
+    New-Item -ItemType Directory -Force -Path $targetAppPath | Out-Null
+  
+    # Remove default generated app files (keep environments)
+    Get-ChildItem -Path $targetAppPath -Force | Where-Object {
+      $_.Name -ne 'environments'
+    } | Remove-Item -Recurse -Force
+  
+    # Copy src-level files (main.ts)
+    if (Test-Path $templateSrcPath) {
+      Get-ChildItem -Path $templateSrcPath -File | ForEach-Object {
+        Copy-Item -Path $_.FullName -Destination $targetSrcPath -Force
+      }
+    }
+  
+    # Copy template app files
+    Get-ChildItem -Path $templateAppPath -Force | ForEach-Object {
+      Copy-Item -Path $_.FullName -Destination $targetAppPath -Recurse -Force
+    }
+    Write-Host "  Template app structure deployed"
+  } else {
+    Write-Host "  Warning: template app structure not found at $templateAppPath"
+  }
 # Setup tsconfig files for the correctly placed app (run always if needed)
 if (-not (Test-Path (Join-Path $repoRoot "projects/web/tsconfig.app.json"))) {
   Write-Host "==> Configuring TypeScript for projects/web"
@@ -227,7 +205,7 @@ foreach ($lib in $libs) {
 # Install Material + Tailwind + theming dependencies
 Write-Host "==> Installing Material Design + Tailwind dependencies"
 pnpm add `
-  "@angular/material" "@angular/cdk"
+  "@angular/material" "@angular/cdk" "@angular/animations"
 
 # Install tooling
 Write-Host "==> Installing dev tooling dependencies"

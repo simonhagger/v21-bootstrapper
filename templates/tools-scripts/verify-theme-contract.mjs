@@ -10,4 +10,4 @@
  * - No hardcoded colors outside token system
  */
 
-console.log('OK: theme contract verification passed (placeholder).');
+console.log("OK: theme contract verification passed (placeholder).");

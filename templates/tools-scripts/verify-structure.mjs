@@ -1,14 +1,14 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import ts from 'typescript';
-import { getWorkspaceContext } from './_workspace.mjs';
+import fs from "node:fs";
+import path from "node:path";
+import ts from "typescript";
+import { getWorkspaceContext } from "./_workspace.mjs";
 
 function exists(p) {
   return fs.existsSync(p);
 }
 
 function parseSource(filePath) {
-  const text = fs.readFileSync(filePath, 'utf8');
+  const text = fs.readFileSync(filePath, "utf8");
   return ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 }
 
@@ -63,7 +63,7 @@ function listFilesRecursive(dir, out = []) {
   for (const e of entries) {
     const fp = path.join(dir, e.name);
     if (e.isDirectory()) {
-      if (e.name === 'node_modules' || e.name === 'dist' || e.name === '.angular') continue;
+      if (e.name === "node_modules" || e.name === "dist" || e.name === ".angular") continue;
       listFilesRecursive(fp, out);
     } else if (e.isFile()) {
       out.push(fp);
@@ -98,18 +98,13 @@ function routeObjectHasProviders(routeObj) {
     if (!ts.isPropertyAssignment(prop)) continue;
     const n = prop.name;
     const name = ts.isIdentifier(n) ? n.text : ts.isStringLiteral(n) ? n.text : null;
-    if (name === 'providers') return true;
+    if (name === "providers") return true;
   }
   return false;
 }
 
 function verifyFeatureFolder(featureDir, featureName) {
-  const required = [
-    `${featureName}.routes.ts`,
-    `${featureName}.page.ts`,
-    `${featureName}.data.ts`,
-    `${featureName}.state.ts`,
-  ];
+  const required = [`${featureName}.routes.ts`, `${featureName}.page.ts`, `${featureName}.data.ts`, `${featureName}.state.ts`];
   const missing = required.filter((f) => !exists(path.join(featureDir, f)));
   return missing;
 }
@@ -120,12 +115,9 @@ function verifyNoStaticPageImportsInAppRoutes(appRoutesFile) {
   const sf = parseSource(appRoutesFile);
   const imports = getImports(sf);
 
-  const bad = imports.filter((s) => s.includes('.page'));
+  const bad = imports.filter((s) => s.includes(".page"));
   if (bad.length) {
-    return [
-      `app.routes.ts must not statically import pages. Found:\n` +
-        bad.map((b) => `  - ${b}`).join('\n'),
-    ];
+    return [`app.routes.ts must not statically import pages. Found:\n` + bad.map((b) => `  - ${b}`).join("\n")];
   }
   return [];
 }
@@ -133,16 +125,11 @@ function verifyNoStaticPageImportsInAppRoutes(appRoutesFile) {
 function verifyNoHttpClientInDisallowedFiles(files) {
   const errors = [];
   for (const fp of files) {
-    if (
-      fp.endsWith('.page.ts') ||
-      fp.endsWith('.state.ts') ||
-      fp.endsWith('.guard.ts') ||
-      fp.endsWith('.guards.ts')
-    ) {
+    if (fp.endsWith(".page.ts") || fp.endsWith(".state.ts") || fp.endsWith(".guard.ts") || fp.endsWith(".guards.ts")) {
       const sf = parseSource(fp);
       const imports = getImports(sf);
-      const importsHttp = imports.includes('@angular/common/http');
-      const mentionsHttpClient = fileContainsIdentifier(sf, 'HttpClient');
+      const importsHttp = imports.includes("@angular/common/http");
+      const mentionsHttpClient = fileContainsIdentifier(sf, "HttpClient");
       if (importsHttp && mentionsHttpClient) {
         errors.push(`HttpClient is not allowed in ${fp} (use *.data.ts or core/api).`);
       }
@@ -155,16 +142,14 @@ function verifyNoProvidedInRootInFeatures(files, featuresDir) {
   const errors = [];
   for (const fp of files) {
     if (!fp.startsWith(featuresDir + path.sep)) continue;
-    if (!fp.endsWith('.ts')) continue;
+    if (!fp.endsWith(".ts")) continue;
 
     const sf = parseSource(fp);
-    const hasProvidedIn = fileContainsIdentifier(sf, 'providedIn');
-    const hasRootLiteral = fileContainsLiteral(sf, 'root');
+    const hasProvidedIn = fileContainsIdentifier(sf, "providedIn");
+    const hasRootLiteral = fileContainsLiteral(sf, "root");
 
     if (hasProvidedIn && hasRootLiteral) {
-      errors.push(
-        `Avoid providedIn: 'root' in features: ${fp}. Provide via route-level providers.`,
-      );
+      errors.push(`Avoid providedIn: 'root' in features: ${fp}. Provide via route-level providers.`);
     }
   }
   return errors;
@@ -206,26 +191,21 @@ function main() {
 
   const featureNames = listDirs(featuresDir);
   if (!featureNames.length) {
-    errors.push(
-      `No feature folders found in ${featuresDir}. Create at least one feature via pnpm gen:feature.`,
-    );
+    errors.push(`No feature folders found in ${featuresDir}. Create at least one feature via pnpm gen:feature.`);
   }
 
   for (const f of featureNames) {
     const featureDir = path.join(featuresDir, f);
     const missing = verifyFeatureFolder(featureDir, f);
     if (missing.length) {
-      errors.push(
-        `Feature "${f}" missing required files:\n` +
-          missing.map((m) => `  - ${path.join(featureDir, m)}`).join('\n'),
-      );
+      errors.push(`Feature "${f}" missing required files:\n` + missing.map((m) => `  - ${path.join(featureDir, m)}`).join("\n"));
     }
   }
 
   errors.push(...verifyNoStaticPageImportsInAppRoutes(appRoutesFile));
 
   if (exists(appRoot)) {
-    const appFiles = listFilesRecursive(appRoot).filter((fp) => fp.endsWith('.ts'));
+    const appFiles = listFilesRecursive(appRoot).filter((fp) => fp.endsWith(".ts"));
     errors.push(...verifyNoHttpClientInDisallowedFiles(appFiles));
     errors.push(...verifyNoProvidedInRootInFeatures(appFiles, featuresDir));
 
@@ -240,9 +220,7 @@ function main() {
     process.exit(1);
   }
 
-  console.log(
-    `OK: structure verified for appRoot=${path.relative(workspaceRoot, appRoot)} (${featureNames.length} feature(s)).`,
-  );
+  console.log(`OK: structure verified for appRoot=${path.relative(workspaceRoot, appRoot)} (${featureNames.length} feature(s)).`);
 }
 
 main();

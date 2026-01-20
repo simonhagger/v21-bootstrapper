@@ -10,9 +10,6 @@ The complete one-shot Angular workspace scaffolding system has been implemented 
 tools/bootstrap/
 ├── bootstrap.ps1                 # Main orchestrator (runs setup, libs, tooling, gates)
 ├── write-files.ps1               # Copy-based config file deployer
-├── setup-git.ps1                 # Git configuration (existing)
-├── verify-env.ps1                # Environment preflight checks (existing)
-│
 └── templates/
     ├── root/                     # Root configuration templates
     │   ├── .editorconfig
@@ -52,17 +49,12 @@ tools/bootstrap/
 From repo root:
 
 ```powershell
-# 1. Verify environment (git, node, pnpm)
-pwsh tools/bootstrap/verify-env.ps1
-
-# 2. Run full bootstrap
+# 1. Run full bootstrap
 pwsh tools/bootstrap/bootstrap.ps1 -Name my-app -Cli 21
-
-# 3. Configure git
-pwsh tools/bootstrap/setup-git.ps1
 ```
 
 **Parameters:**
+
 - `-Name <string>` – Angular workspace name (default: `acme-web`)
 - `-Cli <int>` – Angular CLI version (default: `21`)
 - `-Force` – Overwrite existing config files
@@ -125,6 +117,7 @@ pnpm release:dry     # Test release without publishing
 ### 1. Workspace Discovery (`_workspace.mjs`)
 
 All verifier and generator scripts are **workspace-agnostic**:
+
 - Auto-discover workspace root by walking up to `angular.json`
 - Read `angular.json` to determine app project, sourceRoot, appRoot
 - Works with any project layout: `src/app` or `projects/web/src/app`, etc.
@@ -137,6 +130,7 @@ pnpm gen:feature Dashboard --route dashboard --register
 ```
 
 Creates complete feature scaffold:
+
 ```
 features/dashboard/
 ├── dashboard.routes.ts      # Route definition + providers
@@ -152,6 +146,7 @@ Automatically registers route in `app.routes.ts` (if `--register` used).
 ### 3. Architectural Enforcement
 
 **ESLint rules** (`eslint.config.mjs`):
+
 - No NgModules (standalone-only)
 - HttpClient only in `*.data.ts` or `core/api/**`
 - No cross-feature imports
@@ -159,6 +154,7 @@ Automatically registers route in `app.routes.ts` (if `--register` used).
 - Restricted import patterns for boundary enforcement
 
 **Husky pre-push hooks**:
+
 - Structure validation
 - Route composition validation
 - Cross-feature import detection
@@ -167,12 +163,14 @@ Automatically registers route in `app.routes.ts` (if `--register` used).
 ### 4. GitHub Automation
 
 **CI workflow** (`ci.yml`):
+
 - Runs on push to main + PRs
 - Caches Angular build cache and node_modules
 - Runs full `pnpm verify` suite
 - Parallel execution for speed
 
 **Release workflow** (`release.yml`):
+
 - Runs only on main branch
 - Runs quality gates before release
 - Uses semantic-release for:
@@ -182,6 +180,7 @@ Automatically registers route in `app.routes.ts` (if `--register` used).
   - GitHub release creation
 
 **PR template**:
+
 - Architectural checklist
 - Feature structure verification
 - Data/state boundary checks
@@ -190,6 +189,7 @@ Automatically registers route in `app.routes.ts` (if `--register` used).
 ### 5. Lifecycle Management
 
 **Husky hooks ensure:**
+
 - All commits follow conventional commit format
 - All pushed code passes linting, typing, tests
 - All features follow required structure
@@ -197,6 +197,7 @@ Automatically registers route in `app.routes.ts` (if `--register` used).
 - No architectural boundaries are violated
 
 **Semantic-release ensures:**
+
 - Automated versioning (major.minor.patch based on commits)
 - Automated changelog generation
 - Git tag + GitHub release creation
@@ -205,10 +206,13 @@ Automatically registers route in `app.routes.ts` (if `--register` used).
 ## Configuration Files Reference
 
 ### `.editorconfig`
+
 Universal editor settings (LF line endings, 2-space indent, UTF-8)
 
 ### `eslint.config.mjs`
+
 Modern ESLint v9+ flat config with:
+
 - TypeScript strict type checking
 - Angular standalone-only enforcement
 - Import boundary rules
@@ -216,18 +220,23 @@ Modern ESLint v9+ flat config with:
 - Type-safe promise handling
 
 ### `.prettierrc.json`
+
 Code formatter: single quotes, trailing commas, Tailwind plugin
 
 ### `commitlint.config.cjs`
+
 Validates commits follow conventional commit format (feat, fix, etc.)
 
 ### `.releaserc.cjs`
+
 Semantic-release configuration with changelog + GitHub integration
 
 ### `ARCHITECTURE.md`
+
 Authoritative architectural guidelines defining:
+
 - Feature structure (route-first vertical slices)
-- Data boundary (*.data.ts files)
+- Data boundary (\*.data.ts files)
 - State management (route-scoped DI)
 - Import restrictions (no cross-feature)
 - Generation conventions
@@ -240,6 +249,7 @@ Authoritative architectural guidelines defining:
    - Update `verify-tokens.mjs`
 
 2. **Create first feature**:
+
    ```bash
    pnpm gen:feature Dashboard --route dashboard --register
    pnpm verify  # Run all gates locally
@@ -268,6 +278,7 @@ The verifiers are already workspace-aware and don't need changes.
 ### Add Additional Verifiers
 
 Copy template pattern from existing verifiers (e.g., `verify-structure.mjs`):
+
 1. Use `getWorkspaceContext()` to discover paths
 2. Implement your validation logic
 3. Exit with code 1 on errors
@@ -281,12 +292,13 @@ Edit `write-files.ps1` to modify the `pnpm pkg set` commands.
 ## Files Modified/Created
 
 ### New Files
+
 - `tools/bootstrap/bootstrap.ps1` (main orchestrator)
 - `tools/bootstrap/write-files.ps1` (config deployer)
 - `tools/bootstrap/templates/` (entire template tree)
 
 ### Existing Files (Not Modified)
-- `tools/bootstrap/verify-env.ps1` (unchanged)
+
 - `tools/bootstrap/setup-git.ps1` (unchanged)
 
 ## Verification
@@ -307,6 +319,7 @@ Test-Path tools/bootstrap/write-files.ps1
 ## Production Ready
 
 This bootstrap system is:
+
 - ✅ **Deterministic** – Same input always produces same output
 - ✅ **Idempotent** – Safe to re-run (with `-Force` to overwrite configs)
 - ✅ **Workspace-agnostic** – Scripts work with any project name/layout

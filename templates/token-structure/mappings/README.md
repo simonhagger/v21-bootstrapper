@@ -37,14 +37,14 @@ The mapping files define the bridge contract between:
 The `getMappingFor()` function is used by the token generator:
 
 ```ts
-import { getMappingFor } from '../mappings';
+import { getMappingFor } from "../mappings";
 
 // Get all mappings
 const all = getMappingFor();
 
 // Get specific types
-const colorMappings = getMappingFor('colors');
-const shapeMappings = getMappingFor(['radii', 'elevation']);
+const colorMappings = getMappingFor("colors");
+const shapeMappings = getMappingFor(["radii", "elevation"]);
 ```
 
 ## Adding New Mappings

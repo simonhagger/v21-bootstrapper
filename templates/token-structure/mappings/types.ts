@@ -1,4 +1,4 @@
-export type MappingType = 'colors' | 'radii' | 'typography' | 'elevation' | 'spacing';
+export type MappingType = "colors" | "radii" | "typography" | "elevation" | "spacing";
 
 export type MappingGroup = {
   type: MappingType;
