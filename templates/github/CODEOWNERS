@@ -1,0 +1,14 @@
+# CODEOWNERS
+# Global code owners
+*       @team/maintainers
+
+# Features (team owns their features)
+projects/web/src/app/features/dashboard/**  @team/dashboard
+projects/web/src/app/features/settings/**   @team/settings
+
+# Core and shared (platform team)
+projects/web/src/app/core/**        @team/platform
+projects/web/src/app/shared/**      @team/platform
+
+# Design tokens (design system team)
+projects/tokens/**  @team/design-systems

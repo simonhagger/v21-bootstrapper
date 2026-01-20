@@ -1,0 +1,5 @@
+# Conventional Commits:
+# feat(scope): summary
+# fix(scope): summary
+#
+# Types: feat, fix, docs, chore, refactor, test, build, ci
