@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Example: Custom design tokens that can be used with mat.theme-overrides() */
+  
+  /* Brand colors - uncomment and customize to override Material theme with Tailwind tokens */
+  --color-brand: oklch(0.72 0.11 178);
+  --color-brand-contrast: white;
+  
+  /* Accent color - used to demonstrate Material token overrides */
+  --color-accent: oklch(0.65 0.15 285);
+  --color-accent-contrast: white;
+}
+
+/* To integrate custom tokens with Angular Material, add to styles.scss:
+ *
+ * :root {
+ *   @include mat.theme-overrides((
+ *     primary: var(--color-brand),
+ *     on-primary: var(--color-brand-contrast),
+ *     tertiary: var(--color-accent),
+ *     on-tertiary: var(--color-accent-contrast),
+ *   ));
+ * }
+ */

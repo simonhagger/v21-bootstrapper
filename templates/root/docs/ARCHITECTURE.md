@@ -30,7 +30,7 @@ Each feature lives in `src/app/features/<name>/` and must contain:
 import { SomeService } from '../dashboard/dashboard.service';
 
 // ✅ ALLOWED
-import { SomeApi } from '@core/api';
+import { SomeDataService } from './some-feature.data';
 import { SomeComponent } from '@shared/components';
 ```
 

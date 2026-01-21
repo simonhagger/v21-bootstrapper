@@ -201,19 +201,25 @@ function printSummary() {
     }
     log(`\n✓ Project is ready for development!`, 'success');
     log('\nNext steps:', 'info');
-    log('  1. Start development: pnpm start', 'info');
-    log('  2. Generate features: pnpm gen:feature FeatureName', 'info');
+    log('  1. Start development: pnpm dev', 'info');
+    log(
+      '  2. Generate features: pnpm gen:feature FeatureName --route feature-name --register',
+      'info',
+    );
     log('  3. Check documentation:', 'info');
     log('     - README.md - Project overview', 'info');
-    log('     - AI_AGENT_GUIDE.md - For AI-assisted development', 'info');
-    log('     - DEVELOPMENT_GUIDE.md - Daily workflows', 'info');
-    log('     - PATTERNS.md - Common patterns', 'info');
-    log('     - API_GUIDE.md - Backend integration', 'info');
+    log('     - docs/ARCHITECTURE.md - Core rules', 'info');
+    log('     - docs/DEVELOPMENT.md - Daily workflows', 'info');
+    log('     - docs/TESTING.md - Testing guidance', 'info');
+    log('     - docs/STYLING.md - Tailwind + Material', 'info');
+    log('     - docs/API.md - Backend integration', 'info');
+    log('     - docs/VERIFICATION.md - Verification gates', 'info');
+    log('     - docs/TROUBLESHOOTING.md - Common issues', 'info');
     return true;
   } else {
     log(`\n✗ ${failed} critical check(s) failed`, 'error');
     log(`\nPlease fix the errors above and run verification again:`, 'error');
-    log('  pnpm verify:post-bootstrap', 'info');
+    log('  pnpm verify', 'info');
     return false;
   }
 }

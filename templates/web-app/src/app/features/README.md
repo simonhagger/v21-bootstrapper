@@ -1,35 +1,42 @@
 # Features
 
-Features are vertical slices of functionality using route-first architecture.
+Features are vertical slices of functionality using a route-first, flat-file architecture.
 
 ## Creating a Feature
 
-Use the feature generator:
+Generate a new feature:
 
 ```bash
 pnpm gen:feature FeatureName --route route-path
 ```
 
+Optionally register the route automatically:
+
+```bash
+pnpm gen:feature FeatureName --route route-path --register
+```
+
 ## Structure
 
-Each feature has:
+Each feature is a self-contained slice with these files:
 
 ```
 features/
-├── feature-name/
-│   ├── routes.ts                 # Feature routes
-│   ├── index.ts                  # Feature barrel export
-│   ├── components/               # Feature-scoped components
-│   ├── services/                 # Feature-scoped services
-│   └── pages/                    # Feature pages
+└── feature-name/
+	├── feature-name.routes.ts   # Route definition and providers
+	├── feature-name.page.ts     # Routed component
+	├── feature-name.data.ts     # Data access (HTTP boundary)
+	├── feature-name.state.ts    # State management
+	├── feature-name.models.ts   # Types and interfaces
+	└── README.md                # Feature documentation
 ```
 
 ## Architecture Rules
 
-1. **Route-First**: Define routes first, then build pages/components
-2. **Vertical Slice**: Each feature owns its routes, components, and services
-3. **Feature-Scoped**: Services and components stay within the feature
-4. **Shared Imports**: Only import from `core`, `ui`, `shell`, `tokens` libraries
-5. **No Cross-Feature Imports**: Features cannot import from other features
+- **Route-first**: Define routes/providers first, then build pages/state/data
+- **Vertical slice**: A feature owns its routes, page, state, data, and models
+- **No cross-feature imports**: Do not import code from other features
+- **Shared usage**: Only import from `src/app/shared/` for shared pages/layout
+- **HTTP boundary**: Use `*.data.ts` for all HTTP calls; provide services in `*.routes.ts`
 
-See `tools/scripts/verify-no-cross-feature-imports.mjs` for enforcement.
+See `tools/scripts/verify-no-cross-feature-imports.mjs` and `tools/scripts/verify-feature-routes.mjs` for enforcement.

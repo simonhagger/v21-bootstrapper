@@ -13,5 +13,3 @@ describe('HomePageComponent', () => {
     expect(message).toContain('home');
   });
 });
-
-

@@ -1,61 +1,54 @@
 # Styling Guide
 
-Styling with Angular Material 21 and Tailwind CSS 4 integrated together.
+Styling with Angular Material and Tailwind CSS v4 integrated together.
 
 ## Overview
 
-This project uses both **Angular Material** for component theming and **Tailwind CSS** for utility-first styling. They work together to provide both beautiful default styling and fine-grained layout control.
+This project uses both **Angular Material** for component theming and **Tailwind CSS v4** for utility-first styling. They work together to provide both beautiful default styling and fine-grained layout control.
 
-- **Angular Material**: Component theming, typography, color system
-- **Tailwind CSS**: Layout, spacing, responsive design, utilities
+- **Angular Material**: Component theming via `mat.theme()`, Material 3 design system
+- **Tailwind CSS v4**: Layout, spacing, responsive design, utility classes, custom design tokens
 
 ## Material Theming
 
 ### Default Theme
 
-Angular Material 3 is configured with a default theme in `src/theme.scss`:
+Angular Material is configured with a default theme in `src/styles.scss` using the modern `mat.theme()` API:
 
 ```scss
 @use '@angular/material' as mat;
 
-$theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$indigo-palette,
-    secondary: mat.$blue-palette,
-    tertiary: mat.$purple-palette,
-  ),
-  typography: mat.define-typography-config(),
-  density: 0,
-));
-
 html {
-  color-scheme: light;
-  @include mat.all-component-themes($theme);
-  @include mat.system-level-colors($theme);
-  @include mat.system-typography($theme);
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  color-scheme: light; // or 'dark' or 'light dark'
 }
 ```
 
 ### Adding Dark Mode
 
-To add dark mode support, define a second theme:
+To add dark mode support, you can change the `color-scheme` property:
 
 ```scss
-// Light theme (default)
-html {
-  color-scheme: light;
-  @include mat.all-component-themes($light-theme);
-}
-
-// Dark theme
-html.dark-mode {
-  color-scheme: dark;
-  @include mat.all-component-themes($dark-theme);
+body {
+  color-scheme: light dark; // Defers to user's system settings
+  // or
+  color-scheme: dark; // Force dark mode
 }
 ```
 
-Then toggle in your component:
+Or toggle programmatically in your component:
 
 ```typescript
 @Component({
@@ -63,82 +56,109 @@ Then toggle in your component:
 })
 export class AppComponent {
   toggleDarkMode() {
-    document.documentElement.classList.toggle('dark-mode');
+    const body = document.body;
+    const currentScheme = body.style.colorScheme;
+    body.style.colorScheme = currentScheme === 'dark' ? 'light' : 'dark';
   }
 }
 ```
 
 ### Changing Color Palettes
 
-Update the palette definitions in `src/theme.scss`:
+Update the palette definitions in `src/styles.scss`:
 
 ```scss
-$theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$teal-palette,      // Change primary
-    secondary: mat.$cyan-palette,    // Change secondary
-    tertiary: mat.$orange-palette,   // Change tertiary
-  ),
-));
-```
-
-Available palettes: `$red`, `$pink`, `$purple`, `$deep-purple`, `$indigo`, `$blue`, `$light-blue`, `$cyan`, `$teal`, `$green`, `$light-green`, `$lime`, `$yellow`, `$amber`, `$orange`, `$deep-orange`, `$brown`, `$gray`, `$blue-gray`
-
-### Design Tokens
-
-Material 3 provides CSS variables for theming:
-
-```css
-/* Color tokens */
---md-sys-color-primary
---md-sys-color-secondary
---md-sys-color-tertiary
---md-sys-color-surface
---md-sys-color-on-surface
---md-sys-color-error
-
-/* Shape tokens */
---md-sys-shape-corner-none
---md-sys-shape-corner-small
---md-sys-shape-corner-medium
---md-sys-shape-corner-large
-```
-
-Use in your styles:
-
-```scss
-.card {
-  background: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
-  border-radius: var(--md-sys-shape-corner-medium);
+html {
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$teal-palette,      // Change primary
+        tertiary: mat.$orange-palette,   // Change tertiary
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
 }
 ```
 
-## Tailwind CSS
+Available palettes: `$red`, `$pink`, `$purple`, `$deep-purple`, `$indigo`, `$blue`, `$light-blue`, `$cyan`, `$teal`, `$green`, `$light-green`, `$lime`, `$yellow`, `$amber`, `$orange`, `$deep-orange`, `$brown`, `$gray`, `$blue-gray`, `$azure`
+
+### Integrating Tailwind Design Tokens with Material
+
+You can override Angular Material's theme with Tailwind v4 design tokens using `mat.theme-overrides()`:
+
+**Step 1:** Define custom design tokens in `src/tailwind.css`:
+
+```css
+@import 'tailwindcss';
+
+@theme {
+  /* Custom brand colors as Tailwind tokens */
+  --color-brand: oklch(0.72 0.11 178);
+  --color-brand-contrast: white;
+  --color-accent: oklch(0.65 0.15 285);
+  --color-accent-contrast: white;
+}
+```
+
+**Step 2:** Override Material theme in `src/styles.scss`:
+
+```scss
+@use '@angular/material' as mat;
+
+:root {
+  @include mat.theme-overrides((
+    primary: var(--color-brand),
+    on-primary: var(--color-brand-contrast),
+    tertiary: var(--color-accent),
+    on-tertiary: var(--color-accent-contrast),
+  ));
+}
+```
+
+This approach lets you define colors in Tailwind and use them consistently across both Material components and Tailwind utilities:
+
+```html
+<!-- Material button uses overridden theme -->
+<button mat-raised-button color="primary">Brand Button</button>
+
+<!-- Tailwind utility uses same token -->
+<div class="bg-[var(--color-brand)] text-[var(--color-brand-contrast)]">
+  Matching brand color
+</div>
+```
+
+## Tailwind CSS v4
 
 ### Configuration
 
-Tailwind v4 is configured in `tailwind.config.ts` for content detection:
+Tailwind v4 uses `src/tailwind.css` as the entry point:
 
-```typescript
-export default {
-  content: [
-    './src/**/*.{ts,html}',
-    './src/**/*.component.ts',
-  ],
-};
+```css
+@import 'tailwindcss';
+
+@theme {
+  /* Custom design tokens */
+  --color-brand: oklch(0.72 0.11 178);
+  --spacing-card: 1.5rem;
+}
 ```
 
-### Input File
+The CSS file is imported in `src/styles.scss` and automatically detects all template files.
 
-Customize Tailwind in `src/tailwind.input.css`:
+### Custom Layers
+
+Customize Tailwind in `src/tailwind.css`:
 
 ```css
 @import 'tailwindcss';
 
 @layer base {
   /* Custom base styles */
+  body {
+    @apply antialiased;
+  }
 }
 
 @layer components {
@@ -256,12 +276,15 @@ Material components provide behavior and theming; Tailwind provides layout:
   border-color: #e0e0e0;
 }
 
-// ✅ Use design tokens and Tailwind
+// ✅ Use Tailwind utilities
 .card {
   @apply bg-white text-black border border-gray-200;
-  // Or use Material tokens
-  background: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
+}
+
+// ✅ Or use custom Tailwind design tokens
+.card {
+  background: var(--color-surface);
+  color: var(--color-on-surface);
 }
 ```
 
@@ -292,60 +315,71 @@ export class DashboardComponent {}
 
 ### Global Styles
 
-Keep global styles minimal:
+Keep global styles minimal in `src/styles.scss`:
 
 ```scss
-// src/styles.scss - Global styles only
 html, body {
   margin: 0;
   padding: 0;
-  font-family: var(--md-sys-typescale-body-font-family);
+  height: 100%;
 }
 
-// Wrap text with Material typography
 body {
-  @include mat.typography-level(body-medium);
+  font-family: Roboto, sans-serif;
 }
 ```
 
 ## Extending Tailwind
 
-### Custom Colors
+### Custom Design Tokens
 
-```typescript
-// tailwind.config.ts
-export default {
-  theme: {
-    extend: {
-      colors: {
-        brand: {
-          50: '#f8fafc',
-          500: '#0066cc',
-          900: '#001a4d',
-        },
-      },
-    },
-  },
-};
+Define custom tokens in `src/tailwind.css` using the `@theme` directive:
+
+```css
+@import 'tailwindcss';
+
+@theme {
+  /* Brand colors */
+  --color-brand-50: oklch(0.98 0.02 178);
+  --color-brand-500: oklch(0.72 0.11 178);
+  --color-brand-900: oklch(0.32 0.09 178);
+  
+  /* Spacing scale */
+  --spacing-card: 1.5rem;
+  --spacing-section: 3rem;
+  
+  /* Custom radius */
+  --radius-card: 0.75rem;
+}
 ```
 
-Then use:
+Then use in templates and styles:
 
 ```html
-<div class="bg-brand-500 text-brand-50">Custom brand color</div>
+<div class="bg-[var(--color-brand-500)] text-white p-[var(--spacing-card)] rounded-[var(--radius-card)]">
+  Custom brand card
+</div>
 ```
 
 ### Custom Utilities
 
+Add custom utilities in `src/tailwind.css`:
+
 ```css
-/* src/tailwind.input.css */
+@import 'tailwindcss';
+
 @layer utilities {
   .text-shadow {
-    @apply [text-shadow:_2px_2px_4px_rgba(0,0,0,0.1)];
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .highlight {
     @apply bg-yellow-200 px-1 rounded;
+  }
+  
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
   }
 }
 ```

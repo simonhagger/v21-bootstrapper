@@ -35,7 +35,8 @@ The `*.data.ts` file is where you handle all HTTP communication:
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '@env/environment';
+// Use direct URL strings or constants defined in the feature
+const API_BASE = 'https://api.example.com';
 
 export interface DashboardStats {
   totalUsers: number;

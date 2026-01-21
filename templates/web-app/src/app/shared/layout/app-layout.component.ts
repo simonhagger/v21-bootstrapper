@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ThemeService } from '../services/theme.service';
 
 /**
  * Application shell layout component
@@ -44,11 +45,11 @@ import { MatIconModule } from '@angular/material/icon';
         <!-- Theme toggle button -->
         <button
           mat-icon-button
-          (click)="toggleTheme()"
+          (click)="theme.toggle()"
           class="ml-4"
-          [attr.aria-label]="'Toggle ' + (isDarkMode ? 'light' : 'dark') + ' mode'"
+          [attr.aria-label]="'Toggle ' + (theme.isDark() ? 'light' : 'dark') + ' mode'"
         >
-          <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+          <mat-icon>{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
         </button>
       </mat-toolbar>
 
@@ -79,38 +80,5 @@ import { MatIconModule } from '@angular/material/icon';
   ],
 })
 export class AppLayoutComponent {
-  isDarkMode = false;
-
-  constructor() {
-    // Initialize theme from localStorage or system preference
-    const savedTheme =
-      typeof window !== 'undefined' && window.localStorage
-        ? window.localStorage.getItem('theme')
-        : null;
-    if (savedTheme) {
-      this.isDarkMode = savedTheme === 'dark';
-    } else if (typeof window !== 'undefined') {
-      this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    this.applyTheme();
-  }
-
-  toggleTheme(): void {
-    this.isDarkMode = !this.isDarkMode;
-    this.applyTheme();
-    if (typeof window !== 'undefined' && window.localStorage) {
-      window.localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
-    }
-  }
-
-  private applyTheme(): void {
-    const html = document.documentElement;
-    if (this.isDarkMode) {
-      html.classList.add('dark-theme');
-      html.classList.remove('light-theme');
-    } else {
-      html.classList.add('light-theme');
-      html.classList.remove('dark-theme');
-    }
-  }
+  protected readonly theme = inject(ThemeService);
 }

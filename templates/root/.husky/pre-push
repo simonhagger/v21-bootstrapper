@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
 
 echo "Running tests..."
 pnpm test
@@ -9,3 +8,4 @@ pnpm verify:structure
 pnpm verify:app-routes
 pnpm verify:feature-routes
 pnpm verify:no-cross-feature-imports
+pnpm verify:no-raw-colors

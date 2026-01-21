@@ -59,26 +59,28 @@ pnpm gen:feature Dashboard --route dashboard
 
 ### Development Tools
 
-| Tool | Version | Purpose |
-|------|---------|---------|
-| Angular CLI | 21 | Framework scaffolding |
-| Tailwind CSS | 4.1.18 | Styling |
-| Angular Material | 21.1.0 | Components |
-| Prettier | 3.8.1 | Formatting |
-| ESLint | 9.39.2 | Linting |
-| TypeScript | Latest | Type safety |
-| Husky | 9.1.7 | Git hooks |
-| commitlint | 20.3.1 | Conventional commits |
-| Vitest | 4.0.17 | Testing |
+| Tool             | Version | Purpose               |
+| ---------------- | ------- | --------------------- |
+| Angular CLI      | 21      | Framework scaffolding |
+| Tailwind CSS     | 4.1.18  | Styling               |
+| Angular Material | 21.1.0  | Components            |
+| Prettier         | 3.8.1   | Formatting            |
+| ESLint           | 9.39.2  | Linting               |
+| TypeScript       | Latest  | Type safety           |
+| Husky            | 9.1.7   | Git hooks             |
+| commitlint       | 20.3.1  | Conventional commits  |
+| Vitest           | 4.0.17  | Testing               |
 
 ### Code Quality
 
 **Pre-commit hook** (automatic):
+
 - Auto-format with Prettier
 - Auto-fix ESLint violations
 - Re-format after linting
 
 **Pre-push hook** (automatic):
+
 - Run all tests
 - Verify project structure
 - Validate app routes
@@ -87,6 +89,7 @@ pnpm gen:feature Dashboard --route dashboard
 - Check for raw colors
 
 **Manual commands** (on-demand):
+
 ```bash
 pnpm format           # Auto-format code
 pnpm lint             # Check linting
@@ -108,6 +111,7 @@ Generated apps include these **verification gates**:
 5. **Raw colors** – Detects hardcoded colors
 
 All gates run automatically on:
+
 - Every commit (pre-commit hook)
 - Before push (pre-push hook)
 - Manual `pnpm verify:*` commands
@@ -192,12 +196,12 @@ Each generated app includes comprehensive documentation:
 pwsh bootstrap.ps1 [options]
 ```
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `-Name` | `"acme-web"` | App name (used as folder name) |
-| `-Cli` | `21` | Angular CLI major version |
-| `-TargetPath` | `"E:\ANGULAR\bootstrapped"` | Parent directory for app |
-| `-Force` | `$false` | Overwrite if target exists |
+| Parameter     | Default                     | Description                    |
+| ------------- | --------------------------- | ------------------------------ |
+| `-Name`       | `"acme-web"`                | App name (used as folder name) |
+| `-Cli`        | `21`                        | Angular CLI major version      |
+| `-TargetPath` | `"E:\ANGULAR\bootstrapped"` | Parent directory for app       |
+| `-Force`      | `$false`                    | Overwrite if target exists     |
 
 ### Examples
 
@@ -225,6 +229,7 @@ pnpm gen:feature Dashboard --route dashboard
 ```
 
 Generates:
+
 - Route definition with lazy loading
 - Page component with styling
 - Data service and state management
@@ -250,6 +255,7 @@ git commit -m "feat: add dashboard"
 ```
 
 **Pre-commit hook runs**:
+
 - ✓ Format code
 - ✓ Fix linting
 - ✓ Re-format
@@ -261,6 +267,7 @@ git push origin my-feature
 ```
 
 **Pre-push hook runs**:
+
 - ✓ All tests pass
 - ✓ Structure verified
 - ✓ Routes validated
@@ -276,6 +283,7 @@ If any check fails, push is blocked. Fix and retry.
 ### "Bootstrap didn't create an app"
 
 Check that you have:
+
 - ✓ `node` available: `node --version`
 - ✓ `pnpm` available: `pnpm --version`
 - ✓ PowerShell 5+: `$PSVersionTable.PSVersion`
@@ -290,7 +298,7 @@ Common causes:
 # File formatting issues
 pnpm format
 
-# ESLint violations  
+# ESLint violations
 pnpm lint:fix
 
 # Then commit again
@@ -390,6 +398,7 @@ Use `-Force` with caution on existing projects!
 ### Multiple Projects
 
 Bootstrap creates independent apps. Each has its own:
+
 - `node_modules`
 - `.git` repository
 - Configuration
@@ -400,6 +409,7 @@ Multiple projects don't interfere.
 ### Shared Templates
 
 Edit `templates/` folder in bootstrap directory to customize:
+
 - Code style preferences
 - Material theme colors
 - Default feature layout
@@ -433,6 +443,7 @@ cat docs/VERIFICATION_SYSTEM.md # Verification gates
 ```
 
 For bootstrap issues, check:
+
 - `bootstrap.ps1` comments
 - Verify all prerequisites installed
 - Check Windows/Unix line endings

@@ -125,7 +125,7 @@ import { SharedComponent } from '@shared/components';
 import { UtilityFunction } from '@shared/utils';
 
 // ✅ CORRECT - Import from absolute path alias
-import { CoreApi } from '@core/api';
+import { SomeDataService } from './some-feature.data';
 ```
 
 **Wrong pattern:**
@@ -142,12 +142,10 @@ import { DashboardService } from '../dashboard/dashboard.service';
 
 **How to fix:**
 ```bash
-# Move the shared code to src/app/shared/
-# Then import from @shared/... instead
-# Example:
-mv src/app/features/dashboard/shared-service.ts src/app/shared/services/
-# Update imports
-import { SharedService } from '@shared/services';
+# Do not share services across features.
+# If UI needs to be reused, move components/pages to src/app/shared/
+# and import from @shared/pages or @shared/layout.
+# Keep data/state/services inside the owning feature.
 ```
 
 ### Gate 5: No Raw Colors
@@ -270,11 +268,8 @@ import { DashboardService } from '../dashboard/dashboard.service';
 // → Fails Gate 4 (cross-feature import)
 
 // ✅ RIGHT
-// Move to src/app/shared/services/dashboard.service.ts
-export class DashboardService { ... }
-
-// In any feature
-import { DashboardService } from '@shared/services';
+// Keep services feature-scoped.
+// Share only UI via src/app/shared/pages or src/app/shared/layout.
 ```
 
 ### Mistake 4: Hardcoded colors in styles

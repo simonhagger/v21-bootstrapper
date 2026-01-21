@@ -73,6 +73,17 @@ try {
 
   Write-Host "==> Applying curated templates"
 
+  # Copy src-level files (styles, tailwind config)
+  $srcFiles = @('styles.scss', 'tailwind.css')
+  foreach ($f in $srcFiles) {
+    $srcFile = Join-Path $tplRoot $f
+    $dstFile = Join-Path $appRoot $f
+    if (Test-Path $srcFile) {
+      Copy-Item -Path $srcFile -Destination $dstFile -Force
+      Write-Host "   - $f updated"
+    }
+  }
+
   # Copy core app files (app.ts has layout integration, app.routes.ts has feature routing)
   $coreFiles = @('app.ts','app.routes.ts')
   foreach ($f in $coreFiles) {
@@ -95,8 +106,8 @@ try {
     }
   }
 
-  # Copy root config files (Prettier, ESLint, VSCode settings)
-  $rootFiles = @('.prettierrc.json', 'eslint.config.mjs', 'commitlint.config.cjs', '.gitattributes')
+  # Copy root config files (Prettier, ESLint, VSCode settings, git config)
+  $rootFiles = @('.prettierrc.json', 'eslint.config.mjs', 'commitlint.config.cjs', '.gitattributes', '.gitignore')
   foreach ($f in $rootFiles) {
     $srcFile = Join-Path $rootTpl $f
     $dstFile = Join-Path $projRoot $f
@@ -170,7 +181,7 @@ try {
     # Stage hooks and git config files
     git add .husky/pre-commit .husky/commit-msg .husky/pre-push | Out-Null
     git add .gitignore .gitattributes | Out-Null
-    
+
     # Normalize line endings according to .gitattributes rules
     Write-Host "==> Normalizing line endings according to .gitattributes"
     git add --renormalize . | Out-Null
@@ -223,23 +234,23 @@ try {
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
   if (!pkg.scripts) pkg.scripts = {};
-  
+
   // Build and dev scripts
   pkg.scripts.dev = 'ng serve';
   pkg.scripts.build = 'ng build';
   pkg.scripts.typecheck = 'tsc --noEmit';
-  
+
   // Format and lint scripts
   pkg.scripts.format = 'prettier --write . --ignore-unknown';
   pkg.scripts['format:check'] = 'prettier --check . --ignore-unknown';
   pkg.scripts.lint = 'eslint .';
   pkg.scripts['lint:fix'] = 'eslint . --fix';
-  
+
   // Test scripts
   pkg.scripts.test = 'vitest run';
   pkg.scripts['test:watch'] = 'vitest';
   pkg.scripts['test:coverage'] = 'vitest run --coverage';
-  
+
   // Verification scripts (run tools/scripts/*.mjs)
   pkg.scripts['verify:structure'] = 'node tools/scripts/verify-structure.mjs';
   pkg.scripts['verify:app-routes'] = 'node tools/scripts/verify-app-routes.mjs';
@@ -247,7 +258,7 @@ try {
   pkg.scripts['verify:no-cross-feature-imports'] = 'node tools/scripts/verify-no-cross-feature-imports.mjs';
   pkg.scripts['verify:no-raw-colors'] = 'node tools/scripts/verify-no-raw-colors.mjs';
   pkg.scripts.verify = 'pnpm run verify:structure && pnpm run verify:app-routes && pnpm run verify:feature-routes && pnpm run verify:no-cross-feature-imports && pnpm run verify:no-raw-colors';
-  
+
   // Feature generation script
   pkg.scripts['gen:feature'] = 'node tools/scripts/generate-feature.mjs';
 
@@ -270,13 +281,13 @@ try {
   $rootTemplateSrc = Join-Path $PSScriptRoot "templates\\root"
   $docsTemplateSrc = Join-Path $rootTemplateSrc "docs"
   $docsDst = Join-Path $projRoot "docs"
-  
+
   # Create docs folder
   New-Item -ItemType Directory -Force -Path $docsDst | Out-Null
-  
+
   # Copy consolidated 8-document set from templates/root/docs/
   $docFiles = @('GETTING_STARTED.md', 'ARCHITECTURE.md', 'DEVELOPMENT.md', 'TESTING.md', 'STYLING.md', 'API.md', 'VERIFICATION.md', 'TROUBLESHOOTING.md')
-  
+
   foreach ($doc in $docFiles) {
     $srcPath = Join-Path $docsTemplateSrc $doc
     $dstPath = Join-Path $docsDst $doc
@@ -285,7 +296,7 @@ try {
       Write-Host "   - $doc"
     }
   }
-  
+
   # Copy README.md to project root (from templates/root/)
   $readmeSrc = Join-Path $rootTemplateSrc "README.md"
   $readmeDst = Join-Path $projRoot "README.md"
@@ -293,7 +304,7 @@ try {
     Copy-Item -Path $readmeSrc -Destination $readmeDst -Force
     Write-Host "   - README.md (root)"
   }
-  
+
   Write-Host "   Total: 9 documentation files (1 in root + 8 in docs/)"
 } catch {
   Write-Warning "Documentation copy encountered an issue: $_"
@@ -309,12 +320,12 @@ try {
     Write-Host "==> Running post-bootstrap verification"
     Write-Host "   Validating bootstrap success, build, linting, tests, and architecture gates..."
     Write-Host ""
-    
+
     $verifyOutput = & node $postBootstrapVerify 2>&1
     $verifyExitCode = $LASTEXITCODE
-    
+
     Write-Host $verifyOutput
-    
+
     if ($verifyExitCode -ne 0) {
       Write-Warning "Post-bootstrap verification encountered issues (exit code: $verifyExitCode)"
       Write-Host "   Review the output above to resolve any issues."

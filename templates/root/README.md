@@ -151,20 +151,12 @@ All documentation lives in the `docs/` folder. Start with **ARCHITECTURE.md** to
 | **[docs/API.md](docs/API.md)** | Backend API integration patterns and examples |
 | **[docs/VERIFICATION.md](docs/VERIFICATION.md)** | Verification gates: what they check and how to pass |
 | **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** | Solutions to common problems by category |
-| **[docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** | Testing guidelines and best practices |
-| **[docs/THEMING_GUIDE.md](docs/THEMING_GUIDE.md)** | Styling with Tailwind CSS and Angular Material |
-| **[docs/API_GUIDE.md](docs/API_GUIDE.md)** | Backend API integration and HTTP clients |
-| **[docs/AI_AGENT_GUIDE.md](docs/AI_AGENT_GUIDE.md)** | Tips for AI-assisted development |
-| **[docs/POST_BOOTSTRAP_GUIDE.md](docs/POST_BOOTSTRAP_GUIDE.md)** | Post-bootstrap validation and troubleshooting |
-| **[docs/VERIFICATION_SYSTEM.md](docs/VERIFICATION_SYSTEM.md)** | How verification gates work |
-| **[docs/VERIFICATION_QUICK_REF.md](docs/VERIFICATION_QUICK_REF.md)** | Quick reference for gate commands |
-| **[tools/scripts/README.md](tools/scripts/README.md)** | Verification and generation script documentation |
+| **[tools/scripts/README.md](tools/scripts/README.md)** | Verification and feature generation scripts |
 
 ## Getting Started
 
-1. **Read** [docs/POST_BOOTSTRAP_GUIDE.md](docs/POST_BOOTSTRAP_GUIDE.md) for post-bootstrap validation
-2. **Review** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) to understand architectural rules
-3. **Follow** [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md) for daily workflows
+1. **Review** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) to understand architectural rules
+2. **Follow** [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for daily workflows
 4. **Generate** your first feature with `pnpm gen:feature MyFeature --route my-feature`
 5. **Code** with confidence – gates will catch errors at commit/push time
 
@@ -219,11 +211,10 @@ git push origin feature/dashboard
 
 ## Support
 
-- **Stuck on something?** → See [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)
+- **Stuck on something?** → See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
 - **Need architectural guidance?** → Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- **Want to understand patterns?** → Check [docs/PATTERNS.md](docs/PATTERNS.md)
-- **Testing questions?** → See [docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)
-- **AI-assisted development?** → Use [docs/AI_AGENT_GUIDE.md](docs/AI_AGENT_GUIDE.md)
+- **Testing questions?** → See [docs/TESTING.md](docs/TESTING.md)
+- **Troubleshooting** → Use [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 
 ## Quick Reference
 

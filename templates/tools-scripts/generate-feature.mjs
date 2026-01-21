@@ -78,7 +78,7 @@ export class ${featurePascal}Page {
   readonly store = inject(${featurePascal}Store);
 
   constructor() {
-    this.store.init();
+    void this.store.init();
   }
 }
 `,
@@ -86,18 +86,18 @@ export class ${featurePascal}Page {
   updatedAt: string;
 }
 `,
-    data: `import { inject, Injectable, Provider } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+    data: `import { Injectable, Provider } from '@angular/core';
+import { of, delay } from 'rxjs';
 import type { Observable } from 'rxjs';
 
 import type { ${featurePascal}Summary } from './${f}.models';
 
 @Injectable()
 export class ${featurePascal}Data {
-  private readonly http = inject(HttpClient);
-
   getSummary(): Observable<${featurePascal}Summary> {
-    return this.http.get<${featurePascal}Summary>('/api/${f}/summary');
+    // TODO: Replace with actual HTTP call when backend is ready
+    // Example: return this.http.get<${featurePascal}Summary>('/api/${f}/summary');
+    return of({ updatedAt: new Date().toISOString() }).pipe(delay(300));
   }
 }
 
