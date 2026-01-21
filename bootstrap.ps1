@@ -2,7 +2,7 @@ param(
   [string]$Name = "acme-web",
   [int]$Cli = 21,
   [switch]$Force,
-  [string]$TargetPath = ""
+  [string]$TargetPath = "E:\ANGULAR\bootstrapped"
 )
 
 $ErrorActionPreference = "Stop"
