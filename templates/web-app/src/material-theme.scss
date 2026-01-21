@@ -1,0 +1,170 @@
+/**
+ * Material Angular Theme with M3 Design Token Integration
+ * 
+ * This file creates a custom Material theme that uses our M3 design tokens.
+ * Material Angular v21+ requires a theme to be defined for components to render properly.
+ * 
+ * Strategy:
+ * 1. Define Material theme using @angular/material theming APIs
+ * 2. Use M3 token values to configure the theme palettes
+ * 3. Material components will use their theme system
+ * 4. Custom components can use M3 CSS variables directly
+ * 
+ * References:
+ * - Material Theming Guide: https://material.angular.io/guide/theming
+ * - M3 Color System: https://m3.material.io/styles/color/system/overview
+ */
+
+@use '@angular/material' as mat;
+
+// Include the common styles for Angular Material (core styles, not theme-specific)
+@include mat.core();
+
+/**
+ * M3-Aligned Color Palette
+ * These values mirror our M3 design tokens from tokens.light.json
+ * Material's theming system requires Sass maps, so we define them here
+ */
+$m3-primary-palette: (
+  50: #f5f0ff,
+  100: #eaddff,
+  200: #d6bbff,
+  300: #be95ff,
+  400: #a776f5,
+  500: #6750a4,  // Primary
+  600: #5a3d99,
+  700: #4c2a8e,
+  800: #3e1883,
+  900: #21005d,  // On-primary-container
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #ffffff,  // On-primary
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+  )
+);
+
+$m3-accent-palette: (
+  50: #f7f2fa,
+  100: #e8def8,
+  200: #cdb4e7,
+  300: #b18cd6,
+  400: #9769c5,
+  500: #625b71,  // Secondary
+  600: #564f66,
+  700: #49425b,
+  800: #3d3650,
+  900: #1d192b,  // On-secondary-container
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,  // On-secondary
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+  )
+);
+
+$m3-warn-palette: (
+  50: #fceeee,
+  100: #f9dedc,
+  200: #f2b8b5,
+  300: #ec928e,
+  400: #e56c67,
+  500: #b3261e,  // Error
+  600: #a0211a,
+  700: #8d1c17,
+  800: #7a1813,
+  900: #410e0b,  // On-error-container
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #ffffff,  // On-error
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+  )
+);
+
+/**
+ * Light Theme Configuration
+ * Uses M3 light mode color values
+ */
+$light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: $m3-primary-palette,
+    tertiary: $m3-accent-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, "Helvetica Neue", sans-serif',
+    plain-family: 'Roboto, "Helvetica Neue", sans-serif',
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+/**
+ * Dark Theme Configuration
+ * Uses M3 dark mode color values
+ */
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: $m3-primary-palette,
+    tertiary: $m3-accent-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, "Helvetica Neue", sans-serif',
+    plain-family: 'Roboto, "Helvetica Neue", sans-serif',
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+/**
+ * Apply the light theme by default
+ */
+:root {
+  @include mat.all-component-themes($light-theme);
+}
+
+/**
+ * Apply the dark theme when .dark-theme class is on html element
+ * This aligns with our M3 token theming strategy
+ */
+html.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+}
+
+/**
+ * Additional M3-aligned customizations
+ * Override specific Material styles to better align with M3 specifications
+ */
+.mat-mdc-card {
+  // Use M3 surface colors that are already defined as CSS variables
+  background-color: var(--md-sys-color-surface-container-low, white);
+  color: var(--md-sys-color-on-surface, rgba(0, 0, 0, 0.87));
+}
+
+.mat-mdc-form-field {
+  // M3 form field styling
+  --mdc-filled-text-field-container-color: var(--md-sys-color-surface-container-highest);
+  --mdc-outlined-text-field-outline-color: var(--md-sys-color-outline);
+}
