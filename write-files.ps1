@@ -95,12 +95,11 @@ pnpm pkg set scripts.lint:fix="eslint . --fix" 2>$null | Out-Null
 
 pnpm pkg set scripts.build="pnpm tokens:build && ng build acme-web" 2>$null | Out-Null
 pnpm pkg set scripts.start="pnpm tokens:build && ng serve acme-web" 2>$null | Out-Null
-pnpm pkg set scripts.watch="pnpm tokens:build && ng build --watch --configuration development" 2>$null | Out-Null
 pnpm pkg set scripts.typecheck="pnpm tokens:build && ng build acme-web --configuration development --no-progress" 2>$null | Out-Null
 
 pnpm pkg set scripts.test="pnpm tokens:build && ng test acme-web --watch=false" 2>$null | Out-Null
 pnpm pkg set scripts.test:watch="pnpm tokens:build && ng test acme-web" 2>$null | Out-Null
-pnpm pkg set scripts.test:ci="ng test acme-web --watch=false" 2>$null | Out-Null
+pnpm pkg set scripts.test:ci="pnpm tokens:build && ng test acme-web --watch=false" 2>$null | Out-Null
 
 pnpm pkg set scripts.tokens:build="node projects/tokens/src/generators/build-tokens.ts" 2>$null | Out-Null
 pnpm pkg set scripts.verify:theme-contract="node tools/scripts/verify-theme-contract.mjs" 2>$null | Out-Null
