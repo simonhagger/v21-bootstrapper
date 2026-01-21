@@ -57,10 +57,12 @@ pnpm exec ng add @angular/material `
   --typography=true `
   --animations=true
 
-# Post-scaffold: copy curated templates (main.ts, app core, features/, shared/)
+# Post-scaffold: copy curated templates (app core, features/, shared/, config files)
 try {
   $tplRoot = Join-Path $PSScriptRoot "templates\\web-app\\src"
+  $rootTpl = Join-Path $PSScriptRoot "templates\\root"
   $appRoot = Join-Path (Get-Location) "src"
+  $projRoot = Get-Location
 
   Write-Host "==> Applying curated templates"
 
@@ -86,8 +88,36 @@ try {
     }
   }
 
+  # Copy root config files (Prettier, ESLint, VSCode settings)
+  $rootFiles = @('.prettierrc.json', 'eslint.config.mjs')
+  foreach ($f in $rootFiles) {
+    $srcFile = Join-Path $rootTpl $f
+    $dstFile = Join-Path $projRoot $f
+    if (Test-Path $srcFile) {
+      Copy-Item -Path $srcFile -Destination $dstFile -Force
+      Write-Host "   - $f copied"
+    }
+  }
+
+  # Copy .vscode directory (settings, extensions)
+  $vscodeSrc = Join-Path $rootTpl ".vscode"
+  $vscodeDst = Join-Path $projRoot ".vscode"
+  if (Test-Path $vscodeSrc) {
+    Copy-Item -Path $vscodeSrc -Destination $vscodeDst -Recurse -Force
+    Write-Host "   - .vscode/ copied"
+  }
+
 } catch {
   Write-Warning "Template copy step encountered an issue: $_"
+}
+
+# Install Prettier and ESLint dev dependencies
+try {
+  Write-Host "==> Installing Prettier and ESLint"
+  pnpm add -D prettier prettier-plugin-tailwindcss eslint @eslint/js typescript-eslint angular-eslint | Out-Null
+  Write-Host "   - Dev dependencies installed"
+} catch {
+  Write-Warning "Failed to install Prettier/ESLint dependencies: $_"
 }
 
 Write-Host ""
