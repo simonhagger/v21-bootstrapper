@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm exec prettier --write . --ignore-unknown
+pnpm exec eslint . --fix
+
+

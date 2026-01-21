@@ -89,7 +89,7 @@ try {
   }
 
   # Copy root config files (Prettier, ESLint, VSCode settings)
-  $rootFiles = @('.prettierrc.json', 'eslint.config.mjs')
+  $rootFiles = @('.prettierrc.json', 'eslint.config.mjs', 'commitlint.config.cjs')
   foreach ($f in $rootFiles) {
     $srcFile = Join-Path $rootTpl $f
     $dstFile = Join-Path $projRoot $f
@@ -118,6 +118,44 @@ try {
   Write-Host "   - Dev dependencies installed"
 } catch {
   Write-Warning "Failed to install Prettier/ESLint dependencies: $_"
+}
+
+# Initialize git repository and configure pre-commit hooks
+try {
+  $projRoot = Get-Location
+  
+  Write-Host "==> Initializing git repository"
+  git init -b main | Out-Null
+  git branch -M main | Out-Null
+  
+  Write-Host "==> Installing Husky and commitlint"
+  pnpm add -D husky @commitlint/cli @commitlint/config-conventional | Out-Null
+  
+  Write-Host "==> Initializing Husky"
+  pnpm exec husky init | Out-Null
+  
+  Write-Host "==> Applying pre-commit hooks"
+  $huskyTpl = Join-Path $PSScriptRoot "templates\\root\\.husky"
+  $huskyDst = Join-Path $projRoot ".husky"
+  
+  if (Test-Path $huskyTpl) {
+    # Copy hook files (pre-commit, commit-msg)
+    Get-ChildItem -Path $huskyTpl -File | ForEach-Object {
+      $srcHook = $_.FullName
+      $dstHook = Join-Path $huskyDst $_.Name
+      Copy-Item -Path $srcHook -Destination $dstHook -Force
+      Write-Host "   - $($_.Name) installed"
+    }
+    
+    # Stage hooks in git
+    git add .husky/pre-commit .husky/commit-msg | Out-Null
+    git add .gitignore | Out-Null
+  } else {
+    Write-Warning "Husky templates not found at $huskyTpl (skipping hook setup)"
+  }
+  
+} catch {
+  Write-Warning "Git/Husky initialization encountered an issue: $_"
 }
 
 Write-Host ""
