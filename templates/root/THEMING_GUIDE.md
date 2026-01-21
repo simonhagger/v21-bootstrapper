@@ -2,45 +2,41 @@
 
 ## Overview
 
-This project uses a **hybrid theming system**:
+This project uses a **unified theming system** where Material Design 3 tokens are the single source of truth for both Angular Material components and custom UI:
 
-- **Angular Material components**: Use Material's prebuilt theme (azure-blue.css)
-- **Custom components & Tailwind**: Use M3 design tokens as the single source of truth
+- **Angular Material components**: Use M3 tokens via CSS variable redefinition (`material.system.css`)
+- **Custom components & Tailwind**: Use M3 tokens directly via generated CSS variables
 
-This approach balances the complexity of Material's extensive theming system with the flexibility of custom M3 tokens for application-specific UI.
+This approach provides a **single source of truth** for all theming, eliminating the need for separate Material themes or wrapper components.
 
 ```
-Token Sources (JSON)
+M3 Token Sources (JSON)
     ↓
-M3 CSS Variables (.theme-light, .theme-dark)
-    ↓
-Tailwind Theme Bridge (@theme)
-    ↓
-Custom Components + Tailwind Utilities
-
-Material Prebuilt Theme
-    ↓
-Material Components (mat-*, mdc-*)
+├─ M3 CSS Variables (.theme-light, .theme-dark)
+├─ Material System Tokens (--mat-sys-*)  → Material Components
+└─ Tailwind Theme Bridge (@theme)        → Custom Components + Utilities
 ```
 
 ## Architecture
 
 ### Token Layers
 
-1. **Source Tokens** (`projects/tokens/src/source/`)
-   - `tokens.light.json` - Light theme values
-   - `tokens.dark.json` - Dark theme values
-   - Flat JSON format: `{ "--md-sys-color-primary": "#6750A4" }`
+1. **Source Tokens** (`tokens/src/source/`)
+   - `tokens.light.json` - Light theme M3 values
+   - `tokens.dark.json` - Dark theme M3 values
+   - Format: `{ "--md-sys-color-primary": "#6750A4" }`
 
-2. **Mappings** (`projects/tokens/src/mappings/`)
-   - Bridge contract between M3 and Tailwind
-   - `colors.ts` - Color mappings
-   - `radii.ts` - Border radius mappings
+2. **Mappings** (`tokens/src/mappings/`)
+   - Bridge contract between M3 and framework tokens
+   - `colors.ts` - Tailwind color utility mappings
+   - `material.ts` - Material Angular `--mat-sys-*` system token mappings
+   - `radii.ts` - Tailwind border radius mappings
    - Extensible for typography, elevation, etc.
 
-3. **Generated Outputs** (`projects/tokens/dist/`)
-   - `themes.css` - Theme scope selectors
+3. **Generated Outputs** (`tokens/dist/`)
+   - `themes.css` - Theme scope selectors (`.theme-light`, `.theme-dark`)
    - `m3.css` - M3 system variables scoped per theme
+   - `material.system.css` - Material Angular system token overrides
    - `tailwind.theme.css` - Tailwind `@theme` variables
 
 ### Token Flow
@@ -48,29 +44,78 @@ Material Components (mat-*, mdc-*)
 ```typescript
 // 1. Source (tokens.light.json)
 {
-  "--md-sys-color-primary": "#6750A4"
+  "--md-sys-color-primary": "#6750A4",
+  "--md-sys-color-surface": "#FEF7FF"
 }
 
-// 2. Mapping (colors.ts)
+// 2. Material Mapping (mappings/material.ts)
 {
-  "color-primary": "--md-sys-color-primary"
+  "mat-sys-primary": "--md-sys-color-primary",
+  "mat-sys-surface": "--md-sys-color-surface"
 }
 
 // 3. Generated M3 CSS (m3.css)
 .theme-light {
   --md-sys-color-primary: #6750A4;
+  --md-sys-color-surface: #FEF7FF;
 }
 
-// 4. Generated Tailwind CSS (tailwind.theme.css)
-@theme {
-  --color-primary: var(--md-sys-color-primary);
+// 4. Generated Material System CSS (material.system.css)
+.theme-light {
+  --mat-sys-primary: var(--md-sys-color-primary);
+  --mat-sys-surface: var(--md-sys-color-surface);
+  /* ...75+ Material system token mappings */
 }
 
-// 5. Usage
+// 5. Material Components Use System Tokens
+<mat-button color="primary">
+  <!-- Uses --mat-sys-primary which points to --md-sys-color-primary -->
+</mat-button>
+
+// 6. Custom Components Use M3 Tokens Directly
 <div class="bg-primary text-on-primary">
-  Uses --color-primary → --md-sys-color-primary
+  <!-- Uses Tailwind utility referencing --md-sys-color-primary -->
 </div>
 ```
+
+## Material Angular Integration
+
+### How It Works
+
+Angular Material v19+ components use **Material 3 system tokens** (`--mat-sys-*`). Instead of importing a prebuilt Sass theme, we:
+
+1. **Generate `material.system.css`** that maps Material's 75+ system tokens to our M3 tokens
+2. **Import it before M3 tokens** in `styles.css`:
+   ```css
+   @import '../tokens/dist/material.system.css';
+   @import '../tokens/dist/m3.css';
+   ```
+3. **Material components automatically inherit** M3 theme values
+
+### Benefits
+
+- **No Sass compilation required** - Pure CSS variable redefinition
+- **Single source of truth** - All theming comes from M3 token JSON files
+- **Automatic theme switching** - Material components update when theme class changes
+- **No wrapper components needed** - Material components work directly with M3 tokens
+- **Framework parity** - Material and custom UI use identical color values
+
+### Supported Material Components
+
+All Angular Material components using M3 system tokens are supported:
+
+- `mat-button`, `mat-fab`, `mat-icon-button`
+- `mat-card`
+- `mat-toolbar`
+- `mat-form-field`, `mat-input`, `mat-select`
+- `mat-checkbox`, `mat-radio-button`, `mat-slide-toggle`
+- `mat-progress-bar`, `mat-progress-spinner`
+- `mat-dialog`
+- `mat-snack-bar`
+- `mat-table`
+- `mat-tabs`
+- `mat-menu`
+- And all other M3-compatible Material components
 
 ## Theme Service
 
@@ -120,6 +165,8 @@ The service applies classes to `<html>`:
 </html>
 ```
 
+Both Material components and custom components react to theme class changes via CSS variable scoping.
+
 ### Persistence
 
 Theme preferences are saved to `localStorage`:
@@ -145,89 +192,49 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ...
 
 ### With Material Components
 
-Material components use their own prebuilt theme (imported in styles.css). To apply M3 tokens to Material components, create **themed wrapper components** with scoped CSS overrides:
+Material components **automatically use M3 tokens** via `material.system.css`:
 
 ```typescript
-// shared/components/themed-card.component.ts
-import { Component } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-
 @Component({
-  selector: 'app-themed-card',
-  standalone: true,
-  imports: [MatCardModule],
   template: `
+    <!-- Uses --mat-sys-primary → --md-sys-color-primary -->
+    <button mat-raised-button color="primary">Primary Button</button>
+
+    <!-- Uses --mat-sys-surface → --md-sys-color-surface -->
     <mat-card>
-      <ng-content></ng-content>
+      <mat-card-header>
+        <mat-card-title>Card Title</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        Content inherits M3 surface colors automatically
+      </mat-card-content>
     </mat-card>
+
+    <!-- Uses --mat-sys-surface-container → --md-sys-color-surface-container -->
+    <mat-toolbar>
+      Toolbar inherits M3 tokens
+    </mat-toolbar>
   `,
-  styles: [
-    `
-      mat-card {
-        background: var(--md-sys-color-surface);
-        color: var(--md-sys-color-on-surface);
-        border: 1px solid var(--md-sys-color-outline);
-        border-radius: var(--md-sys-shape-corner-medium);
-      }
-    `,
-  ],
 })
-export class ThemedCardComponent {}
+export class MyComponent {}
 ```
 
-**Usage:**
+**No wrapper components needed** - Material components work directly with M3 tokens.
+
+**Theme switching works automatically:**
 
 ```typescript
-@Component({
-  template: `
-    <!-- Standard Material styling -->
-    <mat-card>Uses azure-blue theme</mat-card>
+// User toggles theme
+themeService.setMode('dark');
 
-    <!-- M3 token styling -->
-    <app-themed-card>Uses M3 design tokens</app-themed-card>
-  `
-})
+// All Material components update via CSS variable scope:
+// .theme-dark { --md-sys-color-primary: #D0BCFF; }
+// .theme-dark { --mat-sys-primary: var(--md-sys-color-primary); }
 ```
-
-**Why this approach?**
-
-- **No global mapping drift**: Avoids maintaining hundreds of Material-to-M3 variable mappings
-- **Clear intent**: `app-themed-*` prefix signals M3 token usage
-- **Scoped overrides**: CSS changes only affect the wrapper component
-- **Opt-in theming**: Use Material components as-is or create themed variants as needed
-
-**Common themed wrappers:**
-
-```typescript
-// app-themed-toolbar.component.ts
-styles: [
-  `
-  mat-toolbar {
-    background: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
-  }
-`,
-];
-
-// app-themed-button.component.ts
-styles: [
-  `
-  button[mat-raised-button] {
-    background: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
-  }
-  button[mat-raised-button]:hover {
-    background: var(--md-sys-color-primary-container);
-  }
-`,
-];
-```
-
-**Note**: Material components use hundreds of internal CSS variables (`--mat-*`, `--mdc-*`). Rather than creating a global mapping layer between two evolving standards, we use themed wrapper components for intentional M3 integration while keeping the prebuilt Material theme as the base.
 
 ### With Tailwind Utilities
 
-Use semantic utility classes that reference tokens:
+Use semantic utility classes that reference M3 tokens:
 
 ```html
 <!-- Background and text colors -->
@@ -235,20 +242,22 @@ Use semantic utility classes that reference tokens:
 
 <div class="bg-primary text-on-primary">Primary surface</div>
 
+<div class="bg-error text-on-error">Error message</div>
+
 <!-- Border radius -->
 <div class="rounded-md">
   <!-- Uses --radius-md → --md-sys-shape-corner-medium -->
 </div>
 
 <!-- Borders -->
-<div class="border-outline border">
+<div class="border border-outline">
   <!-- Uses --color-outline → --md-sys-color-outline -->
 </div>
 ```
 
 ### With Custom CSS
 
-Reference tokens directly:
+Reference M3 tokens directly:
 
 ```css
 .my-component {
@@ -260,8 +269,25 @@ Reference tokens directly:
 
 /* Dark mode automatically handled via theme classes */
 .theme-dark .my-component {
-  /* Variables update automatically */
+  /* Variables update automatically - no manual overrides needed */
 }
+```
+
+### Mixing Material and Custom UI
+
+Material components and custom UI share the same token values:
+
+```html
+<mat-card class="flex items-center gap-4">
+  <!-- Material component uses --mat-sys-surface → --md-sys-color-surface -->
+  <mat-card-content>
+    <!-- Custom div uses Tailwind bg-primary → --color-primary → --md-sys-color-primary -->
+    <div class="rounded-md bg-primary p-4 text-on-primary">
+      <!-- Both inherit from same M3 token values -->
+      <button mat-button color="primary">Material Button</button>
+    </div>
+  </mat-card-content>
+</mat-card>
 ```
 
 ## Available Tokens
@@ -279,10 +305,19 @@ Reference tokens directly:
 --md-sys-color-secondary-container
 --md-sys-color-on-secondary-container
 
+--md-sys-color-tertiary
+--md-sys-color-on-tertiary
+--md-sys-color-tertiary-container
+--md-sys-color-on-tertiary-container
+
 --md-sys-color-surface
 --md-sys-color-on-surface
 --md-sys-color-surface-variant
 --md-sys-color-on-surface-variant
+--md-sys-color-surface-container
+--md-sys-color-surface-container-low
+--md-sys-color-surface-container-high
+--md-sys-color-surface-container-highest
 
 --md-sys-color-error
 --md-sys-color-on-error
@@ -299,9 +334,26 @@ Reference tokens directly:
 bg-primary, text-on-primary
 bg-primary-container, text-on-primary-container
 bg-secondary, text-on-secondary
+bg-secondary-container, text-on-secondary-container
+bg-tertiary, text-on-tertiary
 bg-surface, text-on-surface
+bg-surface-variant, text-on-surface-variant
 bg-error, text-on-error
-border-outline
+border-outline, border-outline-variant
+```
+
+### Material System Tokens (Auto-Generated)
+
+Material components use these internally (you don't reference them directly):
+
+```
+--mat-sys-primary, --mat-sys-on-primary
+--mat-sys-secondary, --mat-sys-on-secondary
+--mat-sys-tertiary, --mat-sys-on-tertiary
+--mat-sys-surface, --mat-sys-on-surface
+--mat-sys-error, --mat-sys-on-error
+--mat-sys-outline, --mat-sys-outline-variant
+... (75+ total Material system tokens)
 ```
 
 ### Shape (Border Radius)
@@ -331,8 +383,9 @@ rounded-xl  (extra-large)
 1. **Edit source files:**
 
    ```bash
-   vim projects/tokens/src/source/tokens.light.json
-   vim projects/tokens/src/source/tokens.dark.json
+   # Open M3 token sources
+   code tokens/src/source/tokens.light.json
+   code tokens/src/source/tokens.dark.json
    ```
 
 2. **Update both themes** (light and dark must have same keys):
@@ -361,41 +414,78 @@ rounded-xl  (extra-large)
    pnpm verify:tokens
    ```
 
+**Changes propagate to:**
+- M3 CSS variables (m3.css)
+- Material system tokens (material.system.css)
+- Tailwind utilities (tailwind.theme.css)
+- All Material components
+- All custom components
+
 ### Adding New Tokens
 
 1. **Add to both source files:**
 
    ```json
    {
-     "--md-sys-color-tertiary": "#7D5260",
-     "--md-sys-color-on-tertiary": "#FFFFFF"
+     "--md-sys-color-custom": "#7D5260",
+     "--md-sys-color-on-custom": "#FFFFFF"
    }
    ```
 
-2. **Add mapping** (if exposing to Tailwind):
+2. **Add Tailwind mapping** (optional, if exposing to utilities):
 
    ```typescript
-   // projects/tokens/src/mappings/colors.ts
+   // tokens/src/mappings/colors.ts
    export const colors: MappingGroup = {
      type: 'colors',
      map: {
-       'color-tertiary': '--md-sys-color-tertiary',
-       'color-on-tertiary': '--md-sys-color-on-tertiary',
+       'color-custom': '--md-sys-color-custom',
+       'color-on-custom': '--md-sys-color-on-custom',
      },
    };
    ```
 
-3. **Regenerate and verify:**
+3. **Add Material mapping** (optional, if Material needs it):
+
+   ```typescript
+   // tokens/src/mappings/material.ts
+   export const material: MappingGroup = {
+     type: 'material',
+     map: {
+       'mat-sys-custom': '--md-sys-color-custom',
+       'mat-sys-on-custom': '--md-sys-color-on-custom',
+     },
+   };
+   ```
+
+4. **Regenerate and verify:**
    ```bash
    pnpm tokens:build
    pnpm verify:theme-contract
+   pnpm verify:tokens
    ```
+
+### Extending Material System Tokens
+
+The Material mapping in `tokens/src/mappings/material.ts` covers all standard M3 color roles. If Material adds new system tokens:
+
+1. Add mapping entry:
+   ```typescript
+   'mat-sys-new-token': '--md-sys-color-source-token'
+   ```
+
+2. Regenerate:
+   ```bash
+   pnpm tokens:build
+   ```
+
+3. Verify Material components use the new token
 
 ## Multi-Brand Setup
 
 ### Defining Brands
 
-Update `theme.types.ts`:
+Update `core/theme/theme.types.ts`:
 
 ```typescript
 export type ThemeBrand = 'brandA' | 'brandB' | 'brandC';
@@ -410,14 +500,16 @@ tokens.brandA.light.json
 tokens.brandA.dark.json
 tokens.brandB.light.json
 tokens.brandB.dark.json
+tokens.brandC.light.json
+tokens.brandC.dark.json
 ```
 
 ### Generator Updates
 
-Modify `build-tokens.ts` to handle multiple brands:
+Modify `tokens/src/generators/build-tokens.ts` to handle multiple brands:
 
 ```typescript
-const brands = ['brandA', 'brandB'];
+const brands = ['brandA', 'brandB', 'brandC'];
 const modes = ['light', 'dark'];
 
 for (const brand of brands) {
@@ -426,6 +518,16 @@ for (const brand of brands) {
     // Generate .theme-brandA.theme-light { ... }
   }
 }
+```
+
+### Brand Switching
+
+```typescript
+// Switch to Brand B
+themeService.setBrand('brandB');
+
+// HTML updates: <html class="theme-brandB theme-light">
+// All Material components and custom UI update via CSS variable scope
 ```
 
 ## Best Practices
@@ -438,21 +540,38 @@ for (const brand of brands) {
 - Update both light and dark themes together
 - Run `pnpm tokens:build` after changes
 - Commit both source and dist
-- Create `app-themed-*` wrapper components for Material components that need M3 styling
-- Use scoped component styles for Material overrides
-- Keep the prebuilt Material theme as the base for standard components
+- Let Material components use M3 tokens directly via `material.system.css`
+- Use Tailwind utilities for custom components
+- Trust the token generation system for theme consistency
 
 ### ❌ DON'T
 
 - Hardcode hex colors in components
-- Map internal Material component tokens globally
-- Override Material component styles with Tailwind
+- Override Material component styles manually
+- Import Material prebuilt Sass themes
+- Use `@use '@angular/material' as mat` for theming
+- Mix Material's default theme with M3 tokens
+- Create wrapper components for Material theming
+- Forget to update dark theme when changing light theme
 - Use raw palette values directly
-- Forget to update dark theme
-- Create global mappings between Material and M3 variable namespaces
-- Mix Material's prebuilt theme with custom global Material variable overrides
+- Duplicate token definitions
 
 ## Troubleshooting
+
+### Material components not using M3 colors
+
+**Check import order in `styles.css`:**
+
+```css
+/* CORRECT - Material overrides before M3 base */
+@import '../tokens/dist/material.system.css';
+@import '../tokens/dist/m3.css';
+@import '../tokens/dist/tailwind.theme.css';
+
+/* WRONG - M3 tokens load before Material overrides */
+@import '../tokens/dist/m3.css';
+@import '../tokens/dist/material.system.css'; /* Too late! */
+```
 
 ### Token mismatch errors
 
@@ -468,21 +587,50 @@ pnpm verify:theme-contract
 # Error: Token outputs are out of date
 # Fix: Regenerate and commit
 pnpm tokens:build
-git add projects/tokens/dist
+git add tokens/dist
 git commit -m "chore(tokens): regenerate dist"
 ```
 
 ### Hardcoded colors detected
 
 ```bash
-# Error: Raw hex colors detected
+# Error: Raw hex colors detected in components
 # Fix: Replace with token references
 pnpm verify:no-raw-colors
+```
+
+### Theme not switching
+
+**Check HTML class application:**
+
+```typescript
+// Verify ThemeService is setting classes
+import { ThemeService } from '@core/theme/theme.service';
+
+constructor(private theme: ThemeService) {
+  console.log('Current mode:', theme.mode());
+  console.log('Current brand:', theme.brand());
+}
+```
+
+**Verify token scope in CSS:**
+
+```css
+/* Tokens must be scoped to theme classes */
+.theme-light {
+  --md-sys-color-primary: #6750A4;
+}
+
+.theme-dark {
+  --md-sys-color-primary: #D0BCFF;
+}
 ```
 
 ## Resources
 
 - [Material Design 3 Tokens](https://m3.material.io/foundations/design-tokens)
+- [Material Design 3 Color System](https://m3.material.io/styles/color/system/overview)
+- [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/) - Generate M3 color schemes
 - [Tailwind CSS v4 Theme](https://tailwindcss.com/docs/theme)
-- [Token Generation Docs](projects/tokens/README.md)
-- [Dist Strategy](projects/tokens/DIST_STRATEGY.md)
+- [Token System Documentation](tokens/src/README.md)
+- [Angular Material M3 Guide](https://material.angular.io/guide/theming)

@@ -1,6 +1,6 @@
 # Project Name
 
-> Industrial-strength Angular workspace with M3 Material Design, Tailwind CSS, and comprehensive quality gates.
+> Industrial-strength Angular workspace with unified M3 Material Design theming for Angular Material and Tailwind CSS, plus comprehensive quality gates.
 
 ## Quick Start
 
@@ -8,7 +8,7 @@
 # Install dependencies
 pnpm install
 
-# Generate initial tokens
+# Generate tokens (creates M3 + Material system tokens + Tailwind theme)
 pnpm tokens:build
 
 # Start development server
@@ -60,9 +60,9 @@ pnpm verify
 
 ### Design System & Theming
 
-- **[docs/THEMING_GUIDE.md](docs/THEMING_GUIDE.md)** - M3 + Tailwind integration strategy
-- **[projects/tokens/README.md](projects/tokens/README.md)** - Token system documentation
-- **[projects/tokens/DIST_STRATEGY.md](projects/tokens/DIST_STRATEGY.md)** - Why token outputs are committed
+- **[docs/THEMING_GUIDE.md](docs/THEMING_GUIDE.md)** - Unified M3 theming for Material + Tailwind (CSS-only, no Sass)
+- **[tokens/src/README.md](tokens/src/README.md)** - Token system architecture and workflow
+- **[tokens/DIST_STRATEGY.md](tokens/DIST_STRATEGY.md)** - Why token outputs are committed
 
 ### AI Agent Development
 
@@ -135,9 +135,14 @@ Pre-configured hooks enforce quality at commit/push time:
 
 Features are organized by route, not by type. Each feature is a self-contained vertical slice with its own routes, components, data access, and state.
 
-### Design Token Bridge
+### Unified M3 Theming
 
-Material Design 3 tokens are the single source of truth. Tailwind theme variables reference M3 CSS variables, ensuring visual consistency between Material components and custom UI.
+Material Design 3 tokens are the single source of truth for both Angular Material and custom UI:
+
+- **Material components** use M3 tokens via `material.system.css` (75+ `--mat-sys-*` mappings)
+- **Tailwind utilities** use M3 tokens via `tailwind.theme.css`
+- **No Sass compilation** required - pure CSS variable redefinition
+- **Single theme change** updates both Material and custom components automatically
 
 ### Quality Gates by Default
 
