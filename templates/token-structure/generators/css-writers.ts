@@ -9,8 +9,26 @@ export function writeThemesCss(): string {
 
 export function writeScopedVarsCss(scopes: { selector: string; tokens: FlatTokenMap }[]): string {
   const lines: string[] = [];
-  for (const { selector, tokens } of scopes) {
-    lines.push(`${selector} {`);
+  
+  // First scope is the default (use :root)
+  if (scopes.length > 0) {
+    const { tokens: defaultTokens } = scopes[0];
+    lines.push(`:root {`);
+    for (const [key, value] of Object.entries(defaultTokens)) {
+      lines.push(`  ${key}: ${String(value)};`);
+    }
+    lines.push(`}`);
+    lines.push(``);
+  }
+
+  // Remaining scopes use their specified selectors (prefixed with html.)
+  for (let i = 1; i < scopes.length; i++) {
+    const { selector, tokens } = scopes[i];
+    // Transform '.theme-light' to 'html.light-theme', '.theme-dark' to 'html.dark-theme'
+    const themeClass = selector.replace('.theme-', '').replace('-', '-');
+    const htmlSelector = `html.${themeClass}-theme`;
+    
+    lines.push(`${htmlSelector} {`);
     for (const [key, value] of Object.entries(tokens)) {
       lines.push(`  ${key}: ${String(value)};`);
     }
@@ -44,16 +62,16 @@ export function writeMaterialSystemCss(groups: MappingGroup[]): string {
   lines.push(` */`);
   lines.push(``);
 
-  // Light theme overrides
-  lines.push(`.theme-light {`);
+  // Light theme overrides (applied to :root by default)
+  lines.push(`:root {`);
   for (const [matVar, m3Var] of Object.entries(materialGroup.map)) {
     lines.push(`  --${matVar}: var(${m3Var});`);
   }
   lines.push(`}`);
   lines.push(``);
 
-  // Dark theme overrides
-  lines.push(`.theme-dark {`);
+  // Dark theme overrides (only override in dark theme)
+  lines.push(`html.dark-theme {`);
   for (const [matVar, m3Var] of Object.entries(materialGroup.map)) {
     lines.push(`  --${matVar}: var(${m3Var});`);
   }

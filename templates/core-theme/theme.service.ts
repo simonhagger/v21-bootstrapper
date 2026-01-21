@@ -90,10 +90,10 @@ export class ThemeService {
     const modes: ThemeMode[] = ['light', 'dark'];
 
     for (const b of brands) el.classList.remove(`theme-${b}`);
-    for (const m of modes) el.classList.remove(`theme-${m}`);
+    for (const m of modes) el.classList.remove(`${m}-theme`);
 
     const s = this._state();
-    el.classList.add(`theme-${s.brand}`, `theme-${s.mode}`);
+    el.classList.add(`theme-${s.brand}`, `${s.mode}-theme`);
   }
 
   private setupReactiveApply() {
