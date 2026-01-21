@@ -89,7 +89,7 @@ try {
   }
 
   # Copy root config files (Prettier, ESLint, VSCode settings)
-  $rootFiles = @('.prettierrc.json', 'eslint.config.mjs', 'commitlint.config.cjs')
+  $rootFiles = @('.prettierrc.json', 'eslint.config.mjs', 'commitlint.config.cjs', '.gitattributes')
   foreach ($f in $rootFiles) {
     $srcFile = Join-Path $rootTpl $f
     $dstFile = Join-Path $projRoot $f
@@ -158,7 +158,7 @@ try {
 
     # Stage hooks in git
     git add .husky/pre-commit .husky/commit-msg .husky/pre-push | Out-Null
-    git add .gitignore | Out-Null
+    git add .gitignore .gitattributes | Out-Null
   } else {
     Write-Warning "Husky templates not found at $huskyTpl (skipping hook setup)"
   }
