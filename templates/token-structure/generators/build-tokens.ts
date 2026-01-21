@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 import { readThemeTokens } from './token-io';
-import { writeScopedVarsCss, writeTailwindThemeCss, writeThemesCss } from './css-writers';
+import { writeScopedVarsCss, writeTailwindThemeCss, writeThemesCss, writeMaterialSystemCss } from './css-writers';
 
 import { getMappingFor, assertNoDuplicateTailwindVars, type MappingType } from '../mappings';
 
@@ -95,6 +95,9 @@ function main() {
   // tailwind.theme.css (narrowed by mapping types if --only used)
   writeFile(distDir, 'tailwind.theme.css', writeTailwindThemeCss(mappings));
 
+  // material.system.css (Material Angular system token overrides)
+  writeFile(distDir, 'material.system.css', writeMaterialSystemCss(mappings));
+
   // optional README / manifest for debugging
   writeFile(
     distDir,
@@ -112,7 +115,7 @@ function main() {
 
   console.log(
     `Generated tokens to ${distDir}\n` +
-      `- themes.css\n- m3.css\n- tailwind.theme.css\n` +
+      `- themes.css\n- m3.css\n- tailwind.theme.css\n- material.system.css\n` +
       `Mapping types: ${mappings.map((m) => m.type).join(', ')}`,
   );
 }

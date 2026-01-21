@@ -64,7 +64,7 @@ if (-not (Test-Path "angular.json")) {
     }
     Copy-Item -Path $_.FullName -Destination $repoRoot -Recurse -Force
   }
-  
+
   Push-Location $repoRoot
   try {
     # Generate the app directly in projects/web with correct structure
@@ -87,19 +87,19 @@ if (-not (Test-Path "angular.json")) {
   if (Test-Path $templateAppPath) {
     # Ensure target app directory exists
     New-Item -ItemType Directory -Force -Path $targetAppPath | Out-Null
-  
+
     # Remove default generated app files (keep environments)
     Get-ChildItem -Path $targetAppPath -Force | Where-Object {
       $_.Name -ne 'environments'
     } | Remove-Item -Recurse -Force
-  
+
     # Copy src-level files (main.ts)
     if (Test-Path $templateSrcPath) {
       Get-ChildItem -Path $templateSrcPath -File | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination $targetSrcPath -Force
       }
     }
-  
+
     # Copy template app files
     Get-ChildItem -Path $templateAppPath -Force | ForEach-Object {
       Copy-Item -Path $_.FullName -Destination $targetAppPath -Recurse -Force
@@ -270,31 +270,31 @@ if (Test-Path $shellTemplateDir) {
   New-Item -ItemType Directory -Force -Path "projects/shell/src/lib" | Out-Null
   Copy-Item -Path (Join-Path $shellTemplateDir "app-layout.component.ts") -Destination "projects/shell/src/lib/" -Force
   Copy-Item -Path (Join-Path $shellTemplateDir "public-api.ts") -Destination "projects/shell/src/" -Force
-  
+
   # Ensure path mapping exists in angular.json for the shell library
   # Angular CLI automatically creates this, but we ensure it's there
   node -e @'
   const fs = require('fs');
   const path = require('path');
-  
+
   // Read angular.json
   const angularJsonPath = 'angular.json';
   const content = fs.readFileSync(angularJsonPath, 'utf8');
   const angularJson = JSON.parse(content);
-  
+
   // Ensure projects.shell exists with correct configuration
   if (!angularJson.projects.shell) {
     throw new Error('Shell library not found in angular.json');
   }
-  
+
   // Ensure projectType is lib
   if (!angularJson.projects.shell.projectType) {
     angularJson.projects.shell.projectType = 'library';
   }
-  
+
   fs.writeFileSync(angularJsonPath, JSON.stringify(angularJson, null, 2) + '\n');
 '@
-  
+
   Write-Host " - Shell layout deployed"
 } else {
   Write-Host " - Shell layout templates not found (skipping)"

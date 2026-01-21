@@ -1,8 +1,24 @@
-@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
-@import './material-theme.scss';
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import '../../tokens/dist/material.system.css';
 @import '../../tokens/dist/m3.css';
 
 /* Global styles */
+/**
+ * Theming Setup:
+ * 
+ * Material theme (material-theme.scss) and M3 tokens (m3.css) are loaded via angular.json.
+ * This ensures proper compilation order:
+ *   1. material-theme.scss (Sass compilation for Material components)
+ *   2. styles.css (this file - global styles)
+ *   3. M3 tokens would be available via Tailwind utilities
+ * 
+ * Material components use Material theming (Sass-based).
+ * Custom components use M3 CSS variables directly.
+ * Both systems share the same M3 color values.
+ * 
+ * See docs/MATERIAL_M3_INTEGRATION.md for full details.
+ */
+
 :root {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;

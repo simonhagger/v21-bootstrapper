@@ -38,18 +38,22 @@ Components Components Classes
 ```scss
 // M3 values mapped to Material Sass palette
 $m3-primary-palette: (
-  500: #6750a4,  // M3 primary color
+  500: #6750a4,
+  // M3 primary color
   contrast: (
-    500: #ffffff,  // M3 on-primary color
-  )
+      500: #ffffff,
+      // M3 on-primary color
+    ),
 );
 
-$light-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: $m3-primary-palette,
+$light-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: $m3-primary-palette,
+    ),
   )
-));
+);
 ```
 
 #### 2. **M3 CSS Variables** (`m3.css`)
@@ -70,8 +74,8 @@ $light-theme: mat.define-theme((
 
 ```css
 /* Import order matters: */
-@import './material-theme.scss';  /* Material components */
-@import '../../tokens/dist/m3.css';  /* M3 CSS variables */
+@import './material-theme.scss'; /* Material components */
+@import '../../tokens/dist/m3.css'; /* M3 CSS variables */
 ```
 
 ## Usage Patterns
@@ -87,6 +91,7 @@ Material components automatically use the Sass theme:
 ```
 
 **What happens:**
+
 - `mat-card` gets styled by Material theme (Sass)
 - Colors come from our M3-aligned palette definitions
 - No manual theming needed
@@ -137,6 +142,7 @@ document.documentElement.classList.toggle('dark-theme');
 ```
 
 **What happens:**
+
 1. Material theme switches via Sass (`:root` vs `html.dark-theme`)
 2. M3 variables switch via CSS scoping (same class)
 3. Both systems stay synchronized
@@ -146,10 +152,12 @@ document.documentElement.classList.toggle('dark-theme');
 To maintain consistency, M3 token values MUST be kept in sync with Material theme Sass values:
 
 ### Source of Truth
+
 - **Primary source:** `projects/tokens/src/source/tokens.{light,dark}.json`
 - **Material theme:** `material-theme.scss` (manually kept in sync)
 
 ### Update Process
+
 1. Update color values in `tokens.{light,dark}.json`
 2. Run `pnpm tokens:build` to generate `m3.css`
 3. **Manually update** matching values in `material-theme.scss`
@@ -194,28 +202,34 @@ pnpm build  # or pnpm start
 ## Benefits
 
 ### ✅ **Material Components Work Properly**
+
 - All Material components render with correct styling
 - No missing styles or broken layouts
 
 ### ✅ **M3 Design System**
+
 - Semantic color tokens available as CSS variables
 - Easy to use in custom components
 
 ### ✅ **Synchronized Theming**
+
 - Light/dark mode works consistently
 - Single class toggle affects both systems
 
 ### ✅ **Type Safety**
+
 - TypeScript config for Tailwind colors
 - IntelliSense for M3 token names
 
 ### ✅ **Maintainability**
+
 - Clear separation of concerns
 - Each system can be updated independently (with manual sync)
 
 ## Limitations & Trade-offs
 
 ### ⚠️ **Manual Synchronization Required**
+
 - M3 token values must be manually copied to Material Sass theme
 - No automatic sync between JSON → Sass
 - Risk of values drifting out of sync
@@ -223,12 +237,14 @@ pnpm build  # or pnpm start
 **Mitigation:** Create a script to generate Sass palette from tokens.json
 
 ### ⚠️ **Dual Import Required**
+
 - Both Sass theme and M3 CSS must be imported
 - Slight increase in CSS bundle size
 
 **Impact:** Minimal (~10-20KB after compression)
 
 ### ⚠️ **Learning Curve**
+
 - Developers must understand which system to use when
 - Material components = Material theme
 - Custom components = M3 variables
@@ -238,6 +254,7 @@ pnpm build  # or pnpm start
 ## Future Improvements
 
 ### 1. **Automated Palette Generation**
+
 Create a build script to generate Material Sass palettes from `tokens.json`:
 
 ```javascript
@@ -248,12 +265,15 @@ const sassOutput = generateMaterialPalette(tokens.color.primary);
 ```
 
 ### 2. **Material 3 Theme Builder Integration**
+
 Use Material 3 theme builder to generate both:
+
 - M3 design tokens
 - Material Angular theme
 - Guaranteed synchronization
 
 ### 3. **CSS Variables in Material**
+
 Monitor Angular Material for CSS custom property support.
 Future versions may support CSS variables directly, eliminating the need for Sass theming.
 
@@ -264,6 +284,7 @@ Future versions may support CSS variables directly, eliminating the need for Sas
 **Problem:** Material components appear unstyled or broken
 
 **Solution:**
+
 1. Verify `material-theme.scss` is imported in `styles.css`
 2. Check that Sass compilation succeeded (check browser DevTools)
 3. Ensure `@angular/material` is installed
@@ -273,6 +294,7 @@ Future versions may support CSS variables directly, eliminating the need for Sas
 **Problem:** Material components use different colors than expected
 
 **Solution:**
+
 1. Check that Material Sass palette values match `tokens.json`
 2. Update `material-theme.scss` manually if tokens changed
 3. Rebuild application
@@ -282,6 +304,7 @@ Future versions may support CSS variables directly, eliminating the need for Sas
 **Problem:** Dark mode doesn't affect Material components
 
 **Solution:**
+
 1. Verify `html.dark-theme` class is being toggled correctly
 2. Check that dark theme Sass is included in `material-theme.scss`
 3. Ensure both `:root` and `html.dark-theme` selectors are present

@@ -1,11 +1,13 @@
 import type { MappingGroup, MappingType } from './types';
 import { colors } from './colors';
+import { material } from './material';
 import { radii } from './radii';
 
 export type { MappingGroup, MappingType };
 
 export const ALL_MAPPINGS: readonly MappingGroup[] = [
   colors,
+  material,
   radii,
   // Add typography, elevation, spacing as needed...
 ] as const;
