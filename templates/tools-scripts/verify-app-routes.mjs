@@ -24,7 +24,7 @@ function findExportedRoutesArray(sf) {
 
       for (const decl of node.declarationList.declarations) {
         if (!ts.isIdentifier(decl.name)) continue;
-        if (decl.name.text !== 'APP_ROUTES') continue;
+        if (decl.name.text !== 'routes') continue;
         if (!decl.initializer || !ts.isArrayLiteralExpression(decl.initializer)) continue;
         routesArray = decl.initializer;
         return;
@@ -100,7 +100,7 @@ function main() {
 
   const sf = parseSource(appRoutesFile);
   const arr = findExportedRoutesArray(sf);
-  if (!arr) die(`app.routes.ts must export const APP_ROUTES = [ ... ]`);
+  if (!arr) die(`app.routes.ts must export const routes = [ ... ] (Angular CLI convention)`);
 
   const errors = [];
   let wildcardCount = 0;
