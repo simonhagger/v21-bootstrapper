@@ -267,18 +267,18 @@ try {
 try {
   Write-Host "==> Copying developer documentation"
   $projRoot = Get-Location
-  $docsSrc = Join-Path $PSScriptRoot "templates\\root"
+  $rootTemplateSrc = Join-Path $PSScriptRoot "templates\\root"
+  $docsTemplateSrc = Join-Path $rootTemplateSrc "docs"
   $docsDst = Join-Path $projRoot "docs"
   
   # Create docs folder
   New-Item -ItemType Directory -Force -Path $docsDst | Out-Null
   
-  # Copy consolidated 8-document set
-  # README.md stays in project root; all others go to docs/
+  # Copy consolidated 8-document set from templates/root/docs/
   $docFiles = @('GETTING_STARTED.md', 'ARCHITECTURE.md', 'DEVELOPMENT.md', 'TESTING.md', 'STYLING.md', 'API.md', 'VERIFICATION.md', 'TROUBLESHOOTING.md')
   
   foreach ($doc in $docFiles) {
-    $srcPath = Join-Path $docsSrc $doc
+    $srcPath = Join-Path $docsTemplateSrc $doc
     $dstPath = Join-Path $docsDst $doc
     if (Test-Path $srcPath) {
       Copy-Item -Path $srcPath -Destination $dstPath -Force
@@ -286,8 +286,8 @@ try {
     }
   }
   
-  # Copy README.md to project root
-  $readmeSrc = Join-Path $docsSrc "README.md"
+  # Copy README.md to project root (from templates/root/)
+  $readmeSrc = Join-Path $rootTemplateSrc "README.md"
   $readmeDst = Join-Path $projRoot "README.md"
   if (Test-Path $readmeSrc) {
     Copy-Item -Path $readmeSrc -Destination $readmeDst -Force
