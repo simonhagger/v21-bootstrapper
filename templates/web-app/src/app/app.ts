@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AppLayoutComponent } from './shared/layout/app-layout.component';
-import '../styles.css';
 
 /**
  * Root application component
@@ -13,6 +12,6 @@ import '../styles.css';
   imports: [AppLayoutComponent],
   template: `<app-layout></app-layout>`,
 })
-export class AppComponent {
+export class App {
   title = 'acme-web';
 }

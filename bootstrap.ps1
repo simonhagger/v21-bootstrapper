@@ -57,6 +57,39 @@ pnpm exec ng add @angular/material `
   --typography=true `
   --animations=true
 
+# Post-scaffold: copy curated templates (main.ts, app core, features/, shared/)
+try {
+  $tplRoot = Join-Path $PSScriptRoot "templates\\web-app\\src"
+  $appRoot = Join-Path (Get-Location) "src"
+
+  Write-Host "==> Applying curated templates"
+
+  # Copy core app files (app.ts has layout integration, app.routes.ts has feature routing)
+  $coreFiles = @('app.ts','app.routes.ts')
+  foreach ($f in $coreFiles) {
+    $srcFile = Join-Path $tplRoot (Join-Path "app" $f)
+    $dstFile = Join-Path $appRoot (Join-Path "app" $f)
+    if (Test-Path $srcFile) {
+      Copy-Item -Path $srcFile -Destination $dstFile -Force
+      Write-Host "   - app/$f updated"
+    }
+  }
+
+  # Copy features/ and shared/
+  $dirs = @('features','shared')
+  foreach ($d in $dirs) {
+    $srcDir = Join-Path $tplRoot (Join-Path "app" $d)
+    $dstDir = Join-Path $appRoot (Join-Path "app" $d)
+    if (Test-Path $srcDir) {
+      Copy-Item -Path $srcDir -Destination $dstDir -Recurse -Force
+      Write-Host "   - app/$d copied"
+    }
+  }
+
+} catch {
+  Write-Warning "Template copy step encountered an issue: $_"
+}
+
 Write-Host ""
 Write-Host "==> Scaffold and ng add complete"
 Write-Host "App ready at: $(Get-Location)"
