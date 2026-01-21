@@ -5,17 +5,17 @@
 /* Global styles */
 /**
  * Theming Setup:
- * 
+ *
  * Material theme (material-theme.scss) and M3 tokens (m3.css) are loaded via angular.json.
  * This ensures proper compilation order:
  *   1. material-theme.scss (Sass compilation for Material components)
  *   2. styles.css (this file - global styles)
  *   3. M3 tokens would be available via Tailwind utilities
- * 
+ *
  * Material components use Material theming (Sass-based).
  * Custom components use M3 CSS variables directly.
  * Both systems share the same M3 color values.
- * 
+ *
  * See docs/MATERIAL_M3_INTEGRATION.md for full details.
  */
 
@@ -32,24 +32,24 @@ body {
   color: var(--md-sys-color-on-surface);
 }
 
-/* 
+/*
  * Theming Strategy:
- * 
+ *
  * 1. Material theme (material-theme.scss) bridges M3 tokens with Material components
  *    - Defines Material theme using M3-aligned color palettes
  *    - Supports light/dark mode via html.dark-theme class
  *    - Material components get proper styling with M3 color values
- * 
+ *
  * 2. M3 tokens (m3.css) provide our custom design system CSS variables
  *    - Generated from tokens.{light,dark}.json
  *    - Used for custom components and Tailwind utilities
  *    - Provides semantic color tokens (--md-sys-color-*)
- * 
+ *
  * 3. Integration approach:
  *    - Material components use Material theming (Sass-based)
  *    - Custom components use M3 CSS variables directly
  *    - Both systems share the same M3 color values
- * 
+ *
  * Token sources: projects/tokens/src/source/tokens.{light,dark}.json
  * Build command: pnpm tokens:build
  * Material theme: material-theme.scss (Sass compilation required)

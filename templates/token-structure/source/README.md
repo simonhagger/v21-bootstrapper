@@ -1,128 +1,175 @@
 # Token Source Files
 
-This directory contains the **single source of truth** for Material Design 3 system tokens used across all frameworks.
+This directory contains the **single source of truth** for Material Design 3 system tokens in **Material Theme Builder format**.
 
 ## Files
 
-- `tokens.light.json` - M3 tokens for light theme
-- `tokens.dark.json` - M3 tokens for dark theme
+- `material-theme.json` - Official Material Theme Builder export with full M3 color system
 
-## Token Format
+## Material Theme Builder Format
 
-All tokens are flat CSS custom properties with the `--md-sys-*` prefix:
+The `material-theme.json` file is exported from the official Material Theme Builder:
+- **Figma Plugin**: https://www.figma.com/community/plugin/1034969338659738588/material-theme-builder
+- **Web Tool**: https://material-foundation.github.io/material-theme-builder/
+
+This format provides **complete Material Design 3 token coverage** including:
+- All semantic color roles (primary, secondary, tertiary, error)
+- All surface and container tokens
+- All fixed and inverse tokens
+- Multiple contrast levels (normal, medium, high)
+- Complete color palettes for system and extended colors
+
+## File Structure
 
 ```json
 {
-  "--md-sys-color-primary": "#6750A4",
-  "--md-sys-color-on-primary": "#FFFFFF",
-  "--md-sys-color-surface": "#FEF7FF",
-  "--md-sys-shape-corner-medium": "12px"
+  "description": "Material Theme Builder export...",
+  "seed": "#002038",
+  "coreColors": { "primary": "#002038" },
+  "extendedColors": [/* custom colors */],
+  "schemes": {
+    "light": { "primary": "#31628D", "onPrimary": "#FFFFFF", ... },
+    "dark": { "primary": "#9DCBFB", "onPrimary": "#003354", ... },
+    "light-medium-contrast": { ... },
+    "light-high-contrast": { ... },
+    "dark-medium-contrast": { ... },
+    "dark-high-contrast": { ... }
+  },
+  "palettes": {
+    "primary": { "0": "#000000", "5": "#001223", ... "100": "#FFFFFF" },
+    "secondary": { ... },
+    "tertiary": { ... },
+    "neutral": { ... },
+    "neutral-variant": { ... }
+  }
 }
 ```
 
-## Token Categories
+## Available Schemes
 
-### Colors (`--md-sys-color-*`)
+The Material Theme Builder generates multiple contrast levels for accessibility:
 
-Material Design 3 semantic color roles:
+- **light** - Standard light theme
+- **light-medium-contrast** - Light theme with enhanced contrast
+- **light-high-contrast** - Light theme with maximum contrast
+- **dark** - Standard dark theme
+- **dark-medium-contrast** - Dark theme with enhanced contrast
+- **dark-high-contrast** - Dark theme with maximum contrast
 
-- **Primary**: Main brand color and variants (`primary`, `on-primary`, `primary-container`, `on-primary-container`)
-- **Secondary**: Supporting color for less prominent elements
-- **Tertiary**: Accent color for highlights and emphasis
-- **Error**: Error states and destructive actions
-- **Surface**: Background colors at various elevations
-- **Outline**: Borders and dividers
+The token system currently uses **light** and **dark** schemes. To use a different scheme, modify `readThemeTokens()` in `generators/token-io.ts`.
 
-### Shape (`--md-sys-shape-*`)
+## Token Extraction
 
-Border radius tokens (not yet fully implemented):
+The build process converts Material Theme Builder camelCase tokens to M3 CSS variable format:
 
-- `corner-none`: 0px
-- `corner-extra-small`: 4px
-- `corner-small`: 8px  
-- `corner-medium`: 12px
-- `corner-large`: 16px
-- `corner-extra-large`: 28px
-
-### Future Categories
-
-- Typography (`--md-sys-typography-*`)
-- Elevation (`--md-sys-elevation-*`)
-- Motion (`--md-sys-motion-*`)
-
-## Theme Synchronization
-
-**Critical Rule**: Both light and dark JSON files **must have identical keys**.
-
-Only values differ between themes:
-
-**tokens.light.json**:
-```json
-{
-  "--md-sys-color-primary": "#6750A4",
-  "--md-sys-color-surface": "#FEF7FF"
+```
+Material Theme Builder: { "primary": "#31628D", "surfaceContainerLowest": "#FFFFFF" }
+              ↓
+M3 Format: { 
+  "--md-sys-color-primary": "#31628D",
+  "--md-sys-color-surface-container-lowest": "#FFFFFF"
 }
 ```
 
-**tokens.dark.json**:
-```json
-{
-  "--md-sys-color-primary": "#D0BCFF",
-  "--md-sys-color-surface": "#1C1B1F"
-}
-```
+## Creating Your Own Theme
 
-The build process validates this and will fail if keys don't match.
+1. **Option A**: Use the Material Theme Builder Figma plugin
+   - Open Figma
+   - Search for "Material Theme Builder" in community plugins
+   - Create your theme with color seed
+   - Export JSON
 
-## Usage
+2. **Option B**: Use the web tool
+   - Go to https://material-foundation.github.io/material-theme-builder/
+   - Customize your theme
+   - Export JSON
 
-These files are consumed by `generators/build-tokens.ts` to generate:
+3. **Replace the file**: Copy the exported `material-theme.json` into this directory
 
-1. **themes.css** - Theme class wrappers (`.theme-light`, `.theme-dark`)
-2. **m3.css** - M3 variables scoped to theme classes
-3. **material.system.css** - Material Angular system token overrides
-4. **tailwind.theme.css** - Tailwind `@theme` utilities via mappings
+4. **Regenerate tokens**: Run `pnpm tokens:build`
 
-All frameworks consume the same token values, ensuring visual consistency.
+## Token Categories in Material Theme Builder
+
+### Semantic Colors
+
+**Primary Color Family**
+- `primary`, `onPrimary`
+- `primaryContainer`, `onPrimaryContainer`
+- `primaryFixed`, `onPrimaryFixed`
+- `onPrimaryFixedVariant`, `primaryFixedDim`
+- `inversePrimary`
+
+**Secondary Color Family**
+- `secondary`, `onSecondary`
+- `secondaryContainer`, `onSecondaryContainer`
+- `secondaryFixed`, `onSecondaryFixed`
+- `onSecondaryFixedVariant`, `secondaryFixedDim`
+
+**Tertiary Color Family**
+- `tertiary`, `onTertiary`
+- `tertiaryContainer`, `onTertiaryContainer`
+- `tertiaryFixed`, `onTertiaryFixed`
+- `onTertiaryFixedVariant`, `tertiaryFixedDim`
+
+**Error Color Family**
+- `error`, `onError`
+- `errorContainer`, `onErrorContainer`
+
+**Surface Color Family**
+- `surface`, `onSurface`
+- `surfaceVariant`, `onSurfaceVariant`
+- `surfaceTint`
+- `surfaceDim`, `surfaceBright`
+- `surfaceContainerLowest`, `surfaceContainerLow`
+- `surfaceContainer`, `surfaceContainerHigh`, `surfaceContainerHighest`
+- `inverseSurface`, `inverseOnSurface`
+
+**Outline Colors**
+- `outline`, `outlineVariant`
+
+**Utility Colors**
+- `background`, `onBackground`
+- `shadow`, `scrim`
 
 ## Maintenance Workflow
 
-### Adding New Tokens
+### Updating Token Values
 
-1. Add to **both** `tokens.light.json` and `tokens.dark.json` with same key
-2. Use M3 naming conventions (`--md-sys-color-*`, `--md-sys-shape-*`)
-3. Run `pnpm tokens:build` to regenerate outputs
-4. Review generated CSS in `dist/`
-5. Commit both source and dist changes together
+1. Open the Material Theme Builder (Figma plugin or web tool)
+2. Customize colors and export JSON
+3. Replace `material-theme.json` with the new export
+4. Run `pnpm tokens:build` to regenerate all outputs
+5. Commit both source and dist changes
 
-### Changing Token Values
+### Switching Contrast Levels
 
-1. Update value in `tokens.light.json` and/or `tokens.dark.json`
-2. Run `pnpm tokens:build`
-3. Verify changes in generated `dist/` files
-4. Test in application (color changes propagate to all frameworks)
-5. Commit source + dist together
+To use a different contrast level (e.g., high-contrast for accessibility):
 
-### Removing Tokens
+Edit `generators/token-io.ts` and change:
+```typescript
+// From:
+const schemeData = themeBuilder.schemes['light'];
 
-1. Check if token is referenced in any mapping (search `mappings/*.ts`)
-2. Remove from both `tokens.light.json` and `tokens.dark.json`
-3. Run `pnpm tokens:build` (will fail if mappings still reference it)
-4. Update/remove mappings as needed
-5. Commit all changes together
+// To:
+const schemeData = themeBuilder.schemes['light-high-contrast'];
+```
+
+Then run `pnpm tokens:build` and test in your application.
 
 ## Material Design 3 Resources
 
 - [M3 Color System](https://m3.material.io/styles/color/system/overview)
 - [M3 Color Roles](https://m3.material.io/styles/color/roles)
-- [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/) - Generate M3 color schemes
+- [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)
+- [Material Design 3 Docs](https://m3.material.io/)
 
 ## CI Validation
 
 The `pnpm verify:tokens` script ensures:
 
-- Dist files are up-to-date with source
-- No uncommitted token changes
-- Light and dark themes have matching keys (via build validation)
+- Source file (`material-theme.json`) exists and is valid JSON
+- All required schemes exist (light, dark)
+- All Material system tokens have corresponding M3 tokens
+- Generated dist files are up-to-date
 
-If build fails with "Missing M3 vars", it means a mapping references a token that doesn't exist in one or both theme files.
+

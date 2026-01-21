@@ -14,7 +14,7 @@ import type { MappingGroup } from './types';
  */
 export const material: MappingGroup = {
   type: 'material',
-  description: 'Material Angular system tokens mapped to M3 design tokens',
+  description: 'Material Angular system tokens mapped to M3 design tokens from Material Theme Builder',
   map: {
     // Primary color tokens
     'mat-sys-primary': '--md-sys-color-primary',
@@ -56,6 +56,9 @@ export const material: MappingGroup = {
     // Surface color tokens
     'mat-sys-surface': '--md-sys-color-surface',
     'mat-sys-on-surface': '--md-sys-color-on-surface',
+    'mat-sys-surface-tint': '--md-sys-color-surface-tint',
+    'mat-sys-surface-variant': '--md-sys-color-surface-variant',
+    'mat-sys-on-surface-variant': '--md-sys-color-on-surface-variant',
     'mat-sys-surface-dim': '--md-sys-color-surface-dim',
     'mat-sys-surface-bright': '--md-sys-color-surface-bright',
     'mat-sys-surface-container-lowest': '--md-sys-color-surface-container-lowest',
@@ -63,8 +66,6 @@ export const material: MappingGroup = {
     'mat-sys-surface-container': '--md-sys-color-surface-container',
     'mat-sys-surface-container-high': '--md-sys-color-surface-container-high',
     'mat-sys-surface-container-highest': '--md-sys-color-surface-container-highest',
-    'mat-sys-surface-variant': '--md-sys-color-surface-variant',
-    'mat-sys-on-surface-variant': '--md-sys-color-on-surface-variant',
     'mat-sys-inverse-surface': '--md-sys-color-inverse-surface',
     'mat-sys-inverse-on-surface': '--md-sys-color-inverse-on-surface',
 
@@ -73,8 +74,8 @@ export const material: MappingGroup = {
     'mat-sys-outline-variant': '--md-sys-color-outline-variant',
 
     // Background tokens (legacy M2 tokens still used by some components)
-    'mat-sys-background': '--md-sys-color-surface',
-    'mat-sys-on-background': '--md-sys-color-on-surface',
+    'mat-sys-background': '--md-sys-color-background',
+    'mat-sys-on-background': '--md-sys-color-on-background',
 
     // Shadow/Scrim tokens
     'mat-sys-shadow': '--md-sys-color-shadow',

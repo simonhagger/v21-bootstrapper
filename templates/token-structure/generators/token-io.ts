@@ -3,6 +3,24 @@ import * as path from 'node:path';
 
 export type FlatTokenMap = Record<string, string | number>;
 
+/**
+ * Material Theme Builder JSON format
+ * See: https://www.figma.com/community/plugin/1034969338659738588/material-theme-builder
+ */
+export interface MaterialThemeBuilderJSON {
+  description: string;
+  seed: string;
+  coreColors: Record<string, string>;
+  extendedColors?: Array<{
+    name: string;
+    color: string;
+    description?: string;
+    harmonized?: boolean;
+  }>;
+  schemes: Record<string, Record<string, string>>;
+  palettes: Record<string, Record<string, string>>;
+}
+
 export function readJson<T>(filePath: string): T {
   const raw = fs.readFileSync(filePath, 'utf8');
   return JSON.parse(raw) as T;
@@ -28,12 +46,48 @@ export function normalizeFlatTokens(input: unknown): FlatTokenMap {
   return out;
 }
 
-export function readThemeTokens(theme: 'light' | 'dark'): FlatTokenMap {
+/**
+ * Convert Material Theme Builder scheme to M3 CSS variable format.
+ * 
+ * Scheme format: { "primary": "#31628D", "onPrimary": "#FFFFFF", ... }
+ * M3 format: { "--md-sys-color-primary": "#31628D", "--md-sys-color-on-primary": "#FFFFFF", ... }
+ */
+function schemeToM3Vars(scheme: Record<string, string>): FlatTokenMap {
+  const m3Vars: FlatTokenMap = {};
+
+  for (const [key, value] of Object.entries(scheme)) {
+    // camelCase → kebab-case
+    const kebabKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+    const m3Key = `--md-sys-color-${kebabKey}`;
+    m3Vars[m3Key] = value;
+  }
+
+  return m3Vars;
+}
+
+/**
+ * Read Material Theme Builder JSON and extract theme tokens.
+ * Returns M3 format: { "--md-sys-color-primary": "#6750A4", ... }
+ */
+export function readThemeTokens(scheme: 'light' | 'dark'): FlatTokenMap {
   const filePath = path.resolve(
     process.cwd(),
     'projects/tokens/src/source',
-    `tokens.${theme}.json`,
+    'material-theme.json',
   );
-  const json = readJson<unknown>(filePath);
-  return normalizeFlatTokens(json);
+  
+  const themeBuilder = readJson<MaterialThemeBuilderJSON>(filePath);
+  
+  // Use "light" or "dark" scheme from the builder
+  const schemeData = themeBuilder.schemes[scheme];
+  if (!schemeData) {
+    throw new Error(
+      `Scheme "${scheme}" not found in material-theme.json. ` +
+      `Available: ${Object.keys(themeBuilder.schemes).join(', ')}`
+    );
+  }
+
+  return schemeToM3Vars(schemeData);
 }
+
+
