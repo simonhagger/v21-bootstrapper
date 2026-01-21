@@ -101,7 +101,7 @@ pnpm pkg set scripts.test="pnpm tokens:build && ng test acme-web --watch=false" 
 pnpm pkg set scripts.test:watch="pnpm tokens:build && ng test acme-web" 2>$null | Out-Null
 pnpm pkg set scripts.test:ci="pnpm tokens:build && ng test acme-web --watch=false" 2>$null | Out-Null
 
-pnpm pkg set scripts.tokens:build="node projects/tokens/src/generators/build-tokens.ts" 2>$null | Out-Null
+pnpm pkg set scripts.tokens:build="pnpm exec tsx projects/tokens/src/generators/build-tokens.ts" 2>$null | Out-Null
 pnpm pkg set scripts.verify:theme-contract="node tools/scripts/verify-theme-contract.mjs" 2>$null | Out-Null
 pnpm pkg set scripts.verify:no-raw-colors="node tools/scripts/verify-no-raw-colors.mjs" 2>$null | Out-Null
 pnpm pkg set scripts.verify:tokens="node tools/scripts/verify-tokens.mjs" 2>$null | Out-Null
