@@ -262,6 +262,25 @@ try {
   Write-Warning "Testing setup encountered an issue: $_"
 }
 
+# Copy developer documentation
+try {
+  Write-Host "==> Copying developer documentation"
+  $projRoot = Get-Location
+  $docsSrc = Join-Path $PSScriptRoot "templates\\root"
+  $docFiles = @('README.md', 'DEVELOPMENT_GUIDE.md', 'ARCHITECTURE.md', 'PATTERNS.md', 'TESTING_GUIDE.md', 'THEMING_GUIDE.md', 'API_GUIDE.md', 'AI_AGENT_GUIDE.md', 'VERIFICATION_SYSTEM.md', 'VERIFICATION_QUICK_REF.md', 'POST_BOOTSTRAP_GUIDE.md')
+  
+  foreach ($doc in $docFiles) {
+    $srcPath = Join-Path $docsSrc $doc
+    $dstPath = Join-Path $projRoot $doc
+    if (Test-Path $srcPath) {
+      Copy-Item -Path $srcPath -Destination $dstPath -Force
+    }
+  }
+  Write-Host "   - Developer documentation copied"
+} catch {
+  Write-Warning "Documentation copy encountered an issue: $_"
+}
+
 # Run post-bootstrap verification
 try {
   $projRoot = Get-Location
