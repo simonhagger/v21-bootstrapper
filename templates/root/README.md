@@ -1,196 +1,276 @@
-## Overview
+# Project Overview
 
-Industrial-strength Angular workspace with Tailwind CSS v4 and Angular Material installed by default. The scaffold keeps all the structural guardrails (lint, tests, route checks, git hooks) but does not include design-token generation or M3 override pipelines.
+Production-ready Angular 21 workspace with **Tailwind CSS 4.1.18** and **Angular Material 21.1.0** installed and configured by default.
 
-What you get:
-- Angular Material ready to use with a small starter theme in `src/theme.scss`.
-- Tailwind v4 wired through `src/tailwind.input.css` (precompile to `src/tailwind.gen.css`).
-- Clean global styles without token coupling between Material and Tailwind.
-- All verification scripts for structure, routes, and imports.
+## What You Get
+
+✅ **Instant productivity** – Zero configuration needed  
+✅ **Code quality** – Automatic formatting, linting, and testing  
+✅ **Architectural integrity** – Enforced via git hooks and verification gates  
+✅ **Feature scaffolding** – Generate features with routes, state, data access in seconds  
+✅ **Comprehensive guides** – Documentation for every aspect of development
 
 ## Quick Start
 
 ```bash
-# Install dependencies
+# Install dependencies (already done during bootstrap)
 pnpm install
 
 # Start development server
-pnpm start
+pnpm dev
 
 # Run all quality gates
 pnpm verify
+
+# Generate a new feature
+pnpm gen:feature Dashboard --route dashboard
 ```
 
 ## Project Structure
 
 ```
-├── projects/
-│   ├── core/              # Singleton services, HTTP clients, theme service
-│   ├── ui/                # Shared UI components and design system wrappers
-│   ├── tokens/            # M3 design tokens → CSS variables
-│   ├── a11y/              # Accessibility utilities
-│   └── shell/             # App shell components
-├── src/app/
-│   ├── features/          # Route-based vertical slices
-│   │   └── <feature>/
-│   │       ├── <feature>.routes.ts
-│   │       ├── <feature>.page.ts
-│   │       ├── <feature>.data.ts
-│   │       ├── <feature>.state.ts
-│   │       └── <feature>.models.ts
-│   ├── core/              # App-wide singleton providers
-│   ├── shared/            # Stateless utilities and components
-│   ├── app.config.ts      # Application configuration
-│   └── app.routes.ts      # Root route composition
-└── tools/
-    └── scripts/           # Verification and generation scripts
+src/app/
+├── app.ts                 # Root component
+├── app.routes.ts          # Route composition (lazy-loaded features)
+├── app.config.ts          # App configuration
+├── features/              # Route-based vertical slices
+│   └── home/
+│       ├── home.routes.ts       # Feature route definition
+│       ├── home.page.ts         # Routed component
+│       ├── home.data.ts         # Data access/HTTP boundary
+│       ├── home.state.ts        # State management
+│       ├── home.models.ts       # TypeScript types
+│       └── README.md            # Feature documentation
+├── shared/                # Shared components and utilities
+│   ├── layout/
+│   ├── pages/
+│   └── ...
+└── styles.scss            # Global styles
+
+tools/
+└── scripts/               # Verification and feature generation
+
+docs/                      # Developer documentation
+├── DEVELOPMENT_GUIDE.md   # Daily development workflows
+├── ARCHITECTURE.md        # Architectural rules and patterns
+├── PATTERNS.md            # Common implementation patterns
+├── TESTING_GUIDE.md       # Testing guidelines
+├── THEMING_GUIDE.md       # Tailwind + Material theming
+├── API_GUIDE.md           # Backend API integration
+├── AI_AGENT_GUIDE.md      # AI-assisted development
+├── POST_BOOTSTRAP_GUIDE.md# Post-bootstrap checklist
+├── VERIFICATION_SYSTEM.md # Verification gates reference
+└── VERIFICATION_QUICK_REF.md # Quick reference for gates
 ```
-
-## Documentation
-
-### Getting Started
-
-- **[docs/POST_BOOTSTRAP_GUIDE.md](docs/POST_BOOTSTRAP_GUIDE.md)** - Validation checklist and troubleshooting (START HERE after bootstrap)
-- **[docs/VERIFICATION_SYSTEM.md](docs/VERIFICATION_SYSTEM.md)** - How the verification system works
-
-### Architecture & Development
-
-- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Authoritative architectural rules and patterns
-- **[docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)** - Day-to-day development workflows
-- **[docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** - Testing patterns and best practices
-- **[docs/PATTERNS.md](docs/PATTERNS.md)** - Common implementation patterns (errors, forms, pagination, etc.)
-- **[docs/API_GUIDE.md](docs/API_GUIDE.md)** - Backend integration (interceptors, environment, type safety)
-
-### Design System & Theming
-- **[docs/THEMING_GUIDE.md](docs/THEMING_GUIDE.md)** - Minimal guidance for using Tailwind v4 alongside Angular Material
-
-### AI Agent Development
-
-- **[docs/AI_AGENT_GUIDE.md](docs/AI_AGENT_GUIDE.md)** - Quick orientation for AI-assisted development
-
-### Tools & Scripts
-
-- **[tools/scripts/README.md](tools/scripts/README.md)** - Verification script documentation
 
 ## Key Commands
 
 ### Development
 
-```bash
-pnpm start                 # Start dev server
-pnpm build                 # Production build
-pnpm test                  # Run tests (no watch)
-pnpm test:watch            # Run tests in watch mode
-```
+| Command | Purpose |
+|---------|---------|
+| `pnpm dev` | Start development server (port 4200) |
+| `pnpm build` | Build for production |
+| `pnpm test` | Run unit tests |
+| `pnpm test:watch` | Run tests in watch mode |
+| `pnpm test:coverage` | Run tests with coverage report |
 
 ### Quality Gates
 
-```bash
-pnpm format                # Format all files
-pnpm format:check          # Check formatting
-pnpm lint                  # Lint with max warnings = 0
-pnpm lint:fix              # Auto-fix linting issues
-pnpm typecheck             # TypeScript compilation check
-pnpm verify                # Run all gates (CI equivalent)
-```
+| Command | Purpose |
+|---------|---------|
+| `pnpm format` | Auto-format all files (Prettier) |
+| `pnpm format:check` | Check formatting without changes |
+| `pnpm lint` | Check code style (ESLint) |
+| `pnpm lint:fix` | Auto-fix linting issues |
+| `pnpm typecheck` | TypeScript type checking |
+| `pnpm verify:*` | Run specific verification gates |
 
-### Feature Generation
+### Feature Management
 
-```bash
-pnpm gen:feature Dashboard --route dashboard --register
-```
-
-## Git Hooks
-
-Pre-configured hooks enforce quality at commit/push time:
-
-- **pre-commit**: Format and lint staged files
-- **commit-msg**: Validate commit message format (Conventional Commits)
-- **pre-push**: Run all verifiers (structure, routes, imports, theme, typecheck)
+| Command | Purpose |
+|---------|---------|
+| `pnpm gen:feature <name> --route <path>` | Generate new feature |
+| `pnpm gen:feature <name> --route <path> --register` | Generate and register in routes |
 
 ## Technology Stack
 
-- **Framework**: Angular 21+ (standalone components)
-- **Language**: TypeScript (strict mode)
-- **Package Manager**: pnpm
-- **Testing**: Vitest (Angular CLI default)
-- **Linting**: ESLint 9 (flat config) + Angular ESLint
-- **Formatting**: Prettier with Tailwind plugin
-- **Design System**: Angular Material + Tailwind CSS v4 (no token pipeline)
-- **State Management**: Signals + route-scoped providers
-- **CI/CD**: GitHub Actions with semantic-release
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | Angular 21+ (standalone components) |
+| **Language** | TypeScript (strict mode) |
+| **Styling** | Tailwind CSS 4.1.18 + Angular Material 21.1.0 |
+| **Package Manager** | pnpm |
+| **Testing** | Vitest 4.0.17 (jsdom environment) |
+| **Linting** | ESLint 9.39.2 (flat config, TypeScript strict) |
+| **Formatting** | Prettier 3.8.1 (with Tailwind plugin) |
+| **Git Hooks** | Husky 9.1.7 (pre-commit, commit-msg, pre-push) |
+| **Commits** | commitlint 20.3.1 (Conventional Commits) |
 
 ## Architecture Highlights
 
-### Route-First Vertical Slices
+### Route-First Organization
 
-Features are organized by route, not by type. Each feature is a self-contained vertical slice with its own routes, components, data access, and state.
-
-### Theming
-
-- Angular Material theme is defined once in `src/theme.scss` using built-in palettes.
-- Tailwind v4 utilities are available via `src/tailwind.gen.css` (precompiled from `src/tailwind.input.css`).
-- No design-token generation or M3 overrides are included; customize palettes directly in `src/theme.scss` or Tailwind config.
+Features are organized by **route**, not by type. Each feature is a self-contained vertical slice with:
+- Route definition (`*.routes.ts`)
+- Routed component (`*.page.ts`)
+- Data access (`*.data.ts`)
+- State management (`*.state.ts`)
+- Type definitions (`*.models.ts`)
 
 ### Quality Gates by Default
 
-The repository enforces quality through:
+The repository enforces quality at every step:
 
-- Pre-commit formatting and linting
-- Pre-push structural verification
-- CI validation of all gates before merge
-- Type-aware ESLint rules
-- Comprehensive test coverage
+| Gate | When | Enforces |
+|------|------|----------|
+| **Pre-commit** | Before commit | Code formatting and linting |
+| **Commit-msg** | During commit | Conventional commit format |
+| **Pre-push** | Before push | Tests, structure, routes, imports |
+| **CI** | On pull request | All gates must pass |
 
-### Explicit Boundaries
+### Verification System
 
-- HTTP calls only in `*.data.ts` files
-- No cross-feature imports
-- Route-scoped dependency injection
-- Component isolation via ESLint rules
+Automatic verification prevents common mistakes:
 
-## Multi-Brand Support
+- ✓ **Structure** – Validates feature folder layout
+- ✓ **App routes** – Ensures lazy-loaded route composition
+- ✓ **Feature routes** – Validates route providers and loaders
+- ✓ **Cross-feature imports** – Prevents feature isolation violations
+- ✓ **Raw colors** – Detects hardcoded colors
 
-The theme system supports multiple brands with light/dark modes:
+## Documentation
 
-```typescript
-// Toggle theme mode
-themeService.setMode('dark');
+All documentation lives in the `docs/` folder:
 
-// Switch brand
-themeService.setBrand('brandB');
+| Document | Purpose |
+|----------|---------|
+| **[docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)** | Daily development workflows and common tasks |
+| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | Authoritative architectural rules and patterns (READ THIS FIRST) |
+| **[docs/PATTERNS.md](docs/PATTERNS.md)** | Common implementation patterns and examples |
+| **[docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** | Testing guidelines and best practices |
+| **[docs/THEMING_GUIDE.md](docs/THEMING_GUIDE.md)** | Styling with Tailwind CSS and Angular Material |
+| **[docs/API_GUIDE.md](docs/API_GUIDE.md)** | Backend API integration and HTTP clients |
+| **[docs/AI_AGENT_GUIDE.md](docs/AI_AGENT_GUIDE.md)** | Tips for AI-assisted development |
+| **[docs/POST_BOOTSTRAP_GUIDE.md](docs/POST_BOOTSTRAP_GUIDE.md)** | Post-bootstrap validation and troubleshooting |
+| **[docs/VERIFICATION_SYSTEM.md](docs/VERIFICATION_SYSTEM.md)** | How verification gates work |
+| **[docs/VERIFICATION_QUICK_REF.md](docs/VERIFICATION_QUICK_REF.md)** | Quick reference for gate commands |
+| **[tools/scripts/README.md](tools/scripts/README.md)** | Verification and generation script documentation |
 
-// Follow system preference
-themeService.setFollowSystem(true);
+## Getting Started
+
+1. **Read** [docs/POST_BOOTSTRAP_GUIDE.md](docs/POST_BOOTSTRAP_GUIDE.md) for post-bootstrap validation
+2. **Review** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) to understand architectural rules
+3. **Follow** [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md) for daily workflows
+4. **Generate** your first feature with `pnpm gen:feature MyFeature --route my-feature`
+5. **Code** with confidence – gates will catch errors at commit/push time
+
+## Git Workflow
+
+```bash
+# Create a feature branch
+git checkout -b feature/my-feature
+
+# Make changes and commit
+git add .
+git commit -m "feat: add my feature"  # Pre-commit hook runs automatically
+
+# Push when ready
+git push origin feature/my-feature    # Pre-push hook runs all verifiers
+
+# Create pull request
+# CI validates all gates before merge
 ```
 
-Theme classes are applied to `<html>`:
+## Development Workflow Example
 
-```html
-<html class="theme-brandA theme-light"></html>
+```bash
+# Start development
+pnpm dev
+
+# In another terminal, generate a feature
+pnpm gen:feature Dashboard --route dashboard
+
+# Edit the generated feature files
+# Hot reload automatically updates your browser
+
+# When ready to commit
+git add src/app/features/dashboard
+git commit -m "feat: add dashboard feature"
+
+# Pre-commit hook runs:
+# ✓ Prettier formatting
+# ✓ ESLint linting
+# ✓ Auto-fixes applied
+
+# When ready to push
+git push origin feature/dashboard
+
+# Pre-push hook runs:
+# ✓ Unit tests
+# ✓ Structure verification
+# ✓ Route verification
+# ✓ Feature isolation verification
+# ✓ Color verification
 ```
 
-## Getting Help
+## Support
 
-- Check **[AI_AGENT_GUIDE.md](AI_AGENT_GUIDE.md)** for AI-assisted development patterns
-- Review **[ARCHITECTURE.md](ARCHITECTURE.md)** for structural constraints
-- See **[DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md)** for common tasks
-- Run `pnpm verify` to catch issues early
+- **Stuck on something?** → See [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)
+- **Need architectural guidance?** → Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- **Want to understand patterns?** → Check [docs/PATTERNS.md](docs/PATTERNS.md)
+- **Testing questions?** → See [docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)
+- **AI-assisted development?** → Use [docs/AI_AGENT_GUIDE.md](docs/AI_AGENT_GUIDE.md)
 
-## Contributing
+## Quick Reference
 
-1. Create a feature branch from `main`
-2. Follow architectural patterns in `ARCHITECTURE.md`
-3. Ensure `pnpm verify` passes
-4. Use conventional commit messages
-5. Create a pull request
+```bash
+# Development
+pnpm dev              # Start dev server
+pnpm test:watch       # Run tests in watch mode
 
-All PRs require:
+# Quality
+pnpm verify           # Run all gates
+pnpm format           # Format code
+pnpm lint:fix         # Fix linting issues
 
-- Passing CI checks
-- Code review approval
-- Up-to-date token outputs (if modified)
+# Features
+pnpm gen:feature Dashboard --route dashboard
+pnpm gen:feature Dashboard --route dashboard --register
 
-## License
+# Commits
+git commit -m "feat: add dashboard"  # Conventional Commits format
+```
 
-[Specify License]
+## Troubleshooting
+
+**"Pre-commit hook failed"**
+```bash
+pnpm format           # Fix formatting
+pnpm lint:fix         # Fix linting
+git add . && git commit -m "fix: resolve issues"
+```
+
+**"Pre-push hook blocked my push"**
+```bash
+pnpm test             # Check tests
+pnpm verify           # Run all verifiers
+git push              # Try again
+```
+
+**"Feature generation didn't work"**
+```bash
+pnpm gen:feature FeatureName --route feature-name
+```
+
+## Resources
+
+- [Angular Documentation](https://angular.io)
+- [Tailwind CSS Documentation](https://tailwindcss.com)
+- [Angular Material Documentation](https://material.angular.io)
+- [ESLint Documentation](https://eslint.org)
+- [Vitest Documentation](https://vitest.dev)
+
+---
+
+**Ready to develop?** Start with `pnpm dev` and read [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)! 🚀
