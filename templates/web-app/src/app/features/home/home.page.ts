@@ -30,14 +30,16 @@ import { ThemeService } from '../../shared/services/theme.service';
     MatIconModule,
     MatProgressSpinnerModule,
   ],
-  styles: [`
-    /* Example: Override Material theme tokens for a specific button */
-    #custom-brand-button {
-      /* Override Material primary color with a custom Tailwind token */
-      --mat-sys-primary: var(--color-accent) !important;
-      --mat-sys-on-primary: var(--color-accent-contrast) !important;
-    }
-  `],
+  styles: [
+    `
+      /* Example: Override Material theme tokens for a specific button */
+      #custom-brand-button {
+        /* Override Material primary color with a custom Tailwind token */
+        --mat-sys-primary: var(--color-accent) !important;
+        --mat-sys-on-primary: var(--color-accent-contrast) !important;
+      }
+    `,
+  ],
   template: `
     <div class="home-page max-w-7xl mx-auto">
       <!-- Hero section with Tailwind utilities -->
@@ -69,8 +71,9 @@ import { ThemeService } from '../../shared/services/theme.service';
         </mat-card-header>
         <mat-card-content class="pt-4">
           <p class="text-sm mb-4">
-            This demonstrates overriding Material Design tokens using Tailwind design tokens.
-            Both buttons below are Material components, but the right one uses custom CSS variable overrides.
+            This demonstrates overriding Material Design tokens using Tailwind design tokens. Both
+            buttons below are Material components, but the right one uses custom CSS variable
+            overrides.
           </p>
           <div class="flex flex-wrap gap-4 mb-4">
             <div>
@@ -89,9 +92,11 @@ import { ThemeService } from '../../shared/services/theme.service';
             </div>
           </div>
           <p class="text-xs mt-3 opacity-70">
-            💡 The right button overrides Material tokens via CSS variables in <code class="px-1 py-0.5 bg-white rounded">home.page.ts</code> styles.
-            Define custom tokens in <code class="px-1 py-0.5 bg-white rounded">src/tailwind.css</code> and use
-            <code class="px-1 py-0.5 bg-white rounded">mat.theme-overrides()</code> in <code class="px-1 py-0.5 bg-white rounded">src/styles.scss</code>
+            💡 The right button overrides Material tokens via CSS variables in
+            <code class="px-1 py-0.5 bg-white rounded">home.page.ts</code> styles. Define custom
+            tokens in <code class="px-1 py-0.5 bg-white rounded">src/tailwind.css</code> and use
+            <code class="px-1 py-0.5 bg-white rounded">mat.theme-overrides()</code> in
+            <code class="px-1 py-0.5 bg-white rounded">src/styles.scss</code>
           </p>
         </mat-card-content>
       </mat-card>
@@ -167,7 +172,8 @@ import { ThemeService } from '../../shared/services/theme.service';
           <mat-card-content class="pt-4">
             <p class="mb-4 text-sm">
               This scaffold demonstrates how Angular Material works alongside Tailwind CSS v4.
-              Material provides theming via <code>mat.theme()</code>, Tailwind provides utility classes and design tokens.
+              Material provides theming via <code>mat.theme()</code>, Tailwind provides utility
+              classes and design tokens.
             </p>
             <div class="flex flex-col gap-3">
               <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
@@ -177,7 +183,8 @@ import { ThemeService } from '../../shared/services/theme.service';
                 <strong>Tailwind:</strong> Design tokens in <code>src/tailwind.css</code>
               </div>
               <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
-                <strong>Integration:</strong> Use <code>mat.theme-overrides()</code> to apply Tailwind tokens to Material
+                <strong>Integration:</strong> Use <code>mat.theme-overrides()</code> to apply
+                Tailwind tokens to Material
               </div>
             </div>
           </mat-card-content>
