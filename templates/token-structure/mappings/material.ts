@@ -14,7 +14,8 @@ import type { MappingGroup } from './types';
  */
 export const material: MappingGroup = {
   type: 'material',
-  description: 'Material Angular system tokens mapped to M3 design tokens from Material Theme Builder',
+  description:
+    'Material Angular system tokens mapped to M3 design tokens from Material Theme Builder',
   map: {
     // Primary color tokens
     'mat-sys-primary': '--md-sys-color-primary',

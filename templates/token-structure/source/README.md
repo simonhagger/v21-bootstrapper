@@ -9,10 +9,12 @@ This directory contains the **single source of truth** for Material Design 3 sys
 ## Material Theme Builder Format
 
 The `material-theme.json` file is exported from the official Material Theme Builder:
+
 - **Figma Plugin**: https://www.figma.com/community/plugin/1034969338659738588/material-theme-builder
 - **Web Tool**: https://material-foundation.github.io/material-theme-builder/
 
 This format provides **complete Material Design 3 token coverage** including:
+
 - All semantic color roles (primary, secondary, tertiary, error)
 - All surface and container tokens
 - All fixed and inverse tokens
@@ -65,7 +67,7 @@ The build process converts Material Theme Builder camelCase tokens to M3 CSS var
 ```
 Material Theme Builder: { "primary": "#31628D", "surfaceContainerLowest": "#FFFFFF" }
               ↓
-M3 Format: { 
+M3 Format: {
   "--md-sys-color-primary": "#31628D",
   "--md-sys-color-surface-container-lowest": "#FFFFFF"
 }
@@ -93,6 +95,7 @@ M3 Format: {
 ### Semantic Colors
 
 **Primary Color Family**
+
 - `primary`, `onPrimary`
 - `primaryContainer`, `onPrimaryContainer`
 - `primaryFixed`, `onPrimaryFixed`
@@ -100,22 +103,26 @@ M3 Format: {
 - `inversePrimary`
 
 **Secondary Color Family**
+
 - `secondary`, `onSecondary`
 - `secondaryContainer`, `onSecondaryContainer`
 - `secondaryFixed`, `onSecondaryFixed`
 - `onSecondaryFixedVariant`, `secondaryFixedDim`
 
 **Tertiary Color Family**
+
 - `tertiary`, `onTertiary`
 - `tertiaryContainer`, `onTertiaryContainer`
 - `tertiaryFixed`, `onTertiaryFixed`
 - `onTertiaryFixedVariant`, `tertiaryFixedDim`
 
 **Error Color Family**
+
 - `error`, `onError`
 - `errorContainer`, `onErrorContainer`
 
 **Surface Color Family**
+
 - `surface`, `onSurface`
 - `surfaceVariant`, `onSurfaceVariant`
 - `surfaceTint`
@@ -125,9 +132,11 @@ M3 Format: {
 - `inverseSurface`, `inverseOnSurface`
 
 **Outline Colors**
+
 - `outline`, `outlineVariant`
 
 **Utility Colors**
+
 - `background`, `onBackground`
 - `shadow`, `scrim`
 
@@ -146,6 +155,7 @@ M3 Format: {
 To use a different contrast level (e.g., high-contrast for accessibility):
 
 Edit `generators/token-io.ts` and change:
+
 ```typescript
 // From:
 const schemeData = themeBuilder.schemes['light'];
@@ -171,5 +181,3 @@ The `pnpm verify:tokens` script ensures:
 - All required schemes exist (light, dark)
 - All Material system tokens have corresponding M3 tokens
 - Generated dist files are up-to-date
-
-

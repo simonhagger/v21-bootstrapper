@@ -16,7 +16,7 @@ Each mapping type generates a corresponding CSS output that references M3 tokens
 - `types.ts` - TypeScript types for mapping structure
 - `index.ts` - Exports all mappings + `getMappingFor()` helper
 - `colors.ts` - Tailwind color utility mappings (semantic colors only)
-- `material.ts` - Material Angular `--mat-sys-*` system token mappings  
+- `material.ts` - Material Angular `--mat-sys-*` system token mappings
 - `radii.ts` - Tailwind border radius mappings
 
 ## Mapping Types
@@ -108,9 +108,10 @@ const shapeMappings = getMappingFor(['radii', 'material']);
    export type MappingType = 'colors' | 'material' | 'radii' | 'bootstrap';
    ```
 4. Add to `ALL_MAPPINGS` array in `index.ts`:
+
    ```typescript
    import { bootstrap } from './bootstrap';
-   
+
    export const ALL_MAPPINGS: readonly MappingGroup[] = [
      colors,
      material,
@@ -118,6 +119,7 @@ const shapeMappings = getMappingFor(['radii', 'material']);
      bootstrap, // Add here
    ];
    ```
+
 5. Add writer function in `generators/css-writers.ts` if custom format needed
 6. Call writer in `generators/build-tokens.ts`
 7. Run `pnpm tokens:build` to generate output
@@ -135,7 +137,7 @@ The build process validates:
 Each mapping type generates CSS in `projects/tokens/dist/`:
 
 - **Tailwind mappings** → `tailwind.theme.css` (combined colors + radii + others)
-- **Material mapping** → `material.system.css`  
+- **Material mapping** → `material.system.css`
 - Future framework mappings → their own CSS files
 
 All outputs reference the same M3 token values, ensuring visual consistency across frameworks.
