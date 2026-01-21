@@ -107,7 +107,8 @@ import { MatIconModule } from '@angular/material/icon';
             </p>
             <div class="flex flex-col gap-3">
               <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
-                <strong>Material:</strong> Theme configured via <code>ng add @angular/material</code>
+                <strong>Material:</strong> Theme configured via
+                <code>ng add @angular/material</code>
               </div>
               <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
                 <strong>Tailwind:</strong> Utilities from <code>ng add tailwindcss</code>
