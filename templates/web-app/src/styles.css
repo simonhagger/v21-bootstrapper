@@ -1,20 +1,9 @@
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
-@import '../../tokens/dist/tailwind.theme.css';
-@import '../../tokens/dist/m3.css';
-@import '../../tokens/dist/material.system.css';
-
-/* Global styles */
-/**
- * Theming Setup:
- *
- * 1. Material prebuilt theme (indigo-pink.css) provides Material component styles
- * 2. Material system tokens (material.system.css) override Material's --mat-sys-* vars with M3 tokens
- * 3. M3 tokens (m3.css) provide semantic color variables for custom components
- *
- * Material components automatically pick up M3 colors via CSS variable overrides.
- * Custom components use M3 CSS variables directly (--md-sys-color-*).
- * Theme switching via html.dark-theme class updates all tokens.
+/* Global baseline styles
+ * Theme and utilities are imported via angular.json styles:
+ *  - node_modules/@angular/material/prebuilt-themes/azure-blue.css (baseline Material theme)
+ *  - projects/web/src/theme.scss (Material theme entry)
+ *  - projects/web/src/tailwind.input.css (Tailwind v4 entry)
+ *  - projects/web/src/styles.css (this file)
  */
 
 :root {
@@ -26,22 +15,6 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
+  background: #f8fafc;
+  color: #0f172a;
 }
-/*
- * Theming Strategy:
- *
- * Light theme is the default (:root).
- * Dark theme is activated by adding the 'dark-theme' class to <html> element.
- *
- * CSS variable override hierarchy:
- *   1. :root defines light theme (M3 light palette)
- *   2. html.dark-theme redefines all vars with M3 dark palette
- *   3. Material components use --mat-sys-* which reference --md-sys-color-*
- *   4. All M3 color tokens generated from Material Theme Builder export
- *
- * Token source: projects/tokens/src/source/material-theme.json
- * Build command: pnpm tokens:build
- */
-

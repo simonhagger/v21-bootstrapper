@@ -93,18 +93,23 @@ if (-not (Test-Path "angular.json")) {
       $_.Name -ne 'environments'
     } | Remove-Item -Recurse -Force
 
-    # Copy src-level files (main.ts)
+    # Copy src-level files (main.ts, styles, theme)
     if (Test-Path $templateSrcPath) {
       Get-ChildItem -Path $templateSrcPath -File | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination $targetSrcPath -Force
       }
     }
 
+    # Copy template app files (excluding app.config.ts which ng add handles)
+    Get-ChildItem -Path $templateAppPath -Force | ForEach-Object {
+      if ($_.Name -ne 'app.config.ts') {
+        Copy-Item -Path $_.FullName -Destination $targetAppPath -Recurse -Force
+      }
+    }
     # Copy template app files
     Get-ChildItem -Path $templateAppPath -Force | ForEach-Object {
       Copy-Item -Path $_.FullName -Destination $targetAppPath -Recurse -Force
     }
-    Write-Host "  Template app structure deployed"
   } else {
     Write-Host "  Warning: template app structure not found at $templateAppPath"
   }
@@ -191,8 +196,15 @@ if (-not (Test-Path (Join-Path $repoRoot "projects/web/tsconfig.app.json"))) {
 Write-Host "==> Installing dependencies"
 pnpm install
 
+  # Install Material + Tailwind dependencies (manual install to avoid schematic conflicts)
+  Write-Host "==> Installing Material Design + Tailwind dependencies"
+  pnpm add `
+    "@angular/material" "@angular/cdk" "@angular/animations"
+  pnpm add -D `
+    tailwindcss "@tailwindcss/postcss"
+
 # Generate libraries
-$libs = @("core","ui","tokens","a11y","shell")
+$libs = @("core","ui","a11y","shell")
 Write-Host "==> Generating libraries (if missing)"
 foreach ($lib in $libs) {
   if (Test-Path ("projects\" + $lib)) {
@@ -202,15 +214,8 @@ foreach ($lib in $libs) {
   }
 }
 
-# Install Material + Tailwind + theming dependencies
-Write-Host "==> Installing Material Design + Tailwind dependencies"
-pnpm add `
-  "@angular/material" "@angular/cdk" "@angular/animations"
-
-# Install tooling
-Write-Host "==> Installing dev tooling dependencies"
+# Install tooling dependencies
 pnpm add -D `
-  tailwindcss "@tailwindcss/postcss" `
   eslint "@eslint/js" typescript-eslint angular-eslint `
   prettier prettier-plugin-tailwindcss `
   husky lint-staged `
@@ -226,29 +231,9 @@ pnpm add -D `
 
 # Write repo files/configs
 Write-Host "==> Writing repo configuration files"
-$writeArgs = @("-Force")
+$writeArgs = @()
 if ($Force) { $writeArgs += "-Force" }
 pwsh (Join-Path $scriptDir "write-files.ps1") @writeArgs
-
-# Create token source structure for M3 + Tailwind theming
-Write-Host "==> Setting up token generation structure"
-$tokenTemplateDir = Join-Path $scriptDir "templates/token-structure"
-
-if (Test-Path $tokenTemplateDir) {
-  # Ensure destination directories exist before copying
-  New-Item -ItemType Directory -Force -Path "projects/tokens/src" | Out-Null
-  New-Item -ItemType Directory -Force -Path "projects/tokens/src/source" | Out-Null
-  New-Item -ItemType Directory -Force -Path "projects/tokens/src/mappings" | Out-Null
-  New-Item -ItemType Directory -Force -Path "projects/tokens/src/generators" | Out-Null
-
-  Copy-Item -Path (Join-Path $tokenTemplateDir "source/*") -Destination "projects/tokens/src/source" -Recurse -Force
-  Copy-Item -Path (Join-Path $tokenTemplateDir "mappings/*") -Destination "projects/tokens/src/mappings" -Recurse -Force
-  Copy-Item -Path (Join-Path $tokenTemplateDir "generators/*") -Destination "projects/tokens/src/generators" -Recurse -Force
-  Copy-Item -Path (Join-Path $tokenTemplateDir "DIST_STRATEGY.md") -Destination "projects/tokens/" -Force
-  Write-Host " - Token structure deployed"
-} else {
-  Write-Host " - Token structure templates not found (skipping)"
-}
 
 # Create core theme service
 Write-Host "==> Setting up theme service"
@@ -300,18 +285,70 @@ if (Test-Path $shellTemplateDir) {
   Write-Host " - Shell layout templates not found (skipping)"
 }
 
-# Build design tokens from sources
-Write-Host "==> Building design tokens from sources"
-try {
-  pnpm exec tsx "projects/tokens/src/generators/build-tokens.ts"
-  if ($LASTEXITCODE -eq 0) {
-    Write-Host " - Design tokens built successfully"
-  } else {
-    Write-Host " - Warning: Token build returned non-zero exit code (this may be expected for bootstrap)"
+# Install Tailwind CSS v4 dependencies (schematic not available, manual install)
+Write-Host "==> Installing Tailwind CSS v4"
+pnpm add -D tailwindcss "@tailwindcss/postcss"
+
+# Configure app styling (Tailwind + custom styles on top of Material setup)
+Write-Host "==> Configuring application styles"
+node -e @'
+const fs = require('fs');
+const angularJsonPath = 'angular.json';
+const angularJson = JSON.parse(fs.readFileSync(angularJsonPath, 'utf8'));
+
+// Add Tailwind input and custom styles to the styles array
+// Material schematic already added material theme and fonts
+const appName = Object.keys(angularJson.projects || {})
+  .find(name => angularJson.projects[name].projectType === 'application');
+
+if (appName) {
+  const styleEntries = [
+    'node_modules/@angular/material/prebuilt-themes/azure-blue.css',
+    'projects/web/src/styles.css',
+    'projects/web/src/tailwind.input.css',
+  ];
+
+  function ensureStyles(target) {
+    if (!target || !target.options) return;
+    const styles = target.options.styles ?? [];
+    for (const entry of styleEntries) {
+      if (!styles.includes(entry)) {
+        styles.push(entry);
+      }
+    }
+    target.options.styles = styles;
   }
-} catch {
-  Write-Host " - Token build not yet available (will be generated on first use)"
+
+  const build = angularJson.projects?.[appName]?.architect?.build;
+  const test = angularJson.projects?.[appName]?.architect?.test;
+  ensureStyles(build);
+  ensureStyles(test);
+
+  fs.writeFileSync(angularJsonPath, JSON.stringify(angularJson, null, 2) + '\n');
 }
+'@
+
+# Ensure Material Icons font is available in index.html
+Write-Host "==> Ensuring Material Icons font"
+node -e @'
+const fs = require('fs');
+const path = require('path');
+const angularJson = JSON.parse(fs.readFileSync('angular.json', 'utf8'));
+const appName = Object.keys(angularJson.projects || {})
+  .find(name => angularJson.projects[name].projectType === 'application');
+
+if (!appName) process.exit(0);
+const sourceRoot = angularJson.projects[appName]?.sourceRoot || 'projects/web/src';
+const indexPath = path.join(sourceRoot, 'index.html');
+if (!fs.existsSync(indexPath)) process.exit(0);
+
+const linkTag = '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />';
+const html = fs.readFileSync(indexPath, 'utf8');
+if (html.includes('fonts.googleapis.com/icon')) process.exit(0);
+
+const updated = html.replace('</head>', `  ${linkTag}\n  </head>`);
+fs.writeFileSync(indexPath, updated);
+'@
 
 # Husky hooks (deterministic policy)
 Write-Host "==> Initializing Husky hooks"
@@ -342,11 +379,9 @@ pnpm verify:structure
 pnpm verify:app-routes
 pnpm verify:feature-routes
 pnpm verify:no-cross-feature-imports
-pnpm verify:theme-contract
-pnpm verify:no-raw-colors
-pnpm verify:tokens
 pnpm lint
 pnpm typecheck
+pnpm test:ci
 "@ | Set-Content -Encoding Ascii ".husky/pre-push"
 
 # Ensure executable bit is set in git

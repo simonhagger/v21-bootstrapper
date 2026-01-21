@@ -1,15 +1,18 @@
-# Project Name
+## Overview
 
-> Industrial-strength Angular workspace with unified M3 Material Design theming for Angular Material and Tailwind CSS, plus comprehensive quality gates.
+Industrial-strength Angular workspace with Tailwind CSS v4 and Angular Material installed by default. The scaffold keeps all the structural guardrails (lint, tests, route checks, git hooks) but does not include design-token generation or M3 override pipelines.
+
+What you get:
+- Angular Material ready to use with a small starter theme in `src/theme.scss`.
+- Tailwind v4 wired through `src/tailwind.input.css` (precompile to `src/tailwind.gen.css`).
+- Clean global styles without token coupling between Material and Tailwind.
+- All verification scripts for structure, routes, and imports.
 
 ## Quick Start
 
 ```bash
 # Install dependencies
 pnpm install
-
-# Generate tokens (creates M3 + Material system tokens + Tailwind theme)
-pnpm tokens:build
 
 # Start development server
 pnpm start
@@ -59,10 +62,7 @@ pnpm verify
 - **[docs/API_GUIDE.md](docs/API_GUIDE.md)** - Backend integration (interceptors, environment, type safety)
 
 ### Design System & Theming
-
-- **[docs/THEMING_GUIDE.md](docs/THEMING_GUIDE.md)** - Unified M3 theming for Material + Tailwind (CSS-only, no Sass)
-- **[tokens/src/README.md](tokens/src/README.md)** - Token system architecture and workflow
-- **[tokens/DIST_STRATEGY.md](tokens/DIST_STRATEGY.md)** - Why token outputs are committed
+- **[docs/THEMING_GUIDE.md](docs/THEMING_GUIDE.md)** - Minimal guidance for using Tailwind v4 alongside Angular Material
 
 ### AI Agent Development
 
@@ -100,15 +100,6 @@ pnpm verify                # Run all gates (CI equivalent)
 pnpm gen:feature Dashboard --route dashboard --register
 ```
 
-### Design Tokens
-
-```bash
-pnpm tokens:build          # Generate CSS from token sources
-pnpm verify:theme-contract # Validate mappings against sources
-pnpm verify:no-raw-colors  # Ensure no hardcoded hex values
-pnpm verify:tokens         # Verify dist is in sync
-```
-
 ## Git Hooks
 
 Pre-configured hooks enforce quality at commit/push time:
@@ -125,7 +116,7 @@ Pre-configured hooks enforce quality at commit/push time:
 - **Testing**: Vitest (Angular CLI default)
 - **Linting**: ESLint 9 (flat config) + Angular ESLint
 - **Formatting**: Prettier with Tailwind plugin
-- **Design System**: Angular Material (M3) + Tailwind CSS v4
+- **Design System**: Angular Material + Tailwind CSS v4 (no token pipeline)
 - **State Management**: Signals + route-scoped providers
 - **CI/CD**: GitHub Actions with semantic-release
 
@@ -135,14 +126,11 @@ Pre-configured hooks enforce quality at commit/push time:
 
 Features are organized by route, not by type. Each feature is a self-contained vertical slice with its own routes, components, data access, and state.
 
-### Unified M3 Theming
+### Theming
 
-Material Design 3 tokens are the single source of truth for both Angular Material and custom UI:
-
-- **Material components** use M3 tokens via `material.system.css` (75+ `--mat-sys-*` mappings)
-- **Tailwind utilities** use M3 tokens via `tailwind.theme.css`
-- **No Sass compilation** required - pure CSS variable redefinition
-- **Single theme change** updates both Material and custom components automatically
+- Angular Material theme is defined once in `src/theme.scss` using built-in palettes.
+- Tailwind v4 utilities are available via `src/tailwind.gen.css` (precompiled from `src/tailwind.input.css`).
+- No design-token generation or M3 overrides are included; customize palettes directly in `src/theme.scss` or Tailwind config.
 
 ### Quality Gates by Default
 

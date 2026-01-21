@@ -115,10 +115,10 @@ Based on my thorough review of the repository against the documented standards i
 ```typescript
 export const HOME_ROUTES: Routes = [
   {
-    path: "",
+    path: '',
     component: HomePage, // ❌ VIOLATION
     providers: [],
-    data: { title: "Home" },
+    data: { title: 'Home' },
   },
 ];
 ```
@@ -132,9 +132,9 @@ export const HOME_ROUTES: Routes = [
 ```typescript
 export const HOME_ROUTES: Routes = [
   {
-    path: "",
+    path: '',
     providers: [],
-    loadComponent: () => import("./home.page").then((m) => m.HomePage),
+    loadComponent: () => import('./home.page').then((m) => m.HomePage),
   },
 ];
 ```
@@ -164,7 +164,7 @@ template: `
 
 ```typescript
 @Component({
-  selector: "app-home",
+  selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
@@ -395,10 +395,10 @@ Now correctly uses `loadComponent` for lazy loading:
 ```typescript
 export const HOME_ROUTES: Routes = [
   {
-    path: "",
+    path: '',
     providers: [],
-    loadComponent: () => import("./home.page").then((m) => m.HomePage),
-    data: { title: "Home" },
+    loadComponent: () => import('./home.page').then((m) => m.HomePage),
+    data: { title: 'Home' },
   },
 ];
 ```
@@ -415,7 +415,7 @@ Now has proper `@Component` decorator with complete configuration:
 
 ```typescript
 @Component({
-  selector: "app-home",
+  selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
@@ -544,7 +544,7 @@ The repository includes comprehensive documentation:
 
 **Specialized Guides:**
 
-- THEMING_GUIDE.md - M3 + Tailwind integration
+- THEMING_GUIDE.md - Material + Tailwind integration (no token pipeline)
 - API_GUIDE.md - Backend communication
 - TESTING_GUIDE.md - Testing practices
 
@@ -564,8 +564,7 @@ All documentation is well-structured and cross-referenced ✅
 
 - Development: `start`, `build`, `test` ✅
 - Quality: `lint`, `format`, `typecheck` ✅
-- Verification: 7 verification scripts ✅
-- Tokens: `tokens:build` + 3 token verifiers ✅
+- Verification scripts ✅
 - Generators: `gen:feature` ✅
 - Comprehensive `verify` command that runs all gates ✅
 
@@ -580,13 +579,9 @@ All documentation is well-structured and cross-referenced ✅
 
 ### ✅ **Theme System**
 
-**Design Token Architecture:**
-
-- M3 tokens as single source of truth ✅
-- Tailwind references M3 variables ✅
-- Multi-brand support (brandA, brandB) ✅
-- Light/dark mode support ✅
-- Theme service in core with `providedIn: 'root'` ✅
+- Angular Material theme defined in `src/theme.scss` ✅
+- Tailwind v4 utilities precompiled from `src/tailwind.input.css` ✅
+- Light/dark can be added via scoped themes if desired ✅
 
 **Example Usage in Components:**
 

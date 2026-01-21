@@ -7,7 +7,6 @@
 ```bash
 # Start fresh
 pnpm install
-pnpm tokens:build
 pnpm start
 
 # Browser opens to http://localhost:4200
@@ -118,96 +117,6 @@ pnpm gen:feature UserProfile --route user-profile --register
      }
    }
    ```
-
-### Working with Design Tokens
-
-#### Modifying Token Sources
-
-1. **Edit source files:**
-
-   ```bash
-   # Light theme
-   vim tokens/src/source/tokens.light.json
-
-   # Dark theme
-   vim tokens/src/source/tokens.dark.json
-   ```
-
-2. **Regenerate CSS:**
-
-   ```bash
-   pnpm tokens:build
-   ```
-
-3. **Verify changes:**
-
-   ```bash
-   pnpm verify:tokens
-   pnpm verify:theme-contract
-   ```
-
-4. **Commit both source and dist:**
-   ```bash
-   git add tokens/src/source tokens/dist
-   git commit -m "feat(tokens): update color palette"
-   ```
-
-#### Adding New Token Mappings
-
-1. **Edit mapping file** (e.g., `tokens/src/mappings/colors.ts`):
-
-   ```typescript
-   export const colors: MappingGroup = {
-     type: 'colors',
-     map: {
-       'color-primary': '--md-sys-color-primary',
-       'color-tertiary': '--md-sys-color-tertiary', // NEW
-     },
-   };
-   ```
-
-2. **Ensure token exists in both themes:**
-
-   ```json
-   // tokens.light.json
-   {
-     "--md-sys-color-tertiary": "#7D5260"
-   }
-
-   // tokens.dark.json
-   {
-     "--md-sys-color-tertiary": "#EFB8C8"
-   }
-   ```
-
-3. **Regenerate and verify:**
-   ```bash
-   pnpm tokens:build
-   pnpm verify:theme-contract
-   ```
-
-### Theme Switching
-
-The `ThemeService` is automatically available application-wide.
-
-**In components:**
-
-```typescript
-export class ToolbarComponent {
-  private readonly theme = inject(ThemeService);
-
-  readonly mode = this.theme.mode;
-  readonly brand = this.theme.brand;
-
-  toggleDarkMode() {
-    this.theme.toggleMode();
-  }
-
-  switchBrand(brand: ThemeBrand) {
-    this.theme.setBrand(brand);
-  }
-}
-```
 
 **In templates:**
 
@@ -385,23 +294,6 @@ pnpm verify:no-cross-feature-imports
 # Use core/shared instead
 ```
 
-**Theme contract:**
-
-```bash
-pnpm verify:theme-contract
-
-# Ensures all mapped tokens exist in both light/dark
-# Fix: Add missing tokens to JSON sources
-```
-
-**Token sync:**
-
-```bash
-pnpm verify:tokens
-
-# Ensures dist/ matches source
-# Fix: Run pnpm tokens:build and commit
-```
 
 ### Linting Errors
 
@@ -436,12 +328,6 @@ import { UserService } from './service';
 pnpm install
 ```
 
-**Token generation:**
-
-```bash
-pnpm tokens:build
-```
-
 **Clean build:**
 
 ```bash
@@ -456,9 +342,8 @@ pnpm build
 CI runs on every push and PR:
 
 1. **Install dependencies** (`pnpm install --frozen-lockfile`)
-2. **Verify tokens** (`pnpm verify:tokens`)
-3. **Run all gates** (`pnpm verify`)
-4. **Build** (`pnpm build`)
+2. **Run all gates** (`pnpm verify`)
+3. **Build** (`pnpm build`)
 
 ### Semantic Release
 

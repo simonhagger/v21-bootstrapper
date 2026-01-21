@@ -445,26 +445,6 @@ export class MyComponent {
 }
 ```
 
-### Design Token Workflow
-
-**After modifying tokens:**
-
-```bash
-# 1. Edit source files
-vim tokens/src/source/tokens.light.json
-
-# 2. Regenerate CSS
-pnpm tokens:build
-
-# 3. Verify everything
-pnpm verify:tokens
-pnpm verify:theme-contract
-
-# 4. Commit both source and dist
-git add tokens/src/source tokens/dist
-git commit -m "feat(tokens): update primary color"
-```
-
 ## Verification Scripts
 
 Before committing, ensure these pass:
@@ -474,9 +454,7 @@ pnpm verify:structure              # Feature structure validation
 pnpm verify:app-routes             # App routing composition
 pnpm verify:feature-routes         # Feature route structure
 pnpm verify:no-cross-feature-imports # Import boundary enforcement
-pnpm verify:theme-contract         # Token mappings valid
 pnpm verify:no-raw-colors          # No hardcoded hex colors
-pnpm verify:tokens                 # Token dist in sync
 ```
 
 Run all at once:
@@ -725,9 +703,6 @@ See [PATTERNS.md](PATTERNS.md) for more component composition patterns.
 **Need theming?**
 → Inject `ThemeService` or use CSS variables
 
-**Modifying tokens?**
-→ Edit JSON → `pnpm tokens:build` → commit both source and dist
-
 **Before committing?**
 → `pnpm verify`
 
@@ -755,13 +730,6 @@ pnpm verify:no-cross-feature-imports
 
 ```bash
 pnpm lint:fix
-```
-
-**Token mismatch?**
-
-```bash
-pnpm tokens:build
-git add tokens/dist
 ```
 
 **Tests failing?**

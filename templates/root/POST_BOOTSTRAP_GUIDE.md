@@ -115,7 +115,6 @@ Expected structure:
 projects/
 ├── core/                  # Singleton services (present)
 ├── ui/                    # Shared components (present)
-├── tokens/                # Design tokens (present)
 ├── shell/                 # App shell (present)
 └── a11y/                  # Accessibility (present)
 
@@ -131,7 +130,7 @@ Verify all required npm scripts are present:
 
 ```bash
 # Check all scripts
-pnpm run | grep -E "start|build|test|lint|format|verify|gen:feature|tokens:build"
+pnpm run | grep -E "start|build|test|lint|format|verify|gen:feature"
 ```
 
 Should output:
@@ -149,7 +148,6 @@ typecheck                      ng build --configuration development --no-progres
 verify                         pnpm format:check && pnpm lint && ...
 verify:post-bootstrap          node tools/scripts/post-bootstrap-verify.mjs
 gen:feature                    node tools/scripts/generate-feature.mjs
-tokens:build                   node tokens/src/generators/build-tokens.ts
 ```
 
 ### ✓ Git Setup

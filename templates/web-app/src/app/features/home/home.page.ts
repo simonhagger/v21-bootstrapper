@@ -9,13 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 
 /**
  * Home page component
- * Demonstrates Material Design components with M3 tokens and Tailwind utilities
- *
- * This component follows the design pattern of using:
- * - Material components for structural UI
- * - M3 CSS variables for semantic theming
- * - Tailwind utilities for layout, spacing, and responsive design
- * - No inline styles - all styling via class names or Material properties
+ * Demonstrates Angular Material components alongside Tailwind utilities
+ * with minimal theming (no token pipeline).
  */
 @Component({
   selector: 'app-home',
@@ -34,18 +29,16 @@ import { MatIconModule } from '@angular/material/icon';
       <!-- Hero section with Tailwind utilities -->
       <div class="mb-8">
         <h1 class="text-4xl font-bold mb-2">Welcome to Acme Web</h1>
-        <p class="text-lg opacity-75">
-          Demonstrating Angular Material + Tailwind CSS + M3 Design Tokens
-        </p>
+        <p class="text-lg opacity-75">Demonstrating Angular Material + Tailwind CSS</p>
       </div>
 
       <!-- Grid layout using Tailwind -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Card 1: Buttons with M3 Tokens -->
+        <!-- Card 1: Buttons -->
         <mat-card>
           <mat-card-header>
             <mat-card-title>Material Buttons</mat-card-title>
-            <mat-card-subtitle>Button variants using M3 tokens</mat-card-subtitle>
+            <mat-card-subtitle>Button variants with the starter theme</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content class="pt-4">
             <div class="flex flex-col gap-3">
@@ -96,7 +89,7 @@ import { MatIconModule } from '@angular/material/icon';
               <mat-chip>Angular v21</mat-chip>
               <mat-chip>Material Design 3</mat-chip>
               <mat-chip>Tailwind CSS</mat-chip>
-              <mat-chip highlighted>M3 Tokens</mat-chip>
+              <mat-chip highlighted>Tailwind</mat-chip>
             </mat-chip-set>
           </mat-card-content>
         </mat-card>
@@ -105,22 +98,22 @@ import { MatIconModule } from '@angular/material/icon';
         <mat-card>
           <mat-card-header>
             <mat-card-title>Design System</mat-card-title>
-            <mat-card-subtitle>M3 tokens + Tailwind CSS</mat-card-subtitle>
+            <mat-card-subtitle>Material + Tailwind</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content class="pt-4">
             <p class="mb-4 text-sm">
-              This scaffold demonstrates how Material Design 3 tokens integrate with Tailwind CSS
-              utilities. All styling uses semantic color tokens and responsive utilities.
+              This scaffold demonstrates how Angular Material works alongside Tailwind CSS
+              utilities. Styling stays minimal and explicit—no generated tokens.
             </p>
             <div class="flex flex-col gap-3">
               <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900">
-                <strong>M3 Tokens:</strong> CSS variables scoped per theme
+                <strong>Material:</strong> Theme defined once in <code>src/theme.scss</code>
               </div>
               <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900">
-                <strong>Tailwind:</strong> References M3 tokens via @theme
+                <strong>Tailwind:</strong> Utilities from <code>src/tailwind.gen.css</code>
               </div>
               <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900">
-                <strong>Theme Toggle:</strong> Switches between light/dark modes
+                <strong>Theme Toggle:</strong> Optional; add a dark class if needed
               </div>
             </div>
           </mat-card-content>

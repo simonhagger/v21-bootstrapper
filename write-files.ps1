@@ -50,7 +50,7 @@ $rootTemplate = Join-Path $templatesDir "root"
 $rootConfigs = @(
   ".editorconfig", ".gitattributes", ".gitmessage.txt", ".lint-stagedrc.json",
   ".postcssrc.json", ".prettierignore", ".prettierrc.json", ".releaserc.cjs",
-  "commitlint.config.cjs", "eslint.config.mjs"
+  "commitlint.config.cjs", "eslint.config.mjs", "tailwind.config.ts"
 )
 $docFiles = @(
   "AI_AGENT_GUIDE.md", "API_GUIDE.md", "ARCHITECTURE.md", "DEVELOPMENT_GUIDE.md",
@@ -93,18 +93,13 @@ pnpm pkg set scripts.format:check="prettier --check ." 2>$null | Out-Null
 pnpm pkg set scripts.lint="eslint . --max-warnings 0" 2>$null | Out-Null
 pnpm pkg set scripts.lint:fix="eslint . --fix" 2>$null | Out-Null
 
-pnpm pkg set scripts.build="pnpm tokens:build && ng build acme-web" 2>$null | Out-Null
-pnpm pkg set scripts.start="pnpm tokens:build && ng serve acme-web" 2>$null | Out-Null
-pnpm pkg set scripts.typecheck="pnpm tokens:build && ng build acme-web --configuration development --no-progress" 2>$null | Out-Null
+pnpm pkg set scripts.build="ng build acme-web" 2>$null | Out-Null
+pnpm pkg set scripts.start="ng serve acme-web" 2>$null | Out-Null
+pnpm pkg set scripts.typecheck="ng build acme-web --configuration development --no-progress" 2>$null | Out-Null
 
-pnpm pkg set scripts.test="pnpm tokens:build && ng test acme-web --watch=false" 2>$null | Out-Null
-pnpm pkg set scripts.test:watch="pnpm tokens:build && ng test acme-web" 2>$null | Out-Null
-pnpm pkg set scripts.test:ci="pnpm tokens:build && ng test acme-web --watch=false" 2>$null | Out-Null
-
-pnpm pkg set scripts.tokens:build="pnpm exec tsx projects/tokens/src/generators/build-tokens.ts" 2>$null | Out-Null
-pnpm pkg set scripts.verify:theme-contract="node tools/scripts/verify-theme-contract.mjs" 2>$null | Out-Null
-pnpm pkg set scripts.verify:no-raw-colors="node tools/scripts/verify-no-raw-colors.mjs" 2>$null | Out-Null
-pnpm pkg set scripts.verify:tokens="node tools/scripts/verify-tokens.mjs" 2>$null | Out-Null
+pnpm pkg set scripts.test="ng test acme-web --watch=false" 2>$null | Out-Null
+pnpm pkg set scripts.test:watch="ng test acme-web" 2>$null | Out-Null
+pnpm pkg set scripts.test:ci="ng test acme-web --watch=false" 2>$null | Out-Null
 pnpm pkg set scripts.verify:structure="node tools/scripts/verify-structure.mjs" 2>$null | Out-Null
 pnpm pkg set scripts.verify:app-routes="node tools/scripts/verify-app-routes.mjs" 2>$null | Out-Null
 pnpm pkg set scripts.verify:feature-routes="node tools/scripts/verify-feature-routes.mjs" 2>$null | Out-Null
@@ -115,7 +110,7 @@ pnpm pkg set scripts.gen:feature="node tools/scripts/generate-feature.mjs" 2>$nu
 pnpm pkg set scripts.release="semantic-release" 2>$null | Out-Null
 pnpm pkg set scripts.release:dry="semantic-release --dry-run" 2>$null | Out-Null
 
-pnpm pkg set scripts.verify="pnpm format:check && pnpm lint && pnpm verify:structure && pnpm verify:app-routes && pnpm verify:feature-routes && pnpm verify:no-cross-feature-imports && pnpm verify:theme-contract && pnpm verify:no-raw-colors && pnpm verify:tokens && pnpm typecheck && pnpm test:ci" 2>$null | Out-Null
+pnpm pkg set scripts.verify="pnpm format:check && pnpm lint && pnpm verify:structure && pnpm verify:app-routes && pnpm verify:feature-routes && pnpm verify:no-cross-feature-imports && pnpm typecheck && pnpm test:ci" 2>$null | Out-Null
 
 pnpm pkg set scripts.verify:post-bootstrap="node tools/scripts/post-bootstrap-verify.mjs" 2>$null | Out-Null
 

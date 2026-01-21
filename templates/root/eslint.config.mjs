@@ -9,7 +9,7 @@ export default [
       '**/dist/**',
       '**/coverage/**',
       '**/.angular/**',
-      'projects/tokens/dist/**',
+      'tailwind.config.ts',
     ],
   },
 

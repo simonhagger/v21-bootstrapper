@@ -204,7 +204,6 @@ pnpm verify                # Run ALL verification gates
 pnpm verify:post-bootstrap # Re-run post-bootstrap verification
 
 pnpm gen:feature Dashboard # Generate feature scaffold
-pnpm tokens:build          # Generate CSS from tokens
 pnpm release               # Semantic release
 ```
 
@@ -217,7 +216,7 @@ pnpm release               # Semantic release
 ✅ Project structure - follows conventions
 ✅ Route configuration - validated
 ✅ Import boundaries - enforced
-✅ Design tokens - M3 + Tailwind bridge working
+✅ Styling - Material theme + Tailwind utilities wired
 
 ## If Verification Fails
 
