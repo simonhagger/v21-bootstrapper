@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import '../../tokens/dist/material.system.css';
 @import '../../tokens/dist/m3.css';
 
@@ -6,17 +7,13 @@
 /**
  * Theming Setup:
  *
- * Material theme (material-theme.scss) and M3 tokens (m3.css) are loaded via angular.json.
- * This ensures proper compilation order:
- *   1. material-theme.scss (Sass compilation for Material components)
- *   2. styles.css (this file - global styles)
- *   3. M3 tokens would be available via Tailwind utilities
+ * 1. Material prebuilt theme (indigo-pink.css) provides Material component styles
+ * 2. Material system tokens (material.system.css) override Material's --mat-sys-* vars with M3 tokens
+ * 3. M3 tokens (m3.css) provide semantic color variables for custom components
  *
- * Material components use Material theming (Sass-based).
- * Custom components use M3 CSS variables directly.
- * Both systems share the same M3 color values.
- *
- * See docs/MATERIAL_M3_INTEGRATION.md for full details.
+ * Material components automatically pick up M3 colors via CSS variable overrides.
+ * Custom components use M3 CSS variables directly (--md-sys-color-*).
+ * Theme switching via html.dark-theme class updates all tokens.
  */
 
 :root {
@@ -31,26 +28,19 @@ body {
   background-color: var(--md-sys-color-surface);
   color: var(--md-sys-color-on-surface);
 }
-
 /*
  * Theming Strategy:
  *
- * 1. Material theme (material-theme.scss) bridges M3 tokens with Material components
- *    - Defines Material theme using M3-aligned color palettes
- *    - Supports light/dark mode via html.dark-theme class
- *    - Material components get proper styling with M3 color values
+ * Light theme is the default (:root).
+ * Dark theme is activated by adding the 'dark-theme' class to <html> element.
  *
- * 2. M3 tokens (m3.css) provide our custom design system CSS variables
- *    - Generated from tokens.{light,dark}.json
- *    - Used for custom components and Tailwind utilities
- *    - Provides semantic color tokens (--md-sys-color-*)
+ * CSS variable override hierarchy:
+ *   1. :root defines light theme (M3 light palette)
+ *   2. html.dark-theme redefines all vars with M3 dark palette
+ *   3. Material components use --mat-sys-* which reference --md-sys-color-*
+ *   4. All M3 color tokens generated from Material Theme Builder export
  *
- * 3. Integration approach:
- *    - Material components use Material theming (Sass-based)
- *    - Custom components use M3 CSS variables directly
- *    - Both systems share the same M3 color values
- *
- * Token sources: projects/tokens/src/source/tokens.{light,dark}.json
+ * Token source: projects/tokens/src/source/material-theme.json
  * Build command: pnpm tokens:build
- * Material theme: material-theme.scss (Sass compilation required)
  */
+
