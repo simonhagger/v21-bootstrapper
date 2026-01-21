@@ -43,7 +43,7 @@ npx -y "@angular/cli@$Cli" new $Name `
   --skip-git `
   --skip-tests `
   --style=scss `
-  --package-manager=pnpm
+  --package-manager=pnpm 2>&1 | Out-Null
 
 Push-Location (Join-Path $TargetPath $Name)
 
