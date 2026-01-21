@@ -49,7 +49,7 @@ export function normalizeFlatTokens(input: unknown): FlatTokenMap {
 
 /**
  * Convert Material Theme Builder scheme to M3 CSS variable format.
- * 
+ *
  * Scheme format: { "primary": "#31628D", "onPrimary": "#FFFFFF", ... }
  * M3 format: { "--md-sys-color-primary": "#31628D", "--md-sys-color-on-primary": "#FFFFFF", ... }
  */
@@ -70,25 +70,21 @@ function schemeToM3Vars(scheme: Record<string, string>): FlatTokenMap {
  * Read Material Theme Builder JSON and extract theme tokens."--md-sys-shape-corner-medium": "12px", ... }
  */
 export function readThemeTokens(scheme: 'light' | 'dark'): FlatTokenMap {
-  const filePath = path.resolve(
-    process.cwd(),
-    'projects/tokens/src/source',
-    'material-theme.json',
-  );
-  
+  const filePath = path.resolve(process.cwd(), 'projects/tokens/src/source', 'material-theme.json');
+
   const themeBuilder = readJson<MaterialThemeBuilderJSON>(filePath);
-  
+
   // Use "light" or "dark" scheme from the builder
   const schemeData = themeBuilder.schemes[scheme];
   if (!schemeData) {
     throw new Error(
       `Scheme "${scheme}" not found in material-theme.json. ` +
-      `Available: ${Object.keys(themeBuilder.schemes).join(', ')}`
+        `Available: ${Object.keys(themeBuilder.schemes).join(', ')}`,
     );
   }
 
   const colorTokens = schemeToM3Vars(schemeData);
-  
+
   // Add shape tokens from the shapes section (these are the same for all schemes)
   const shapeTokens: FlatTokenMap = {};
   if (themeBuilder.shapes) {
@@ -98,8 +94,5 @@ export function readThemeTokens(scheme: 'light' | 'dark'): FlatTokenMap {
     }
   }
 
-  return { ...colorTokens, ...shapeTokens }
-  return schemeToM3Vars(schemeData);
+  return { ...colorTokens, ...shapeTokens };
 }
-
-
