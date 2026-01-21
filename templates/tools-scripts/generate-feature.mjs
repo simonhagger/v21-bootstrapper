@@ -1,6 +1,6 @@
-import fs from "node:fs";
-import path from "node:path";
-import { getWorkspaceContext } from "./_workspace.mjs";
+import fs from 'node:fs';
+import path from 'node:path';
+import { getWorkspaceContext } from './_workspace.mjs';
 
 function die(msg) {
   console.error(msg);
@@ -10,22 +10,22 @@ function die(msg) {
 function toKebab(input) {
   return input
     .trim()
-    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-    .replace(/[\s_]+/g, "-")
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
     .toLowerCase();
 }
 
 function toPascal(input) {
   const kebab = toKebab(input);
   return kebab
-    .split("-")
+    .split('-')
     .filter(Boolean)
     .map((p) => p[0].toUpperCase() + p.slice(1))
-    .join("");
+    .join('');
 }
 
 function toConst(input) {
-  return toKebab(input).toUpperCase().replace(/-/g, "_");
+  return toKebab(input).toUpperCase().replace(/-/g, '_');
 }
 
 function ensureDir(dir) {
@@ -36,7 +36,7 @@ function writeFileSafe(fp, content, overwrite) {
   if (fs.existsSync(fp) && !overwrite) {
     die(`Refusing to overwrite existing file: ${fp}\nUse --overwrite to force.`);
   }
-  fs.writeFileSync(fp, content, "utf8");
+  fs.writeFileSync(fp, content, 'utf8');
 }
 
 function renderTemplates({ featureKebab, featurePascal, featureConst }) {
@@ -149,7 +149,7 @@ This folder is a vertical slice and must not be imported from other feature fold
 
 function addRouteToAppRoutes(appRoutesFile, { routePath, featureKebab, featureConst }) {
   if (!fs.existsSync(appRoutesFile)) die(`Cannot find app.routes.ts at ${appRoutesFile}`);
-  const src = fs.readFileSync(appRoutesFile, "utf8");
+  const src = fs.readFileSync(appRoutesFile, 'utf8');
 
   const needle = `path: '${routePath}'`;
   if (src.includes(needle)) {
@@ -168,18 +168,22 @@ function addRouteToAppRoutes(appRoutesFile, { routePath, featureKebab, featureCo
   if (wildcardIndex !== -1) {
     const before = src.slice(0, wildcardIndex);
     const after = src.slice(wildcardIndex);
-    const insertPos = before.lastIndexOf("  {");
+    const insertPos = before.lastIndexOf('  {');
     if (insertPos === -1) {
-      fs.writeFileSync(appRoutesFile, before + insertion + after, "utf8");
+      fs.writeFileSync(appRoutesFile, before + insertion + after, 'utf8');
       return;
     }
-    fs.writeFileSync(appRoutesFile, before.slice(0, insertPos) + insertion + before.slice(insertPos) + after, "utf8");
+    fs.writeFileSync(
+      appRoutesFile,
+      before.slice(0, insertPos) + insertion + before.slice(insertPos) + after,
+      'utf8',
+    );
     return;
   }
 
-  const closing = src.lastIndexOf("];");
+  const closing = src.lastIndexOf('];');
   if (closing === -1) die(`Could not locate end of APP_ROUTES array in app.routes.ts`);
-  fs.writeFileSync(appRoutesFile, src.slice(0, closing) + insertion + src.slice(closing), "utf8");
+  fs.writeFileSync(appRoutesFile, src.slice(0, closing) + insertion + src.slice(closing), 'utf8');
 }
 
 function main() {
@@ -200,10 +204,10 @@ Examples:
   const { workspaceRoot, featuresDir, appRoutesFile } = ctx;
 
   const nameRaw = args[0];
-  const overwrite = args.includes("--overwrite");
-  const register = args.includes("--register");
+  const overwrite = args.includes('--overwrite');
+  const register = args.includes('--register');
 
-  const routeIndex = args.indexOf("--route");
+  const routeIndex = args.indexOf('--route');
   const routePath = routeIndex !== -1 ? args[routeIndex + 1] : null;
 
   const featureKebab = toKebab(nameRaw);

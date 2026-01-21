@@ -308,7 +308,7 @@ import { LoadingService } from '@core/loading/loading.service';
   selector: 'app-root',
   template: `
     @if (loading.isLoading()) {
-      <mat-progress-bar mode="indeterminate" class="fixed top-0 left-0 right-0 z-50" />
+      <mat-progress-bar mode="indeterminate" class="fixed top-0 right-0 left-0 z-50" />
     }
 
     <router-outlet />

@@ -9,4 +9,4 @@
  * - Errors on unapproved colors
  */
 
-console.log("OK: no raw colors verification passed (placeholder).");
+console.log('OK: no raw colors verification passed (placeholder).');

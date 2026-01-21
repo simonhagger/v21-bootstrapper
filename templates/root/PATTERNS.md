@@ -95,7 +95,7 @@ type LoadingState = 'idle' | 'loading' | 'success' | 'error';
         <mat-spinner />
       }
       @case ('error') {
-        <div class="bg-error-container text-on-error-container p-4 rounded-md">
+        <div class="bg-error-container text-on-error-container rounded-md p-4">
           {{ error() }}
         </div>
       }
@@ -594,10 +594,10 @@ export const roleGuard = (requiredRole: string): CanActivateFn => {
       <div class="grid gap-4">
         @for (_ of [1, 2, 3, 4]; track $index) {
           <div class="bg-surface-variant animate-pulse">
-            <div class="h-48 bg-outline-variant rounded-t-md"></div>
-            <div class="p-4 space-y-2">
-              <div class="h-4 bg-outline-variant rounded w-3/4"></div>
-              <div class="h-4 bg-outline-variant rounded w-1/2"></div>
+            <div class="bg-outline-variant h-48 rounded-t-md"></div>
+            <div class="space-y-2 p-4">
+              <div class="bg-outline-variant h-4 w-3/4 rounded"></div>
+              <div class="bg-outline-variant h-4 w-1/2 rounded"></div>
             </div>
           </div>
         }

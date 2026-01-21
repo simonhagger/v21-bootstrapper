@@ -2,7 +2,12 @@
 
 ## Overview
 
-This project uses a **unified theming system** where Material Design 3 tokens are the single source of truth, and Tailwind CSS utilities reference those same tokens.
+This project uses a **hybrid theming system**:
+
+- **Angular Material components**: Use Material's prebuilt theme (azure-blue.css)
+- **Custom components & Tailwind**: Use M3 design tokens as the single source of truth
+
+This approach balances the complexity of Material's extensive theming system with the flexibility of custom M3 tokens for application-specific UI.
 
 ```
 Token Sources (JSON)
@@ -11,7 +16,11 @@ M3 CSS Variables (.theme-light, .theme-dark)
     ↓
 Tailwind Theme Bridge (@theme)
     ↓
-Material Components + Tailwind Utilities
+Custom Components + Tailwind Utilities
+
+Material Prebuilt Theme
+    ↓
+Material Components (mat-*, mdc-*)
 ```
 
 ## Architecture
@@ -136,24 +145,85 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ...
 
 ### With Material Components
 
-Material components automatically use M3 tokens:
+Material components use their own prebuilt theme (imported in styles.css). To apply M3 tokens to Material components, create **themed wrapper components** with scoped CSS overrides:
+
+```typescript
+// shared/components/themed-card.component.ts
+import { Component } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+
+@Component({
+  selector: 'app-themed-card',
+  standalone: true,
+  imports: [MatCardModule],
+  template: `
+    <mat-card>
+      <ng-content></ng-content>
+    </mat-card>
+  `,
+  styles: [
+    `
+      mat-card {
+        background: var(--md-sys-color-surface);
+        color: var(--md-sys-color-on-surface);
+        border: 1px solid var(--md-sys-color-outline);
+        border-radius: var(--md-sys-shape-corner-medium);
+      }
+    `,
+  ],
+})
+export class ThemedCardComponent {}
+```
+
+**Usage:**
 
 ```typescript
 @Component({
   template: `
-    <mat-toolbar color="primary">
-      <!-- Uses --md-sys-color-primary -->
-    </mat-toolbar>
+    <!-- Standard Material styling -->
+    <mat-card>Uses azure-blue theme</mat-card>
 
-    <mat-card>
-      <!-- Uses --md-sys-color-surface -->
-      <mat-card-content>
-        Content uses on-surface color
-      </mat-card-content>
-    </mat-card>
+    <!-- M3 token styling -->
+    <app-themed-card>Uses M3 design tokens</app-themed-card>
   `
 })
 ```
+
+**Why this approach?**
+
+- **No global mapping drift**: Avoids maintaining hundreds of Material-to-M3 variable mappings
+- **Clear intent**: `app-themed-*` prefix signals M3 token usage
+- **Scoped overrides**: CSS changes only affect the wrapper component
+- **Opt-in theming**: Use Material components as-is or create themed variants as needed
+
+**Common themed wrappers:**
+
+```typescript
+// app-themed-toolbar.component.ts
+styles: [
+  `
+  mat-toolbar {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+`,
+];
+
+// app-themed-button.component.ts
+styles: [
+  `
+  button[mat-raised-button] {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+  }
+  button[mat-raised-button]:hover {
+    background: var(--md-sys-color-primary-container);
+  }
+`,
+];
+```
+
+**Note**: Material components use hundreds of internal CSS variables (`--mat-*`, `--mdc-*`). Rather than creating a global mapping layer between two evolving standards, we use themed wrapper components for intentional M3 integration while keeping the prebuilt Material theme as the base.
 
 ### With Tailwind Utilities
 
@@ -171,7 +241,7 @@ Use semantic utility classes that reference tokens:
 </div>
 
 <!-- Borders -->
-<div class="border border-outline">
+<div class="border-outline border">
   <!-- Uses --color-outline → --md-sys-color-outline -->
 </div>
 ```
@@ -368,14 +438,19 @@ for (const brand of brands) {
 - Update both light and dark themes together
 - Run `pnpm tokens:build` after changes
 - Commit both source and dist
+- Create `app-themed-*` wrapper components for Material components that need M3 styling
+- Use scoped component styles for Material overrides
+- Keep the prebuilt Material theme as the base for standard components
 
 ### ❌ DON'T
 
 - Hardcode hex colors in components
-- Map internal Material component tokens
+- Map internal Material component tokens globally
 - Override Material component styles with Tailwind
 - Use raw palette values directly
 - Forget to update dark theme
+- Create global mappings between Material and M3 variable namespaces
+- Mix Material's prebuilt theme with custom global Material variable overrides
 
 ## Troubleshooting
 

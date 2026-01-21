@@ -140,7 +140,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
     @if (products.isLoading()) {
       <mat-spinner />
     } @else if (products.error()) {
-      <div class="bg-error-container text-on-error-container p-4 rounded-md">
+      <div class="bg-error-container text-on-error-container rounded-md p-4">
         {{ products.error() }}
       </div>
     } @else {

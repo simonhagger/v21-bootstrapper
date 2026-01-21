@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import fs from 'node:fs';
+import path from 'node:path';
 
 function die(msg) {
   console.error(msg);
@@ -19,7 +19,7 @@ export function findWorkspaceRoot(startDir = process.cwd()) {
   let dir = path.resolve(startDir);
 
   while (true) {
-    const angularJson = path.join(dir, "angular.json");
+    const angularJson = path.join(dir, 'angular.json');
     if (fileExists(angularJson)) return dir;
 
     const parent = path.dirname(dir);
@@ -31,9 +31,9 @@ export function findWorkspaceRoot(startDir = process.cwd()) {
 }
 
 export function readAngularJson(workspaceRoot) {
-  const p = path.join(workspaceRoot, "angular.json");
+  const p = path.join(workspaceRoot, 'angular.json');
   if (!fileExists(p)) die(`Missing angular.json at: ${p}`);
-  const raw = fs.readFileSync(p, "utf8");
+  const raw = fs.readFileSync(p, 'utf8');
   try {
     return JSON.parse(raw);
   } catch (e) {
@@ -42,14 +42,18 @@ export function readAngularJson(workspaceRoot) {
 }
 
 function isApplicationProject(project) {
-  return project?.projectType === "application";
+  return project?.projectType === 'application';
 }
 
 export function getDefaultAppProjectName(angularJson) {
   const projects = angularJson?.projects ?? {};
   const defaultProject = angularJson?.defaultProject;
 
-  if (defaultProject && projects[defaultProject] && isApplicationProject(projects[defaultProject])) {
+  if (
+    defaultProject &&
+    projects[defaultProject] &&
+    isApplicationProject(projects[defaultProject])
+  ) {
     return defaultProject;
   }
 
@@ -74,11 +78,11 @@ export function getWorkspaceContext(opts = {}) {
   const appProjectName = opts.appProjectName ?? getDefaultAppProjectName(angularJson);
   const appProject = getProject(angularJson, appProjectName);
 
-  const sourceRootRel = appProject.sourceRoot ?? "src";
+  const sourceRootRel = appProject.sourceRoot ?? 'src';
   const sourceRoot = path.join(workspaceRoot, sourceRootRel);
-  const appRoot = path.join(sourceRoot, "app");
-  const featuresDir = path.join(appRoot, "features");
-  const appRoutesFile = path.join(appRoot, "app.routes.ts");
+  const appRoot = path.join(sourceRoot, 'app');
+  const featuresDir = path.join(appRoot, 'features');
+  const appRoutesFile = path.join(appRoot, 'app.routes.ts');
 
   return {
     workspaceRoot,

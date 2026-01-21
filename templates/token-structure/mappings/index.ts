@@ -1,6 +1,6 @@
-import type { MappingGroup, MappingType } from "./types";
-import { colors } from "./colors";
-import { radii } from "./radii";
+import type { MappingGroup, MappingType } from './types';
+import { colors } from './colors';
+import { radii } from './radii';
 
 export type { MappingGroup, MappingType };
 

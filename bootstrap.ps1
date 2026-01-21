@@ -221,7 +221,8 @@ pnpm add -D `
   "@semantic-release/github" `
   "@semantic-release/changelog" `
   "@semantic-release/git" `
-  "@vitest/coverage-v8"
+  "@vitest/coverage-v8" `
+  tsx
 
 # Write repo files/configs
 Write-Host "==> Writing repo configuration files"
@@ -259,6 +260,57 @@ if (Test-Path $themeTemplateDir) {
   Write-Host " - Theme service deployed"
 } else {
   Write-Host " - Theme service templates not found (skipping)"
+}
+
+# Create shell layout components
+Write-Host "==> Setting up shell layout"
+$shellTemplateDir = Join-Path $scriptDir "templates/shell"
+
+if (Test-Path $shellTemplateDir) {
+  New-Item -ItemType Directory -Force -Path "projects/shell/src/lib" | Out-Null
+  Copy-Item -Path (Join-Path $shellTemplateDir "app-layout.component.ts") -Destination "projects/shell/src/lib/" -Force
+  Copy-Item -Path (Join-Path $shellTemplateDir "public-api.ts") -Destination "projects/shell/src/" -Force
+  
+  # Ensure path mapping exists in angular.json for the shell library
+  # Angular CLI automatically creates this, but we ensure it's there
+  node -e @'
+  const fs = require('fs');
+  const path = require('path');
+  
+  // Read angular.json
+  const angularJsonPath = 'angular.json';
+  const content = fs.readFileSync(angularJsonPath, 'utf8');
+  const angularJson = JSON.parse(content);
+  
+  // Ensure projects.shell exists with correct configuration
+  if (!angularJson.projects.shell) {
+    throw new Error('Shell library not found in angular.json');
+  }
+  
+  // Ensure projectType is lib
+  if (!angularJson.projects.shell.projectType) {
+    angularJson.projects.shell.projectType = 'library';
+  }
+  
+  fs.writeFileSync(angularJsonPath, JSON.stringify(angularJson, null, 2) + '\n');
+'@
+  
+  Write-Host " - Shell layout deployed"
+} else {
+  Write-Host " - Shell layout templates not found (skipping)"
+}
+
+# Build design tokens from sources
+Write-Host "==> Building design tokens from sources"
+try {
+  pnpm exec tsx "projects/tokens/src/generators/build-tokens.ts"
+  if ($LASTEXITCODE -eq 0) {
+    Write-Host " - Design tokens built successfully"
+  } else {
+    Write-Host " - Warning: Token build returned non-zero exit code (this may be expected for bootstrap)"
+  }
+} catch {
+  Write-Host " - Token build not yet available (will be generated on first use)"
 }
 
 # Husky hooks (deterministic policy)

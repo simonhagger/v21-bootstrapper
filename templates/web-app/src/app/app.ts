@@ -1,19 +1,18 @@
-import { Component } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { RouterOutlet } from "@angular/router";
+import { Component } from '@angular/core';
+import { AppLayoutComponent } from './shared/layout/app-layout.component';
+import '../styles.css';
 
 /**
  * Root application component
- * - Standalone component with CommonModule and RouterOutlet
- * - RouterOutlet displays routed content
+ * - Uses shell layout component for application structure
+ * - Layout includes toolbar with navigation and router-outlet for content
  */
 @Component({
-  selector: "app-root",
+  selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
-  template: `<router-outlet></router-outlet>`,
-  styleUrls: ["./app.css"],
+  imports: [AppLayoutComponent],
+  template: `<app-layout></app-layout>`,
 })
 export class AppComponent {
-  title = "acme-web";
+  title = 'acme-web';
 }

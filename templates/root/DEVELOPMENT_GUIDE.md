@@ -91,7 +91,7 @@ pnpm gen:feature UserProfile --route user-profile --register
      standalone: true,
      imports: [CommonModule, MatCardModule],
      template: `
-       <div class="max-w-4xl mx-auto p-6">
+       <div class="mx-auto max-w-4xl p-6">
          <mat-card>
            @if (user(); as user) {
              <mat-card-header>

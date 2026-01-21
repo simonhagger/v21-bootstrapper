@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { RouterLink } from "@angular/router";
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 /**
  * Not Found (404) Page
@@ -12,7 +12,7 @@ import { RouterLink } from "@angular/router";
  * - Shared page as part of vertical slice architecture
  */
 @Component({
-  selector: "app-not-found",
+  selector: 'app-not-found',
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `

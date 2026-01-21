@@ -1,0 +1,29 @@
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
+@import '../../tokens/dist/m3.css';
+
+/* Global styles */
+:root {
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+
+/* 
+ * Theming Strategy:
+ * 
+ * 1. Material prebuilt theme (azure-blue.css) provides complete Material component styling
+ * 2. M3 tokens (m3.css) provide our custom design system variables
+ * 3. Use Material components as-is (they use their own theme)
+ * 4. Use M3 tokens for custom components and Tailwind utilities
+ * 
+ * Token sources: projects/tokens/src/source/tokens.{light,dark}.json
+ * Build command: pnpm tokens:build
+ * Output: projects/tokens/dist/m3.css (scoped .theme-light and .theme-dark)
+ */

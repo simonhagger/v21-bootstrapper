@@ -1,16 +1,16 @@
-import { Injectable, Signal, computed, effect, inject, signal } from "@angular/core";
-import { DOCUMENT } from "@angular/common";
-import { THEME_STORAGE } from "./theme.storage";
-import type { ThemeBrand, ThemeMode, ThemeState } from "./theme.types";
+import { Injectable, Signal, computed, effect, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { THEME_STORAGE } from './theme.storage';
+import type { ThemeBrand, ThemeMode, ThemeState } from './theme.types';
 
-const STORAGE_KEY = "app.theme.v1";
+const STORAGE_KEY = 'app.theme.v1';
 
 function isThemeMode(x: unknown): x is ThemeMode {
-  return x === "light" || x === "dark";
+  return x === 'light' || x === 'dark';
 }
 
 function isThemeBrand(x: unknown): x is ThemeBrand {
-  return x === "brandA" || x === "brandB";
+  return x === 'brandA' || x === 'brandB';
 }
 
 function safeParse(json: string | null): unknown {
@@ -22,14 +22,14 @@ function safeParse(json: string | null): unknown {
   }
 }
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly doc = inject(DOCUMENT);
   private readonly storage = inject(THEME_STORAGE);
 
   private readonly _state = signal<ThemeState>({
-    brand: "brandA",
-    mode: "light",
+    brand: 'brandA',
+    mode: 'light',
   });
 
   /** Expose as read-only */
@@ -77,7 +77,7 @@ export class ThemeService {
   }
 
   toggleMode() {
-    this.setMode(this.mode() === "dark" ? "light" : "dark");
+    this.setMode(this.mode() === 'dark' ? 'light' : 'dark');
   }
 
   /** Applies theme classes to <html> */
@@ -86,8 +86,8 @@ export class ThemeService {
     if (!el) return;
 
     // Contract: exactly one brand class, exactly one mode class
-    const brands: ThemeBrand[] = ["brandA", "brandB"];
-    const modes: ThemeMode[] = ["light", "dark"];
+    const brands: ThemeBrand[] = ['brandA', 'brandB'];
+    const modes: ThemeMode[] = ['light', 'dark'];
 
     for (const b of brands) el.classList.remove(`theme-${b}`);
     for (const m of modes) el.classList.remove(`theme-${m}`);
@@ -108,7 +108,7 @@ export class ThemeService {
     const raw = this.storage.getItem(STORAGE_KEY);
     const parsed = safeParse(raw);
 
-    if (!parsed || typeof parsed !== "object") {
+    if (!parsed || typeof parsed !== 'object') {
       // default to system mode if possible
       const sys = this.getSystemMode();
       if (sys) this._state.set({ ...this._state(), mode: sys });
@@ -116,17 +116,17 @@ export class ThemeService {
     }
 
     const obj = parsed as Record<string, unknown>;
-    const brand = obj["brand"];
-    const mode = obj["mode"];
-    const followSystem = obj["followSystem"];
+    const brand = obj['brand'];
+    const mode = obj['mode'];
+    const followSystem = obj['followSystem'];
 
     const next: ThemeState = {
-      brand: isThemeBrand(brand) ? brand : "brandA",
-      mode: isThemeMode(mode) ? mode : (this.getSystemMode() ?? "light"),
+      brand: isThemeBrand(brand) ? brand : 'brandA',
+      mode: isThemeMode(mode) ? mode : (this.getSystemMode() ?? 'light'),
     };
 
     this._state.set(next);
-    this._followSystem.set(typeof followSystem === "boolean" ? followSystem : true);
+    this._followSystem.set(typeof followSystem === 'boolean' ? followSystem : true);
 
     // If follow system is enabled, sync mode to current system
     if (this._followSystem()) {
@@ -146,24 +146,24 @@ export class ThemeService {
   private getSystemMode(): ThemeMode | null {
     const win = this.doc?.defaultView;
     if (!win || !win.matchMedia) return null;
-    return win.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return win.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
   private setupPrefersColorSchemeListener() {
     const win = this.doc?.defaultView;
     if (!win || !win.matchMedia) return;
 
-    const mql = win.matchMedia("(prefers-color-scheme: dark)");
+    const mql = win.matchMedia('(prefers-color-scheme: dark)');
 
     const handler = () => {
       if (!this._followSystem()) return;
-      this._state.set({ ...this._state(), mode: mql.matches ? "dark" : "light" });
+      this._state.set({ ...this._state(), mode: mql.matches ? 'dark' : 'light' });
       this.persist();
     };
 
     // Modern browsers
-    if (typeof mql.addEventListener === "function") {
-      mql.addEventListener("change", handler);
+    if (typeof mql.addEventListener === 'function') {
+      mql.addEventListener('change', handler);
       return;
     }
 

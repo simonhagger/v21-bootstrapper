@@ -1,8 +1,10 @@
-import type { FlatTokenMap } from "./token-io";
-import type { MappingGroup } from "../mappings/types";
+import type { FlatTokenMap } from './token-io';
+import type { MappingGroup } from '../mappings/types';
 
 export function writeThemesCss(): string {
-  return [`.theme-light { color-scheme: light; }`, `.theme-dark { color-scheme: dark; }`, ``].join("\n");
+  return [`.theme-light { color-scheme: light; }`, `.theme-dark { color-scheme: dark; }`, ``].join(
+    '\n',
+  );
 }
 
 export function writeScopedVarsCss(scopes: { selector: string; tokens: FlatTokenMap }[]): string {
@@ -15,7 +17,7 @@ export function writeScopedVarsCss(scopes: { selector: string; tokens: FlatToken
     lines.push(`}`);
     lines.push(``);
   }
-  return lines.join("\n");
+  return lines.join('\n');
 }
 
 /**
@@ -41,5 +43,5 @@ export function writeTailwindThemeCss(groups: MappingGroup[]): string {
 
   lines.push(`}`);
   lines.push(``);
-  return lines.join("\n");
+  return lines.join('\n');
 }

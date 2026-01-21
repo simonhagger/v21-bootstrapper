@@ -109,7 +109,7 @@
       │                              │                          ├─ Report status
       │                              │                          │
       │                              │                          └─ Poll for merge
-      │                              │                      
+      │                              │
       │  Review & Merge to main      │                      ├─► semantic-release
       │                              │                          │
       │                              │                          ├─ Analyze commits
@@ -298,7 +298,7 @@
    └─ Report status to GitHub
       ├─ ✓ All checks pass → Merge allowed
       └─ ✗ Any check fails → Merge blocked
-   
+
 
    ON MERGE TO MAIN:
    │

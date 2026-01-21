@@ -11,21 +11,21 @@ pwsh tools/bootstrap/setup-git.ps1
 
 ## What Gets Installed
 
-| Category | What | Purpose |
-|----------|------|---------|
-| **Framework** | Angular CLI v21+ | Web application framework |
-| **Package Mgr** | pnpm | Fast, efficient Node package manager |
-| **Linting** | ESLint v9 (flat config) | JavaScript/TypeScript linting |
-|  | TypeScript ESLint | Type-aware linting rules |
-|  | Angular ESLint | Angular-specific rules |
-| **Formatting** | Prettier | Opinionated code formatter |
-|  | prettier-plugin-tailwindcss | Tailwind class sorting |
-| **Commit Hooks** | Husky | Git hook manager |
-|  | lint-staged | Run linters on staged files |
-|  | commitlint | Commit message validation |
-| **Versioning** | Semantic-release | Automated versioning & releases |
-| **Testing** | Vitest | Fast unit testing framework |
-| **CI/CD** | GitHub Actions | Automated pipelines |
+| Category         | What                        | Purpose                              |
+| ---------------- | --------------------------- | ------------------------------------ |
+| **Framework**    | Angular CLI v21+            | Web application framework            |
+| **Package Mgr**  | pnpm                        | Fast, efficient Node package manager |
+| **Linting**      | ESLint v9 (flat config)     | JavaScript/TypeScript linting        |
+|                  | TypeScript ESLint           | Type-aware linting rules             |
+|                  | Angular ESLint              | Angular-specific rules               |
+| **Formatting**   | Prettier                    | Opinionated code formatter           |
+|                  | prettier-plugin-tailwindcss | Tailwind class sorting               |
+| **Commit Hooks** | Husky                       | Git hook manager                     |
+|                  | lint-staged                 | Run linters on staged files          |
+|                  | commitlint                  | Commit message validation            |
+| **Versioning**   | Semantic-release            | Automated versioning & releases      |
+| **Testing**      | Vitest                      | Fast unit testing framework          |
+| **CI/CD**        | GitHub Actions              | Automated pipelines                  |
 
 ## Key Scripts
 
@@ -71,7 +71,7 @@ feature-name/
 
 ```
 Root configs:
-  .editorconfig, .gitattributes, .prettierrc.json, 
+  .editorconfig, .gitattributes, .prettierrc.json,
   commitlint.config.cjs, eslint.config.mjs, .releaserc.cjs,
   ARCHITECTURE.md, .gitmessage.txt
 
@@ -101,18 +101,23 @@ Husky hooks:
 ## Customization
 
 ### Change Project Name
+
 App defaults to `web`. To rename:
+
 1. Update ESLint rules in `eslint.config.mjs` (replace `projects/web` with your name)
 2. Verifiers auto-discover from `angular.json` (no changes needed)
 
 ### Add More Verifiers
+
 1. Create script in `tools/scripts/my-verifier.mjs`
 2. Add to `package.json` scripts
 3. Add to `pnpm verify` command chain
 4. Add to `.husky/pre-push` if needed
 
 ### Customize Library List
+
 In `bootstrap.ps1`, change:
+
 ```powershell
 $libs = @("core","ui","tokens","a11y","shell")  # Edit this
 ```
@@ -120,11 +125,13 @@ $libs = @("core","ui","tokens","a11y","shell")  # Edit this
 ## CI/CD Behavior
 
 ### On Pull Request
+
 - Runs `pnpm verify` (all quality gates)
 - Caches Node/Angular build
 - Fails if any gate fails
 
 ### On Merge to Main
+
 - Runs `pnpm verify` again (quality gates)
 - Runs `pnpm release` (semantic-release)
 - Automatically:
@@ -137,6 +144,7 @@ $libs = @("core","ui","tokens","a11y","shell")  # Edit this
 ## Pre-Push Verification Chain
 
 When you push, Husky runs:
+
 ```
 ✓ pnpm verify:structure
 ✓ pnpm verify:app-routes
@@ -153,14 +161,14 @@ All must pass to push successfully.
 
 ## File Locations
 
-| Item | Location |
-|------|----------|
-| Bootstrap scripts | `tools/bootstrap/` |
-| Templates | `tools/bootstrap/templates/` |
-| Generated scripts | `tools/scripts/` (after bootstrap) |
-| Config files | Root directory (after bootstrap) |
-| Workflows | `.github/workflows/` (after bootstrap) |
-| Hooks | `.husky/` (after bootstrap) |
+| Item              | Location                               |
+| ----------------- | -------------------------------------- |
+| Bootstrap scripts | `tools/bootstrap/`                     |
+| Templates         | `tools/bootstrap/templates/`           |
+| Generated scripts | `tools/scripts/` (after bootstrap)     |
+| Config files      | Root directory (after bootstrap)       |
+| Workflows         | `.github/workflows/` (after bootstrap) |
+| Hooks             | `.husky/` (after bootstrap)            |
 
 ## Common Workflow
 
@@ -190,24 +198,24 @@ git push
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
+| Issue                             | Solution                                                      |
+| --------------------------------- | ------------------------------------------------------------- |
 | "Cannot find module" in verifiers | Ensure `node_modules/.bin` is in PATH or use `pnpm exec node` |
-| ESLint errors in generated files | Run `pnpm lint:fix` |
-| Husky hooks not running | Run `pnpm prepare` to install git hooks |
-| Want to skip a hook | Use `git commit --no-verify` (use sparingly) |
-| Re-run bootstrap | Use `-Force` flag: `bootstrap.ps1 -Force` |
+| ESLint errors in generated files  | Run `pnpm lint:fix`                                           |
+| Husky hooks not running           | Run `pnpm prepare` to install git hooks                       |
+| Want to skip a hook               | Use `git commit --no-verify` (use sparingly)                  |
+| Re-run bootstrap                  | Use `-Force` flag: `bootstrap.ps1 -Force`                     |
 
 ## Key Differences from Manual Setup
 
-| Aspect | This Bootstrap | Manual Setup |
-|--------|---|---|
-| Time to prod-ready | ~5 minutes | Hours |
-| Consistency | 100% identical across repos | Varies |
-| Maintenance | Update templates once | Manual updates per repo |
-| CI/CD | Fully configured | Manual setup |
-| Quality gates | Pre-configured + enforced | If you remember to set them up |
-| Feature generation | Automated with `gen:feature` | Manual folder creation |
+| Aspect             | This Bootstrap               | Manual Setup                   |
+| ------------------ | ---------------------------- | ------------------------------ |
+| Time to prod-ready | ~5 minutes                   | Hours                          |
+| Consistency        | 100% identical across repos  | Varies                         |
+| Maintenance        | Update templates once        | Manual updates per repo        |
+| CI/CD              | Fully configured             | Manual setup                   |
+| Quality gates      | Pre-configured + enforced    | If you remember to set them up |
+| Feature generation | Automated with `gen:feature` | Manual folder creation         |
 
 ---
 
