@@ -156,9 +156,14 @@ try {
       Write-Host "   - $($_.Name) installed"
     }
 
-    # Stage hooks in git
+    # Stage hooks and git config files
     git add .husky/pre-commit .husky/commit-msg .husky/pre-push | Out-Null
     git add .gitignore .gitattributes | Out-Null
+    
+    # Normalize line endings according to .gitattributes rules
+    Write-Host "==> Normalizing line endings according to .gitattributes"
+    git add --renormalize . | Out-Null
+    Write-Host "   - All files normalized to configured line endings (LF for shell scripts, auto for others)"
   } else {
     Write-Warning "Husky templates not found at $huskyTpl (skipping hook setup)"
   }
