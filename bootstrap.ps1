@@ -136,6 +136,10 @@ try {
   Write-Host "==> Initializing git repository"
   git init -b main | Out-Null
   git branch -M main | Out-Null
+  git config user.email "dev@workspace.local" | Out-Null
+  git config user.name "Dev Setup" | Out-Null
+  git config core.safecrlf false | Out-Null
+  git config core.eol lf | Out-Null
 
   Write-Host "==> Installing Husky and commitlint"
   pnpm add -D husky @commitlint/cli @commitlint/config-conventional | Out-Null
@@ -285,6 +289,7 @@ try {
 # Final line ending normalization to ensure absolutely clean state
 try {
   git add --renormalize . 2>$null | Out-Null
+  git config core.safecrlf false 2>$null | Out-Null
 } catch {
   # Silently ignore any git normalization issues at this point
 }
