@@ -139,7 +139,7 @@ try {
   $huskyDst = Join-Path $projRoot ".husky"
 
   if (Test-Path $huskyTpl) {
-    # Copy hook files (pre-commit, commit-msg)
+    # Copy hook files (pre-commit, commit-msg, pre-push)
     Get-ChildItem -Path $huskyTpl -File | ForEach-Object {
       $srcHook = $_.FullName
       $dstHook = Join-Path $huskyDst $_.Name
@@ -148,7 +148,7 @@ try {
     }
 
     # Stage hooks in git
-    git add .husky/pre-commit .husky/commit-msg | Out-Null
+    git add .husky/pre-commit .husky/commit-msg .husky/pre-push | Out-Null
     git add .gitignore | Out-Null
   } else {
     Write-Warning "Husky templates not found at $huskyTpl (skipping hook setup)"

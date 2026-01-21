@@ -10,6 +10,9 @@ export default [
       '**/coverage/**',
       '**/.angular/**',
       'tailwind.config.ts',
+      'vitest.config.ts',
+      'src/test.ts',
+      '**/*.spec.ts',
     ],
   },
 
@@ -20,6 +23,7 @@ export default [
 
   {
     files: ['**/*.ts'],
+    ignores: ['**/*.spec.ts'],
     plugins: {
       '@typescript-eslint': tseslint.plugin,
     },
