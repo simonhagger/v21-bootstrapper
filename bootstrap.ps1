@@ -107,6 +107,15 @@ try {
     Write-Host "   - .vscode/ copied"
   }
 
+  # Copy tools/scripts directory (verification and generation scripts)
+  $toolsScriptsSrc = Join-Path $PSScriptRoot "templates\\tools-scripts"
+  $toolsScriptsDst = Join-Path $projRoot "tools\\scripts"
+  if (Test-Path $toolsScriptsSrc) {
+    New-Item -ItemType Directory -Force -Path $toolsScriptsDst | Out-Null
+    Copy-Item -Path (Join-Path $toolsScriptsSrc "*") -Destination $toolsScriptsDst -Recurse -Force
+    Write-Host "   - tools/scripts/ copied (verification + generation scripts)"
+  }
+
 } catch {
   Write-Warning "Template copy step encountered an issue: $_"
 }
@@ -191,26 +200,78 @@ try {
   }
 
   # Add test scripts to package.json
-  Write-Host "==> Adding test scripts to package.json"
+  Write-Host "==> Adding test and verification scripts to package.json"
   node -e @'
   const fs = require('fs');
   const pkgPath = 'package.json';
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
   if (!pkg.scripts) pkg.scripts = {};
+  
+  // Test scripts
   pkg.scripts.test = 'vitest run';
   pkg.scripts['test:watch'] = 'vitest';
   pkg.scripts['test:coverage'] = 'vitest run --coverage';
+  
+  // Verification scripts (run tools/scripts/*.mjs)
+  pkg.scripts['verify:structure'] = 'node tools/scripts/verify-structure.mjs';
+  pkg.scripts['verify:app-routes'] = 'node tools/scripts/verify-app-routes.mjs';
+  pkg.scripts['verify:feature-routes'] = 'node tools/scripts/verify-feature-routes.mjs';
+  pkg.scripts['verify:no-cross-feature-imports'] = 'node tools/scripts/verify-no-cross-feature-imports.mjs';
+  pkg.scripts['verify:no-raw-colors'] = 'node tools/scripts/verify-no-raw-colors.mjs';
+  
+  // Feature generation script
+  pkg.scripts['gen:feature'] = 'node tools/scripts/generate-feature.mjs';
 
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 '@
   Write-Host "   - Scripts added: test, test:watch, test:coverage"
+  Write-Host "   - Verification scripts: verify:structure, verify:app-routes, verify:feature-routes, verify:no-cross-feature-imports, verify:no-raw-colors"
+  Write-Host "   - Feature generation: gen:feature"
 
 } catch {
   Write-Warning "Testing setup encountered an issue: $_"
 }
 
+# Run post-bootstrap verification
+try {
+  $projRoot = Get-Location
+  $postBootstrapVerify = Join-Path $PSScriptRoot "templates\\tools-scripts\\post-bootstrap-verify.mjs"
+
+  if (Test-Path $postBootstrapVerify) {
+    Write-Host ""
+    Write-Host "==> Running post-bootstrap verification"
+    Write-Host "   Validating bootstrap success, build, linting, tests, and architecture gates..."
+    Write-Host ""
+    
+    $verifyOutput = & node $postBootstrapVerify 2>&1
+    $verifyExitCode = $LASTEXITCODE
+    
+    Write-Host $verifyOutput
+    
+    if ($verifyExitCode -ne 0) {
+      Write-Warning "Post-bootstrap verification encountered issues (exit code: $verifyExitCode)"
+      Write-Host "   Review the output above to resolve any issues."
+      Write-Host "   Once fixed, you can run 'pnpm verify:*' commands to check specific areas."
+      Write-Host ""
+    } else {
+      Write-Host ""
+      Write-Host "✓ All verification gates passed!"
+      Write-Host ""
+    }
+  }
+} catch {
+  Write-Warning "Post-bootstrap verification step encountered an issue: $_"
+}
+
 Write-Host ""
-Write-Host "==> Scaffold and ng add complete"
+Write-Host "==> Scaffold, configuration, and verification complete"
 Write-Host "App ready at: $(Get-Location)"
+Write-Host ""
+Write-Host "Next steps:"
+Write-Host "  cd $(Split-Path -Leaf (Get-Location))"
+Write-Host "  pnpm dev          # Start development server"
+Write-Host "  pnpm test         # Run tests"
+Write-Host "  pnpm gen:feature  # Generate new feature"
+Write-Host "  pnpm verify:*     # Run verification gates"
 Write-Host ""
