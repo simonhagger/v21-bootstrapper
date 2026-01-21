@@ -103,17 +103,17 @@ import { MatIconModule } from '@angular/material/icon';
           <mat-card-content class="pt-4">
             <p class="mb-4 text-sm">
               This scaffold demonstrates how Angular Material works alongside Tailwind CSS
-              utilities. Styling stays minimal and explicit—no generated tokens.
+              utilities. Material uses CLI-generated theming, Tailwind provides utility classes.
             </p>
             <div class="flex flex-col gap-3">
-              <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900">
-                <strong>Material:</strong> Theme defined once in <code>src/theme.scss</code>
+              <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+                <strong>Material:</strong> Theme configured via <code>ng add @angular/material</code>
               </div>
-              <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900">
-                <strong>Tailwind:</strong> Utilities from <code>src/tailwind.gen.css</code>
+              <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+                <strong>Tailwind:</strong> Utilities from <code>ng add tailwindcss</code>
               </div>
-              <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900">
-                <strong>Theme Toggle:</strong> Optional; add a dark class if needed
+              <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+                <strong>Components:</strong> Modern animation patterns, no deprecated APIs
               </div>
             </div>
           </mat-card-content>
