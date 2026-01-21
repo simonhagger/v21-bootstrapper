@@ -103,11 +103,9 @@ If the automated verification succeeds, check these manually:
 
 ```bash
 # Verify expected directories exist
-ls -la projects/core
-ls -la projects/ui
-ls -la projects/tokens
-ls -la projects/shell
-ls -la projects/a11y
+ls -la src/core
+ls -la src/shared
+ls -la tokens
 ls -la src/app/features
 ```
 
@@ -151,7 +149,7 @@ typecheck                      ng build --configuration development --no-progres
 verify                         pnpm format:check && pnpm lint && ...
 verify:post-bootstrap          node tools/scripts/post-bootstrap-verify.mjs
 gen:feature                    node tools/scripts/generate-feature.mjs
-tokens:build                   node projects/tokens/src/generators/build-tokens.ts
+tokens:build                   node tokens/src/generators/build-tokens.ts
 ```
 
 ### ✓ Git Setup
@@ -225,15 +223,15 @@ pnpm list typescript
 
 ```bash
 # Verify token files exist
-ls projects/tokens/src/source/
+ls tokens/src/source/
 # Should show: tokens.light.json, tokens.dark.json
 
 # Verify generated CSS
-ls projects/tokens/dist/
+ls tokens/dist/
 # Should show: *.css files
 
 # Verify mappings
-ls projects/tokens/src/lib/mappings/
+ls tokens/src/mappings/
 # Should show: colors.ts, radii.ts, types.ts, index.ts
 ```
 

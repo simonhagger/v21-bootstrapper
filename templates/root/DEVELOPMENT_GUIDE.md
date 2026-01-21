@@ -127,10 +127,10 @@ pnpm gen:feature UserProfile --route user-profile --register
 
    ```bash
    # Light theme
-   vim projects/tokens/src/source/tokens.light.json
+   vim tokens/src/source/tokens.light.json
 
    # Dark theme
-   vim projects/tokens/src/source/tokens.dark.json
+   vim tokens/src/source/tokens.dark.json
    ```
 
 2. **Regenerate CSS:**
@@ -148,13 +148,13 @@ pnpm gen:feature UserProfile --route user-profile --register
 
 4. **Commit both source and dist:**
    ```bash
-   git add projects/tokens/src/source projects/tokens/dist
+   git add tokens/src/source tokens/dist
    git commit -m "feat(tokens): update color palette"
    ```
 
 #### Adding New Token Mappings
 
-1. **Edit mapping file** (e.g., `projects/tokens/src/mappings/colors.ts`):
+1. **Edit mapping file** (e.g., `tokens/src/mappings/colors.ts`):
 
    ```typescript
    export const colors: MappingGroup = {

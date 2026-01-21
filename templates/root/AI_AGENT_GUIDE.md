@@ -451,7 +451,7 @@ export class MyComponent {
 
 ```bash
 # 1. Edit source files
-vim projects/tokens/src/source/tokens.light.json
+vim tokens/src/source/tokens.light.json
 
 # 2. Regenerate CSS
 pnpm tokens:build
@@ -461,7 +461,7 @@ pnpm verify:tokens
 pnpm verify:theme-contract
 
 # 4. Commit both source and dist
-git add projects/tokens/src/source projects/tokens/dist
+git add tokens/src/source tokens/dist
 git commit -m "feat(tokens): update primary color"
 ```
 
@@ -548,7 +548,7 @@ feature.page.css            # Styles (prefer inline when small)
 ```typescript
 import { ... } from '@core/...';        // projects/core/src/lib/...
 import { ... } from '@ui/...';          // projects/ui/src/lib/...
-import { ... } from '@tokens/...';      // projects/tokens/src/lib/...
+import { ... } from '@tokens/...';      // tokens/src/...
 import { ... } from '@a11y/...';        // projects/a11y/src/lib/...
 import { ... } from '@shell/...';       // projects/shell/src/lib/...
 ```
@@ -761,7 +761,7 @@ pnpm lint:fix
 
 ```bash
 pnpm tokens:build
-git add projects/tokens/dist
+git add tokens/dist
 ```
 
 **Tests failing?**
