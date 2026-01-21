@@ -19,6 +19,7 @@ export interface MaterialThemeBuilderJSON {
   }>;
   schemes: Record<string, Record<string, string>>;
   palettes: Record<string, Record<string, string>>;
+  shapes?: Record<string, string>;
 }
 
 export function readJson<T>(filePath: string): T {
@@ -66,8 +67,7 @@ function schemeToM3Vars(scheme: Record<string, string>): FlatTokenMap {
 }
 
 /**
- * Read Material Theme Builder JSON and extract theme tokens.
- * Returns M3 format: { "--md-sys-color-primary": "#6750A4", ... }
+ * Read Material Theme Builder JSON and extract theme tokens."--md-sys-shape-corner-medium": "12px", ... }
  */
 export function readThemeTokens(scheme: 'light' | 'dark'): FlatTokenMap {
   const filePath = path.resolve(
@@ -87,6 +87,18 @@ export function readThemeTokens(scheme: 'light' | 'dark'): FlatTokenMap {
     );
   }
 
+  const colorTokens = schemeToM3Vars(schemeData);
+  
+  // Add shape tokens from the shapes section (these are the same for all schemes)
+  const shapeTokens: FlatTokenMap = {};
+  if (themeBuilder.shapes) {
+    for (const [key, value] of Object.entries(themeBuilder.shapes)) {
+      const m3Key = `--md-sys-shape-${key}`;
+      shapeTokens[m3Key] = value;
+    }
+  }
+
+  return { ...colorTokens, ...shapeTokens }
   return schemeToM3Vars(schemeData);
 }
 
