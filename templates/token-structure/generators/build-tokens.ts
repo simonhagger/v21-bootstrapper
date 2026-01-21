@@ -2,7 +2,12 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 import { readThemeTokens } from './token-io';
-import { writeScopedVarsCss, writeTailwindThemeCss, writeThemesCss, writeMaterialSystemCss } from './css-writers';
+import {
+  writeScopedVarsCss,
+  writeTailwindThemeCss,
+  writeThemesCss,
+  writeMaterialSystemCss,
+} from './css-writers';
 
 import { getMappingFor, assertNoDuplicateTailwindVars, type MappingType } from '../mappings';
 
