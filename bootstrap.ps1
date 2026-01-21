@@ -246,6 +246,7 @@ try {
   pkg.scripts['verify:feature-routes'] = 'node tools/scripts/verify-feature-routes.mjs';
   pkg.scripts['verify:no-cross-feature-imports'] = 'node tools/scripts/verify-no-cross-feature-imports.mjs';
   pkg.scripts['verify:no-raw-colors'] = 'node tools/scripts/verify-no-raw-colors.mjs';
+  pkg.scripts.verify = 'pnpm run verify:structure && pnpm run verify:app-routes && pnpm run verify:feature-routes && pnpm run verify:no-cross-feature-imports && pnpm run verify:no-raw-colors';
   
   // Feature generation script
   pkg.scripts['gen:feature'] = 'node tools/scripts/generate-feature.mjs';
@@ -255,7 +256,7 @@ try {
   Write-Host "   - Build/dev scripts: dev, build, typecheck"
   Write-Host "   - Format/lint scripts: format, format:check, lint, lint:fix"
   Write-Host "   - Test scripts: test, test:watch, test:coverage"
-  Write-Host "   - Verification scripts: verify:structure, verify:app-routes, verify:feature-routes, verify:no-cross-feature-imports, verify:no-raw-colors"
+  Write-Host "   - Verification scripts: verify (all), verify:structure, verify:app-routes, verify:feature-routes, verify:no-cross-feature-imports, verify:no-raw-colors"
   Write-Host "   - Feature generation: gen:feature"
 
 } catch {
@@ -272,17 +273,28 @@ try {
   # Create docs folder
   New-Item -ItemType Directory -Force -Path $docsDst | Out-Null
   
-  # Copy all docs except README.md (which stays in root)
-  $docFiles = @('DEVELOPMENT_GUIDE.md', 'ARCHITECTURE.md', 'PATTERNS.md', 'TESTING_GUIDE.md', 'THEMING_GUIDE.md', 'API_GUIDE.md', 'AI_AGENT_GUIDE.md', 'VERIFICATION_SYSTEM.md', 'VERIFICATION_QUICK_REF.md', 'POST_BOOTSTRAP_GUIDE.md')
+  # Copy consolidated 8-document set
+  # README.md stays in project root; all others go to docs/
+  $docFiles = @('GETTING_STARTED.md', 'ARCHITECTURE.md', 'DEVELOPMENT.md', 'TESTING.md', 'STYLING.md', 'API.md', 'VERIFICATION.md', 'TROUBLESHOOTING.md')
   
   foreach ($doc in $docFiles) {
     $srcPath = Join-Path $docsSrc $doc
     $dstPath = Join-Path $docsDst $doc
     if (Test-Path $srcPath) {
       Copy-Item -Path $srcPath -Destination $dstPath -Force
+      Write-Host "   - $doc"
     }
   }
-  Write-Host "   - Documentation copied to docs/ folder"
+  
+  # Copy README.md to project root
+  $readmeSrc = Join-Path $docsSrc "README.md"
+  $readmeDst = Join-Path $projRoot "README.md"
+  if (Test-Path $readmeSrc) {
+    Copy-Item -Path $readmeSrc -Destination $readmeDst -Force
+    Write-Host "   - README.md (root)"
+  }
+  
+  Write-Host "   Total: 9 documentation files (1 in root + 8 in docs/)"
 } catch {
   Write-Warning "Documentation copy encountered an issue: $_"
 }

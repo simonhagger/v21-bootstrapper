@@ -1,6 +1,6 @@
-# Testing Guide (Angular + Vitest)
+# Testing Guide
 
-Angular CLI uses Vitest as the default unit test runner for new projects.
+Testing Angular with Vitest and following best practices for Angular 21.
 
 ## Principles
 

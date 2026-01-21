@@ -7,7 +7,7 @@
 ```bash
 # Start fresh
 pnpm install
-pnpm start
+pnpm dev
 
 # Browser opens to http://localhost:4200
 ```
@@ -16,7 +16,7 @@ pnpm start
 
 ```bash
 # Generate feature scaffold
-pnpm gen:feature UserProfile --route user-profile --register
+pnpm gen:feature UserProfile --route user-profile
 
 # This creates:
 # src/app/features/user-profile/
@@ -142,7 +142,7 @@ pnpm test
 pnpm test:watch
 
 # With coverage
-pnpm test:ci --code-coverage
+pnpm test:coverage
 ```
 
 ### Writing Tests
@@ -293,7 +293,6 @@ pnpm verify:no-cross-feature-imports
 # Fix: Remove imports from other features
 # Use core/shared instead
 ```
-
 
 ### Linting Errors
 
