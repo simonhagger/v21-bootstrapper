@@ -108,13 +108,13 @@ export class AppLayoutComponent {
   }
 
   private applyTheme(): void {
-    const body = document.body;
+    const html = document.documentElement;
     if (this.isDarkMode) {
-      body.classList.add('dark-theme');
-      body.classList.remove('light-theme');
+      html.classList.add('dark-theme');
+      html.classList.remove('light-theme');
     } else {
-      body.classList.add('light-theme');
-      body.classList.remove('dark-theme');
+      html.classList.add('light-theme');
+      html.classList.remove('dark-theme');
     }
   }
 }
