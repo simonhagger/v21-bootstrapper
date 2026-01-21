@@ -7,6 +7,13 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# Normalize TargetPath to prevent redundant nesting
+# If TargetPath ends with the app Name, use its parent directory instead
+$targetBaseName = Split-Path -Leaf $TargetPath
+if ($targetBaseName -eq $Name) {
+  $TargetPath = Split-Path -Parent $TargetPath
+}
+
 function Require-Cmd($name) {
   $cmd = Get-Command $name -ErrorAction SilentlyContinue
   if (-not $cmd) { throw "Missing required command: $name" }
