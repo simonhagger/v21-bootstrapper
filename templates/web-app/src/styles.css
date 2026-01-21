@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import '@angular/material/core/all-theme.css';
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import '../../tokens/dist/tailwind.theme.css';
-@import '../../tokens/dist/material.system.css';
 @import '../../tokens/dist/m3.css';
+@import '../../tokens/dist/material.system.css';
 
 /* Global styles */
 /**
