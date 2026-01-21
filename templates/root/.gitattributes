@@ -1,1 +1,6 @@
 * text=auto eol=lf
+
+# Explicitly enforce LF for shell scripts to prevent Windows CRLF conversion
+# This prevents "LF will be replaced by CRLF" warnings and ensures hooks work correctly
+.husky/* text eol=lf
+*.sh text eol=lf
