@@ -208,6 +208,17 @@ try {
 
   if (!pkg.scripts) pkg.scripts = {};
   
+  // Build and dev scripts
+  pkg.scripts.dev = 'ng serve';
+  pkg.scripts.build = 'ng build';
+  pkg.scripts.typecheck = 'tsc --noEmit';
+  
+  // Format and lint scripts
+  pkg.scripts.format = 'prettier --write . --ignore-unknown';
+  pkg.scripts['format:check'] = 'prettier --check . --ignore-unknown';
+  pkg.scripts.lint = 'eslint .';
+  pkg.scripts['lint:fix'] = 'eslint . --fix';
+  
   // Test scripts
   pkg.scripts.test = 'vitest run';
   pkg.scripts['test:watch'] = 'vitest';
@@ -225,7 +236,9 @@ try {
 
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 '@
-  Write-Host "   - Scripts added: test, test:watch, test:coverage"
+  Write-Host "   - Build/dev scripts: dev, build, typecheck"
+  Write-Host "   - Format/lint scripts: format, format:check, lint, lint:fix"
+  Write-Host "   - Test scripts: test, test:watch, test:coverage"
   Write-Host "   - Verification scripts: verify:structure, verify:app-routes, verify:feature-routes, verify:no-cross-feature-imports, verify:no-raw-colors"
   Write-Host "   - Feature generation: gen:feature"
 
