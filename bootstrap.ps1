@@ -123,21 +123,21 @@ try {
 # Initialize git repository and configure pre-commit hooks
 try {
   $projRoot = Get-Location
-  
+
   Write-Host "==> Initializing git repository"
   git init -b main | Out-Null
   git branch -M main | Out-Null
-  
+
   Write-Host "==> Installing Husky and commitlint"
   pnpm add -D husky @commitlint/cli @commitlint/config-conventional | Out-Null
-  
+
   Write-Host "==> Initializing Husky"
   pnpm exec husky init | Out-Null
-  
+
   Write-Host "==> Applying pre-commit hooks"
   $huskyTpl = Join-Path $PSScriptRoot "templates\\root\\.husky"
   $huskyDst = Join-Path $projRoot ".husky"
-  
+
   if (Test-Path $huskyTpl) {
     # Copy hook files (pre-commit, commit-msg)
     Get-ChildItem -Path $huskyTpl -File | ForEach-Object {
@@ -146,16 +146,68 @@ try {
       Copy-Item -Path $srcHook -Destination $dstHook -Force
       Write-Host "   - $($_.Name) installed"
     }
-    
+
     # Stage hooks in git
     git add .husky/pre-commit .husky/commit-msg | Out-Null
     git add .gitignore | Out-Null
   } else {
     Write-Warning "Husky templates not found at $huskyTpl (skipping hook setup)"
   }
-  
+
 } catch {
   Write-Warning "Git/Husky initialization encountered an issue: $_"
+}
+
+# Install and configure testing framework
+try {
+  $projRoot = Get-Location
+
+  Write-Host "==> Installing Vitest and testing utilities"
+  pnpm add -D vitest @vitest/coverage-v8 jsdom | Out-Null
+  Write-Host "   - Testing dependencies installed"
+
+  Write-Host "==> Applying test configuration"
+  $vitestSrc = Join-Path $PSScriptRoot "templates\\root\\vitest.config.ts"
+  $vitestDst = Join-Path $projRoot "vitest.config.ts"
+  if (Test-Path $vitestSrc) {
+    Copy-Item -Path $vitestSrc -Destination $vitestDst -Force
+    Write-Host "   - vitest.config.ts copied (50% coverage thresholds)"
+  }
+
+  # Copy test.ts setup file
+  $testSetupSrc = Join-Path $PSScriptRoot "templates\\root\\src\\test.ts"
+  $testSetupDst = Join-Path $projRoot "src\\test.ts"
+  if (Test-Path $testSetupSrc) {
+    Copy-Item -Path $testSetupSrc -Destination $testSetupDst -Force
+    Write-Host "   - src/test.ts setup file copied"
+  }
+
+  # Copy home.page.spec.ts example test
+  $homeSpecSrc = Join-Path $PSScriptRoot "templates\\web-app\\src\\app\\features\\home\\home.page.spec.ts"
+  $homeSpecDst = Join-Path $projRoot "src\\app\\features\\home\\home.page.spec.ts"
+  if (Test-Path $homeSpecSrc) {
+    Copy-Item -Path $homeSpecSrc -Destination $homeSpecDst -Force
+    Write-Host "   - home.page.spec.ts example copied"
+  }
+
+  # Add test scripts to package.json
+  Write-Host "==> Adding test scripts to package.json"
+  node -e @'
+  const fs = require('fs');
+  const pkgPath = 'package.json';
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+
+  if (!pkg.scripts) pkg.scripts = {};
+  pkg.scripts.test = 'vitest run';
+  pkg.scripts['test:watch'] = 'vitest';
+  pkg.scripts['test:coverage'] = 'vitest run --coverage';
+
+  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
+'@
+  Write-Host "   - Scripts added: test, test:watch, test:coverage"
+
+} catch {
+  Write-Warning "Testing setup encountered an issue: $_"
 }
 
 Write-Host ""

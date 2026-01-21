@@ -22,12 +22,43 @@ pnpm test
 pnpm test:watch
 
 # With coverage
-pnpm test:ci --code-coverage
+pnpm test:coverage
 ```
+
+## Coverage Thresholds
+
+Coverage thresholds are configured in `vitest.config.ts` and enforced automatically.
+
+### Current Targets (Bootstrap Phase)
+- **Lines**: 50%
+- **Functions**: 50%
+- **Branches**: 50%
+- **Statements**: 50%
+
+These are intentionally **low** to enable rapid development while establishing testing patterns.
+
+### Recommended Progression
+
+Increase thresholds as your codebase matures. Update `vitest.config.ts`:
+
+| Phase | Lines | Functions | Branches | Goal |
+|-------|-------|-----------|----------|------|
+| **Bootstrap** | 50% | 50% | 50% | Establish patterns |
+| **Growth** | 60% | 60% | 55% | Core logic coverage |
+| **Stable** | 75% | 75% | 70% | High confidence |
+| **Production** | 85%+ | 85%+ | 80%+ | Enterprise standards |
+
+---
 
 ## Coverage
 
 Coverage is provided by `@vitest/coverage-v8` (included in dev dependencies).
+
+To view detailed coverage report:
+```bash
+pnpm test:coverage
+# Open coverage/index.html in browser
+```
 
 Coverage outputs are excluded from git and should not be committed.
 
