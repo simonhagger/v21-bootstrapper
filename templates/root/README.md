@@ -50,17 +50,15 @@ src/app/
 tools/
 └── scripts/               # Verification and feature generation
 
-docs/                      # Developer documentation
-├── DEVELOPMENT_GUIDE.md   # Daily development workflows
-├── ARCHITECTURE.md        # Architectural rules and patterns
-├── PATTERNS.md            # Common implementation patterns
-├── TESTING_GUIDE.md       # Testing guidelines
-├── THEMING_GUIDE.md       # Tailwind + Material theming
-├── API_GUIDE.md           # Backend API integration
-├── AI_AGENT_GUIDE.md      # AI-assisted development
-├── POST_BOOTSTRAP_GUIDE.md# Post-bootstrap checklist
-├── VERIFICATION_SYSTEM.md # Verification gates reference
-└── VERIFICATION_QUICK_REF.md # Quick reference for gates
+docs/                      # Developer documentation (8 guides)
+├── GETTING_STARTED.md     # Zero-to-first-feature onboarding
+├── ARCHITECTURE.md        # Non-negotiable architectural rules
+├── DEVELOPMENT.md         # Daily development workflows
+├── TESTING.md             # Testing patterns and guidelines
+├── STYLING.md             # Tailwind + Material theming
+├── API.md                 # Backend API integration patterns
+├── VERIFICATION.md        # Verification gates system
+└── TROUBLESHOOTING.md     # Common problems and solutions
 ```
 
 ## Key Commands
@@ -141,13 +139,18 @@ Automatic verification prevents common mistakes:
 
 ## Documentation
 
-All documentation lives in the `docs/` folder:
+All documentation lives in the `docs/` folder. Start with **ARCHITECTURE.md** to understand the core principles:
 
 | Document | Purpose |
 |----------|---------|
-| **[docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)** | Daily development workflows and common tasks |
-| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | Authoritative architectural rules and patterns (READ THIS FIRST) |
-| **[docs/PATTERNS.md](docs/PATTERNS.md)** | Common implementation patterns and examples |
+| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | Non-negotiable architectural rules (READ THIS FIRST) |
+| **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** | Zero-to-first-feature onboarding in 10 minutes |
+| **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** | Daily development workflows and best practices |
+| **[docs/TESTING.md](docs/TESTING.md)** | Testing patterns, utilities, and coverage guidance |
+| **[docs/STYLING.md](docs/STYLING.md)** | Tailwind CSS + Angular Material integration |
+| **[docs/API.md](docs/API.md)** | Backend API integration patterns and examples |
+| **[docs/VERIFICATION.md](docs/VERIFICATION.md)** | Verification gates: what they check and how to pass |
+| **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** | Solutions to common problems by category |
 | **[docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md)** | Testing guidelines and best practices |
 | **[docs/THEMING_GUIDE.md](docs/THEMING_GUIDE.md)** | Styling with Tailwind CSS and Angular Material |
 | **[docs/API_GUIDE.md](docs/API_GUIDE.md)** | Backend API integration and HTTP clients |
