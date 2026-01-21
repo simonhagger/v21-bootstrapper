@@ -282,6 +282,13 @@ try {
   Write-Warning "Post-bootstrap verification step encountered an issue: $_"
 }
 
+# Final line ending normalization to ensure absolutely clean state
+try {
+  git add --renormalize . 2>$null | Out-Null
+} catch {
+  # Silently ignore any git normalization issues at this point
+}
+
 Write-Host ""
 Write-Host "==> Scaffold, configuration, and verification complete"
 Write-Host "App ready at: $(Get-Location)"
