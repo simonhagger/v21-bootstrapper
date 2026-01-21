@@ -48,14 +48,14 @@ npx -y "@angular/cli@$Cli" new $Name `
 Push-Location (Join-Path $TargetPath $Name)
 
 Write-Host "==> Adding Tailwind CSS"
-pnpm exec ng add tailwindcss --skip-confirmation
+pnpm exec ng add tailwindcss --skip-confirmation 2>&1 | Out-Null
 
 Write-Host "==> Adding Angular Material"
 pnpm exec ng add @angular/material `
   --skip-confirmation `
   --theme=custom `
   --typography=true `
-  --animations=true
+  --animations=true 2>&1 | Out-Null
 
 # Post-scaffold: copy curated templates (app core, features/, shared/, config files)
 try {
