@@ -159,7 +159,7 @@ import { MatCardModule } from '@angular/material/card';
     }
 
     mat-card.elevated {
-      box-shadow: var(--shadow-md);
+      @apply shadow-md;
     }
 
     mat-card-header {
@@ -185,8 +185,6 @@ Where `--spacing-md` is defined in `tailwind.css`:
   --spacing-md: 1.5rem;
   --spacing-lg: 2rem;
   --spacing-sm: 0.75rem;
-  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 ```
 
