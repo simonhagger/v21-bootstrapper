@@ -1,3 +1,4 @@
+/* global localStorage */
 import { Injectable, effect, signal } from '@angular/core';
 
 type ColorScheme = 'light' | 'dark' | 'auto';
