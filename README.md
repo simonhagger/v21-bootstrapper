@@ -18,6 +18,7 @@ Creates a complete Angular 21 application with:
 - ✅ **Vitest 4.0.17** – Unit testing with jsdom
 - ✅ **Verification gates** – Structural, routing, import, and color validation
 - ✅ **Feature generator** – Scaffold new features with routes
+- ✅ **Core services** – ThemeService (light/dark mode), ResponsiveService (Tailwind-aligned breakpoints)
 - ✅ **Developer documentation** – Architecture, patterns, testing guides
 
 **Time**: ~2-3 minutes | **Consistency**: 100% | **Quality**: Guaranteed
@@ -113,6 +114,25 @@ Generated apps include these **verification gates**:
 4. **Cross-feature imports** – Prevents feature isolation violations
 5. **Raw colors** – Detects hardcoded colors
 6. **GitHub Actions** – CI workflow runs the same checks on push/PR (format, lint, typecheck, test, build, all gates)
+
+### Core Services
+
+Every bootstrapped app includes reusable services for common requirements:
+
+**ThemeService** – Light/dark mode management
+- Handles theme switching and persistence
+- Works seamlessly with Material Angular automatic dark mode
+- See docs: [THEMING_GUIDE.md](templates/root/docs/THEMING_GUIDE.md)
+
+**ResponsiveService** – Responsive design helpers using Angular CDK Layout
+- Tailwind CSS-aligned breakpoints (xs, sm, md, lg, xl, 2xl)
+- Device classification (mobile, tablet, desktop)
+- Orientation, touch, platform, browser, OS detection
+- Applies semantic classes to `<html>` element for CSS selectors
+- Observable-based for reactive component logic
+- Home page demo: Live breakpoint and platform detection example
+
+---
 
 ## 🛰️ CI/CD & Git Setup
 

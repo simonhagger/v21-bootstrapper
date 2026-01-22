@@ -165,6 +165,63 @@ All documentation lives in the `docs/` folder. Start with **ARCHITECTURE.md** to
 | **[docs/QUALITY_GATES.md](docs/QUALITY_GATES.md)** | Optional hardening gates (coverage, lint warnings, audit, bundle budgets) |
 | **[tools/scripts/README.md](tools/scripts/README.md)** | Verification and feature generation scripts |
 
+## Core Services
+
+The app includes shared services for common functionality:
+
+### ThemeService
+
+Manages theme switching and detection (light/dark mode):
+
+```typescript
+import { ThemeService } from './shared/services/theme.service';
+
+export class MyComponent {
+  private theme = inject(ThemeService);
+  
+  toggleTheme() {
+    this.theme.toggleTheme();
+  }
+  
+  getCurrentTheme() {
+    return this.theme.getTheme();
+  }
+}
+```
+
+**See:** [docs/STYLING.md](docs/STYLING.md) for comprehensive theming guide
+
+### ResponsiveService
+
+Provides Tailwind-aligned breakpoint detection and device/platform information:
+
+```typescript
+import { ResponsiveService } from './shared/services/responsive.service';
+
+export class MyComponent {
+  private responsive = inject(ResponsiveService);
+  
+  // Observable for reactive breakpoint changes
+  constructor() {
+    this.responsive.currentBreakpoint$.subscribe(bp => {
+      console.log('Current breakpoint:', bp); // 'sm', 'md', 'lg', etc.
+    });
+  }
+  
+  // Get complete responsive state
+  state$ = this.responsive.state$; // isMobile, isTablet, isDesktop, etc.
+}
+```
+
+**CSS Usage:** The service applies semantic classes to `<html>` element:
+```css
+/* Styles only apply on md breakpoint and above */
+html.bp-md .sidebar { display: block; }
+html.bp-sm .sidebar { display: none; }
+```
+
+**See:** Home page component for live demo of responsive features
+
 ## Getting Started
 
 1. **Review** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) to understand architectural rules
