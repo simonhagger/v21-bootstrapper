@@ -251,8 +251,8 @@ import { ResponsiveService } from '../../shared/services/responsive.service';
                   <div class="flex gap-2 text-xs">
                     <span class="text-opacity-70">
                       <strong>Applied:</strong>
-                      <span class="status-indicator" [class.active]="themeScheme() === 'dark'">
-                        {{ themeScheme() === 'auto' ? (state.prefersDark ? 'Dark' : 'Light') + ' (auto)' : themeScheme() | titlecase }}
+                      <span class="status-indicator" [class.active]="themeScheme() !== 'auto'">
+                        {{ themeScheme() === 'auto' ? (state.prefersDark ? 'Dark' : 'Light') + ' (auto)' : (themeScheme() | titlecase) }}
                       </span>
                     </span>
                   </div>
