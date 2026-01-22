@@ -31,9 +31,16 @@
 - **NEVER use Unix commands** like `head`, `tail`, `grep`, etc.
 - Always use **PowerShell native equivalents**:
   - `head -n 20` → `Select-Object -First 20`
-  - `tail -n 20` → `Select-Object -Last 20`
+  - ~~`tail -n 20` → `Select-Object -Last 20`~~ **AVOID `Select-Object -Last` with streaming output**
   - `grep pattern file` → `Select-String -Pattern 'pattern' -Path 'file'`
 - This prevents command errors and maintains consistency on Windows
+
+**CRITICAL: `Select-Object -Last` causes hangs with long-running commands**
+- Commands like `pnpm verify 2>&1 | Select-Object -Last 25` will **HANG**
+- `Select-Object -Last` buffers entire stream before outputting
+- For long-running commands, let them complete naturally or use `-First` only
+- If you need tail behavior, redirect to file then read: `pnpm verify > out.txt; Get-Content out.txt -Tail 25`
+- **NEVER pipe long-running commands to `Select-Object -Last`**
 
 ### 4. Pace & Control
 - Stop frantic changes and rapid iteration
