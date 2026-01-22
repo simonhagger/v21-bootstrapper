@@ -313,8 +313,8 @@ try {
   # Create docs folder
   New-Item -ItemType Directory -Force -Path $docsDst | Out-Null
 
-  # Copy consolidated 8-document set from templates/root/docs/
-  $docFiles = @('GETTING_STARTED.md', 'ARCHITECTURE.md', 'DEVELOPMENT.md', 'TESTING.md', 'STYLING.md', 'API.md', 'VERIFICATION.md', 'TROUBLESHOOTING.md')
+  # Copy consolidated 9-document set from templates/root/docs/
+  $docFiles = @('GETTING_STARTED.md', 'ARCHITECTURE.md', 'DEVELOPMENT.md', 'TESTING.md', 'E2E_TESTING.md', 'STYLING.md', 'API.md', 'VERIFICATION.md', 'TROUBLESHOOTING.md')
 
   foreach ($doc in $docFiles) {
     $srcPath = Join-Path $docsTemplateSrc $doc
@@ -333,7 +333,7 @@ try {
     Write-Host "   - README.md (root)"
   }
 
-  Write-Host "   Total: 9 documentation files (1 in root + 8 in docs/)"
+  Write-Host "   Total: 10 documentation files (1 in root + 9 in docs/)"
 } catch {
   Write-Warning "Documentation copy encountered an issue: $_"
 }
