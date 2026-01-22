@@ -5,6 +5,38 @@
 
 ---
 
+## ⚠️ CRITICAL OPERATIONAL CONSTRAINTS (Lessons Learned)
+
+### 1. Deliberate Change Management
+- **NO rapid-fire commits to main branch** without validation
+- **ALWAYS test locally before pushing to GitHub**
+- Verify not just code compilation, but **actual UI/UX behavior**
+- Wait for user feedback on changes before proceeding
+- When unsure about next steps, **ask instead of assume**
+
+### 2. Demo App Update Process
+- **ONLY mechanism for demo app updates**: `upgrade-deployment.ps1` script
+- Never manually copy files or apply changes directly to deployed app
+- Always use the established upgrade script to maintain consistency
+- This ensures demo app state is always traceable to bootstrap templates
+
+### 3. PowerShell Command Usage
+- **NEVER use Unix commands** like `head`, `tail`, `grep`, etc.
+- Always use **PowerShell native equivalents**:
+  - `head -n 20` → `Select-Object -First 20`
+  - `tail -n 20` → `Select-Object -Last 20`
+  - `grep pattern file` → `Select-String -Pattern 'pattern' -Path 'file'`
+- This prevents command errors and maintains consistency on Windows
+
+### 4. Pace & Control
+- Stop frantic changes and rapid iteration
+- Bootstrap and demo app are **critical infrastructure**, not sandboxes
+- Each change needs careful consideration of downstream impact
+- Document decisions and get confirmation before execution
+- Prefer thorough validation over speed
+
+---
+
 ## 1. Git & Branch Workflow
 
 ### Branch Strategy
