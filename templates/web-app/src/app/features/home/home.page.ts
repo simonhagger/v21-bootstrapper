@@ -152,127 +152,125 @@ import { ResponsiveService } from '../../shared/services/responsive.service';
       </mat-card>
 
       <!-- Responsive service demo -->
-      @if (responsive.state$ | async; as state) {
-        <mat-card class="mb-6">
-          <mat-card-header>
-            <mat-card-title class="flex items-center gap-2">
-              <mat-icon>devices</mat-icon>
-              Responsive Service Demo
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="pt-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <!-- Breakpoint Info -->
-              <div>
-                <p class="text-xs font-semibold mb-2 opacity-70">Current Breakpoint</p>
-                <span class="breakpoint-badge">{{ state.breakpoint }}</span>
-                <p class="text-xs mt-2 opacity-60">
-                  Resize your window to see breakpoint changes in real-time
-                </p>
-              </div>
+      <mat-card class="mb-6">
+        <mat-card-header>
+          <mat-card-title class="flex items-center gap-2">
+            <mat-icon>devices</mat-icon>
+            Responsive Service Demo
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="pt-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <!-- Breakpoint Info -->
+            <div>
+              <p class="text-xs font-semibold mb-2 opacity-70">Current Breakpoint</p>
+              <span class="breakpoint-badge">{{ responsive.currentBreakpoint() }}</span>
+              <p class="text-xs mt-2 opacity-60">
+                Resize your window to see breakpoint changes in real-time
+              </p>
+            </div>
 
-              <!-- Device Type -->
-              <div>
-                <p class="text-xs font-semibold mb-2 opacity-70">Device Classification</p>
-                <div class="flex gap-2">
-                  <span class="status-indicator" [class.active]="state.isMobile"
-                    >Mobile</span
-                  >
-                  <span class="status-indicator" [class.active]="state.isTablet"
-                    >Tablet</span
-                  >
-                  <span class="status-indicator" [class.active]="state.isDesktop"
-                    >Desktop</span
-                  >
-                </div>
-              </div>
-
-              <!-- Orientation -->
-              <div>
-                <p class="text-xs font-semibold mb-2 opacity-70">Orientation</p>
-                <div class="flex gap-2">
-                  <span class="status-indicator" [class.active]="state.isPortrait">
-                    <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
-                      >phone_iphone</mat-icon
-                    >
-                    Portrait
-                  </span>
-                  <span class="status-indicator" [class.active]="state.isLandscape">
-                    <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
-                      >landscape</mat-icon
-                    >
-                    Landscape
-                  </span>
-                </div>
-              </div>
-
-              <!-- Platform & Browser -->
-              <div>
-                <p class="text-xs font-semibold mb-2 opacity-70">Platform Detection (CDK)</p>
-                <div class="flex flex-col gap-1 text-sm">
-                  <span>
-                    <strong>Browser:</strong>
-                    {{ state.browser }}
-                  </span>
-                  <span>
-                    <strong>OS:</strong>
-                    {{ state.os }}
-                  </span>
-                  <span>
-                    <strong>Platform:</strong>
-                    {{ state.platform }}
-                  </span>
-                </div>
-                <p class="text-xs mt-2 opacity-60">
-                  Detected via Angular CDK Platform service
-                </p>
-              </div>
-
-              <!-- Touch & Color Scheme -->
-              <div>
-                <p class="text-xs font-semibold mb-2 opacity-70">Capabilities & Theme</p>
-                <div class="flex gap-2 flex-col">
-                  <div class="flex gap-2">
-                    <span class="status-indicator" [class.active]="state.isTouchEnabled">
-                      <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
-                        >touch_app</mat-icon
-                      >
-                      Touch
-                    </span>
-                  </div>
-                  <div class="flex gap-2 text-xs">
-                    <span class="text-opacity-70">
-                      <strong>System:</strong>
-                      <span class="status-indicator" [class.active]="state.prefersDark">
-                        {{ state.prefersDark ? 'Dark' : 'Light' }} Preference
-                      </span>
-                    </span>
-                  </div>
-                  <div class="flex gap-2 text-xs">
-                    <span class="text-opacity-70">
-                      <strong>Applied:</strong>
-                      <span class="status-indicator" [class.active]="themeScheme() !== 'auto'">
-                        {{ themeScheme() === 'auto' ? (state.prefersDark ? 'Dark' : 'Light') + ' (auto)' : (themeScheme() | titlecase) }}
-                      </span>
-                    </span>
-                  </div>
-                </div>
+            <!-- Device Type -->
+            <div>
+              <p class="text-xs font-semibold mb-2 opacity-70">Device Classification</p>
+              <div class="flex gap-2">
+                <span class="status-indicator" [class.active]="responsive.isMobile()"
+                  >Mobile</span
+                >
+                <span class="status-indicator" [class.active]="responsive.isTablet()"
+                  >Tablet</span
+                >
+                <span class="status-indicator" [class.active]="responsive.isDesktop()"
+                  >Desktop</span
+                >
               </div>
             </div>
 
-            <p class="text-xs mt-4 opacity-70 p-3 bg-opacity-10 rounded">
-              💡
-              <strong>Usage:</strong>
-              Inject <code>ResponsiveService</code> to access <code>state$</code> observable for
-              component logic, or use CSS class selectors on <code>&lt;html&gt;</code>:
-              <code>html.bp-lg .sidebar {{ '{' }} {{ '}' }}</code>,
-              <code>html.platform-mobile .desktop-only {{ '{' }} display: none; {{ '}' }}</code>, or
-              <code>html.browser-safari</code> for browser-specific styles. Detection uses Angular
-              CDK Layout (breakpoints) and Platform service (browser/OS).
-            </p>
-          </mat-card-content>
-        </mat-card>
-      }
+            <!-- Orientation -->
+            <div>
+              <p class="text-xs font-semibold mb-2 opacity-70">Orientation</p>
+              <div class="flex gap-2">
+                <span class="status-indicator" [class.active]="responsive.isPortrait()">
+                  <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
+                    >phone_iphone</mat-icon
+                  >
+                  Portrait
+                </span>
+                <span class="status-indicator" [class.active]="responsive.isLandscape()">
+                  <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
+                    >landscape</mat-icon
+                  >
+                  Landscape
+                </span>
+              </div>
+            </div>
+
+            <!-- Platform & Browser -->
+            <div>
+              <p class="text-xs font-semibold mb-2 opacity-70">Platform Detection (CDK)</p>
+              <div class="flex flex-col gap-1 text-sm">
+                <span>
+                  <strong>Browser:</strong>
+                  {{ responsive.browser() }}
+                </span>
+                <span>
+                  <strong>OS:</strong>
+                  {{ responsive.os() }}
+                </span>
+                <span>
+                  <strong>Platform:</strong>
+                  {{ responsive.platform() }}
+                </span>
+              </div>
+              <p class="text-xs mt-2 opacity-60">
+                Detected via Angular CDK Platform service
+              </p>
+            </div>
+
+            <!-- Touch & Color Scheme -->
+            <div>
+              <p class="text-xs font-semibold mb-2 opacity-70">Capabilities & Theme</p>
+              <div class="flex gap-2 flex-col">
+                <div class="flex gap-2">
+                  <span class="status-indicator" [class.active]="responsive.state()?.isTouchEnabled">
+                    <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
+                      >touch_app</mat-icon
+                    >
+                    Touch
+                  </span>
+                </div>
+                <div class="flex gap-2 text-xs">
+                  <span class="text-opacity-70">
+                    <strong>System:</strong>
+                    <span class="status-indicator" [class.active]="responsive.state()?.prefersDark">
+                      {{ responsive.state()?.prefersDark ? 'Dark' : 'Light' }} Preference
+                    </span>
+                  </span>
+                </div>
+                <div class="flex gap-2 text-xs">
+                  <span class="text-opacity-70">
+                    <strong>Applied:</strong>
+                    <span class="status-indicator" [class.active]="themeScheme() !== 'auto'">
+                      {{ themeScheme() === 'auto' ? (responsive.state()?.prefersDark ? 'Dark' : 'Light') + ' (auto)' : (themeScheme() | titlecase) }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs mt-4 opacity-70 p-3 bg-opacity-10 rounded">
+            💡
+            <strong>Usage:</strong>
+            Inject <code>ResponsiveService</code> to access signals like <code>state()</code>, <code>isMobile()</code>,
+            <code>currentBreakpoint()</code> for component logic, or use CSS class selectors on <code>&lt;html&gt;</code>:
+            <code>html.bp-lg .sidebar {{ '{' }} {{ '}' }}</code>,
+            <code>html.platform-mobile .desktop-only {{ '{' }} display: none; {{ '}' }}</code>, or
+            <code>html.browser-safari</code> for browser-specific styles. Detection uses Angular
+            CDK Layout (breakpoints) and Platform service (browser/OS).
+          </p>
+        </mat-card-content>
+      </mat-card>
 
       <!-- Grid layout using Tailwind -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

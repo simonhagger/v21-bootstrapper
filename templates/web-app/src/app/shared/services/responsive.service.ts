@@ -1,9 +1,10 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID, computed } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Platform } from '@angular/cdk/platform';
 import { map, shareReplay, distinctUntilChanged } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 /**
  * Responsive Service
@@ -23,11 +24,21 @@ import { Observable } from 'rxjs';
  * - lg: 1024px
  * - xl: 1280px
  * - 2xl: 1536px
+ *Public API (Signals):**
+ * Breakpoints: isSm, isMd, isLg, isXl, is2xl, currentBreakpoint
+ * Devices: isMobile, isTablet, isDesktop
+ * Orientation: isPortrait, isLandscape
+ * Complete state: state (all properties in ResponsiveState)
  *
- * **Available Observables:**
- * Breakpoints: isSm$, isMd$, isLg$, isXl$, is2xl$, currentBreakpoint$
- * Devices: isMobile$, isTablet$, isDesktop$
- * Orientation: isPortrait$, isLandscape$
+ * **Usage in Components:**
+ * ```typescript
+ * readonly responsive = inject(ResponsiveService);
+ * 
+ * // Access signals directly in template or component
+ * {{ responsive.isMobile() ? 'Mobile' : 'Desktop' }}
+ * {{ responsive.currentBreakpoint() }}
+ * {{ responsive.state().browser }}
+ * ```
  * Complete state: state$ (all properties in ResponsiveState)
  *
  * **HTML Classes Applied:**
@@ -61,32 +72,29 @@ export class ResponsiveService {
   private cdkPlatform = inject(Platform);
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
+Internal observables (RxJS for reactive logic)
+  private readonly isSm$ = this.observe(this.TAILWIND_BREAKPOINTS.sm);
+  private readonly isMd$ = this.observe(this.TAILWIND_BREAKPOINTS.md);
+  private readonly isLg$ = this.observe(this.TAILWIND_BREAKPOINTS.lg);
+  private readonly isXl$ = this.observe(this.TAILWIND_BREAKPOINTS.xl);
+  private readonly is2xl$ = this.observe(this.TAILWIND_BREAKPOINTS['2xl']);
 
-  // Tailwind CSS v4 breakpoint definitions (aligned with Tailwind)
-  private readonly TAILWIND_BREAKPOINTS = {
-    sm: '(min-width: 640px)',
-    md: '(min-width: 768px)',
-    lg: '(min-width: 1024px)',
-    xl: '(min-width: 1280px)',
-    '2xl': '(min-width: 1536px)',
-  };
-
-  // Breakpoint observables (Tailwind-aligned)
-  readonly isSm$ = this.observe(this.TAILWIND_BREAKPOINTS.sm);
-  readonly isMd$ = this.observe(this.TAILWIND_BREAKPOINTS.md);
-  readonly isLg$ = this.observe(this.TAILWIND_BREAKPOINTS.lg);
-  readonly isXl$ = this.observe(this.TAILWIND_BREAKPOINTS.xl);
-  readonly is2xl$ = this.observe(this.TAILWIND_BREAKPOINTS['2xl']);
-
-  // Device type observables
-  readonly isMobile$: Observable<boolean> = this.observe(
+  private readonly isMobile$: Observable<boolean> = this.observe(
     `(max-width: 639px)` // xs only
   );
 
-  readonly isTablet$: Observable<boolean> = this.observe(
+  private readonly isTablet$: Observable<boolean> = this.observe(
     `(min-width: 768px) and (max-width: 1023px)` // md, lg
   );
 
+  private readonly isDesktop$: Observable<boolean> = this.observe(
+    `(min-width: 1024px)` // lg and up
+  );
+
+  private readonly isPortrait$ = this.observe('(orientation: portrait)');
+  private readonly isLandscape$ = this.observe('(orientation: landscape)');
+
+  private
   readonly isDesktop$: Observable<boolean> = this.observe(
     `(min-width: 1024px)` // lg and up
   );
@@ -111,15 +119,7 @@ export class ResponsiveService {
         if (result.breakpoints[this.TAILWIND_BREAKPOINTS.xl]) return 'xl';
         if (result.breakpoints[this.TAILWIND_BREAKPOINTS.lg]) return 'lg';
         if (result.breakpoints[this.TAILWIND_BREAKPOINTS.md]) return 'md';
-        if (result.breakpoints[this.TAILWIND_BREAKPOINTS.sm]) return 'sm';
-        return 'xs'; // default
-      }),
-      distinctUntilChanged(),
-      shareReplay(1)
-    );
-
-  // Complete responsive state
-  readonly state$: Observable<ResponsiveState> = this.currentBreakpoint$.pipe(
+  private readonly state$: Observable<ResponsiveState> = this.currentBreakpoint$.pipe(
     map(breakpoint => {
       const isMobile = !this.checkMatch(this.TAILWIND_BREAKPOINTS.sm);
       const isTablet = this.checkMatch(this.TAILWIND_BREAKPOINTS.md) &&
@@ -135,6 +135,35 @@ export class ResponsiveService {
         isLandscape: this.isBrowser && this.checkMatch('(orientation: landscape)'),
         isTouchEnabled: this.isBrowser && this.detectTouch(),
         platform: (isDesktop ? 'desktop' : isTablet ? 'tablet' : 'mobile') as 'mobile' | 'tablet' | 'desktop',
+        browser: this.detectBrowser(),
+        os: this.detectOS(),
+        prefersDark: this.isBrowser && this.getPrefersDark(),
+      };
+    }),
+    shareReplay(1)
+  );
+
+  // Public API: Signals (converted from observables)
+  readonly isSm = toSignal(this.isSm$, { requireSync: true });
+  readonly isMd = toSignal(this.isMd$, { requireSync: true });
+  readonly isLg = toSignal(this.isLg$, { requireSync: true });
+  readonly isXl = toSignal(this.isXl$, { requireSync: true });
+  readonly is2xl = toSignal(this.is2xl$, { requireSync: true });
+  
+  readonly isMobile = toSignal(this.isMobile$, { requireSync: true });
+  readonly isTablet = toSignal(this.isTablet$, { requireSync: true });
+  readonly isDesktop = toSignal(this.isDesktop$, { requireSync: true });
+  
+  readonly isPortrait = toSignal(this.isPortrait$, { requireSync: true });
+  readonly isLandscape = toSignal(this.isLandscape$, { requireSync: true });
+  
+  readonly currentBreakpoint = toSignal(this.currentBreakpoint$, { requireSync: true });
+  readonly state = toSignal(this.state$, { requireSync: true });
+
+  // Computed signals for convenience
+  readonly platform = computed(() => this.state()?.platform ?? 'desktop');
+  readonly browser = computed(() => this.state()?.browser ?? 'other');
+  readonly os = computed(() => this.state()?.os ?? 'other'      platform: (isDesktop ? 'desktop' : isTablet ? 'tablet' : 'mobile') as 'mobile' | 'tablet' | 'desktop',
         browser: this.detectBrowser(),
         os: this.detectOS(),
         prefersDark: this.isBrowser && this.getPrefersDark(),
