@@ -12,6 +12,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
  * Provides comprehensive responsive design and platform detection using Angular CDK.
  * Applies semantic classes to <html> element for responsive styling and platform detection.
  *
+ * **Architecture:**
+ * - Internal: RxJS observables for reactive logic
+ * - Public API: Signals-first (observables converted via toSignal)
+ *
  * **CDK Integration:**
  * - BreakpointObserver: Tailwind CSS v4 breakpoint detection (xs/sm/md/lg/xl/2xl)
  * - Platform service: SSR-safe platform checks (isBrowser, etc.)
@@ -24,11 +28,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
  * - lg: 1024px
  * - xl: 1280px
  * - 2xl: 1536px
- *Public API (Signals):**
- * Breakpoints: isSm, isMd, isLg, isXl, is2xl, currentBreakpoint
- * Devices: isMobile, isTablet, isDesktop
- * Orientation: isPortrait, isLandscape
- * Complete state: state (all properties in ResponsiveState)
+ *
+ * **Public API (Signals):**
+ * - Breakpoints: isSm(), isMd(), isLg(), isXl(), is2xl(), currentBreakpoint()
+ * - Devices: isMobile(), isTablet(), isDesktop()
+ * - Orientation: isPortrait(), isLandscape()
+ * - Platform: platform(), browser(), os()
+ * - Complete state: state() (all properties in ResponsiveState)
  *
  * **Usage in Components:**
  * ```typescript
@@ -39,24 +45,25 @@ import { toSignal } from '@angular/core/rxjs-interop';
  * {{ responsive.currentBreakpoint() }}
  * {{ responsive.state().browser }}
  * ```
- * Complete state: state$ (all properties in ResponsiveState)
  *
  * **HTML Classes Applied:**
- * Breakpoints: bp-xs, bp-sm, bp-md, bp-lg, bp-xl, bp-2xl
- * Devices: mobile, tablet, desktop
- * Orientation: orientation-portrait, orientation-landscape
- * Platform: platform-[os], browser-[browser], os-[os]
- * Touch: touch-enabled, touch-disabled
- * Color scheme: prefers-dark, prefers-light
+ * - Breakpoints: bp-xs, bp-sm, bp-md, bp-lg, bp-xl, bp-2xl
+ * - Devices: mobile, tablet, desktop
+ * - Orientation: orientation-portrait, orientation-landscape
+ * - Platform: platform-mobile/tablet/desktop
+ * - Browser: browser-chrome/firefox/safari/edge/other
+ * - OS: os-windows/macos/linux/ios/android/other
+ * - Touch: touch-enabled, touch-disabled
+ * - Color scheme: prefers-dark, prefers-light
  */
 
 export type TailwindBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 export interface ResponsiveState {
   breakpoint: TailwindBreakpoint;
-  isMobile: boolean;        // xs, sm
-  isTablet: boolean;        // md, lg
-  isDesktop: boolean;       // xl, 2xl
+  isMobile: boolean;
+  isTablet: boolean;
+  isDesktop: boolean;
   isPortrait: boolean;
   isLandscape: boolean;
   isTouchEnabled: boolean;
@@ -68,43 +75,36 @@ export interface ResponsiveState {
 
 @Injectable({ providedIn: 'root' })
 export class ResponsiveService {
+  // CDK services
   private breakpointObserver = inject(BreakpointObserver);
   private cdkPlatform = inject(Platform);
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
-Internal observables (RxJS for reactive logic)
+
+  // Tailwind CSS v4 breakpoint definitions
+  private readonly TAILWIND_BREAKPOINTS = {
+    sm: '(min-width: 640px)',
+    md: '(min-width: 768px)',
+    lg: '(min-width: 1024px)',
+    xl: '(min-width: 1280px)',
+    '2xl': '(min-width: 1536px)',
+  };
+
+  // Internal observables (RxJS for reactive logic)
   private readonly isSm$ = this.observe(this.TAILWIND_BREAKPOINTS.sm);
   private readonly isMd$ = this.observe(this.TAILWIND_BREAKPOINTS.md);
   private readonly isLg$ = this.observe(this.TAILWIND_BREAKPOINTS.lg);
   private readonly isXl$ = this.observe(this.TAILWIND_BREAKPOINTS.xl);
   private readonly is2xl$ = this.observe(this.TAILWIND_BREAKPOINTS['2xl']);
 
-  private readonly isMobile$: Observable<boolean> = this.observe(
-    `(max-width: 639px)` // xs only
-  );
-
-  private readonly isTablet$: Observable<boolean> = this.observe(
-    `(min-width: 768px) and (max-width: 1023px)` // md, lg
-  );
-
-  private readonly isDesktop$: Observable<boolean> = this.observe(
-    `(min-width: 1024px)` // lg and up
-  );
+  private readonly isMobile$ = this.observe('(max-width: 767px)');
+  private readonly isTablet$ = this.observe('(min-width: 768px) and (max-width: 1023px)');
+  private readonly isDesktop$ = this.observe('(min-width: 1024px)');
 
   private readonly isPortrait$ = this.observe('(orientation: portrait)');
   private readonly isLandscape$ = this.observe('(orientation: landscape)');
 
-  private
-  readonly isDesktop$: Observable<boolean> = this.observe(
-    `(min-width: 1024px)` // lg and up
-  );
-
-  // Orientation
-  readonly isPortrait$ = this.observe('(orientation: portrait)');
-  readonly isLandscape$ = this.observe('(orientation: landscape)');
-
-  // Current breakpoint (Tailwind-aligned)
-  readonly currentBreakpoint$: Observable<TailwindBreakpoint> = this.breakpointObserver
+  private readonly currentBreakpoint$ = this.breakpointObserver
     .observe([
       this.TAILWIND_BREAKPOINTS.sm,
       this.TAILWIND_BREAKPOINTS.md,
@@ -114,7 +114,6 @@ Internal observables (RxJS for reactive logic)
     ])
     .pipe(
       map(result => {
-        // Check from largest to smallest to avoid overlap
         if (result.breakpoints[this.TAILWIND_BREAKPOINTS['2xl']]) return '2xl';
         if (result.breakpoints[this.TAILWIND_BREAKPOINTS.xl]) return 'xl';
         if (result.breakpoints[this.TAILWIND_BREAKPOINTS.lg]) return 'lg';
@@ -126,12 +125,12 @@ Internal observables (RxJS for reactive logic)
       shareReplay(1)
     );
 
-  // Complete responsive state
-  private readonly state$: Observable<ResponsiveState> = this.currentBreakpoint$.pipe(
+  private readonly state$ = this.currentBreakpoint$.pipe(
     map(breakpoint => {
-      const isMobile = !this.checkMatch(this.TAILWIND_BREAKPOINTS.sm);
-      const isTablet = this.checkMatch(this.TAILWIND_BREAKPOINTS.md) &&
-                      !this.checkMatch(this.TAILWIND_BREAKPOINTS.lg);
+      const isMobile = !this.checkMatch(this.TAILWIND_BREAKPOINTS.md);
+      const isTablet =
+        this.checkMatch(this.TAILWIND_BREAKPOINTS.md) &&
+        !this.checkMatch(this.TAILWIND_BREAKPOINTS.lg);
       const isDesktop = this.checkMatch(this.TAILWIND_BREAKPOINTS.lg);
 
       return {
@@ -142,7 +141,10 @@ Internal observables (RxJS for reactive logic)
         isPortrait: this.isBrowser && this.checkMatch('(orientation: portrait)'),
         isLandscape: this.isBrowser && this.checkMatch('(orientation: landscape)'),
         isTouchEnabled: this.isBrowser && this.detectTouch(),
-        platform: (isDesktop ? 'desktop' : isTablet ? 'tablet' : 'mobile') as 'mobile' | 'tablet' | 'desktop',
+        platform: (isDesktop ? 'desktop' : isTablet ? 'tablet' : 'mobile') as
+          | 'mobile'
+          | 'tablet'
+          | 'desktop',
         browser: this.detectBrowser(),
         os: this.detectOS(),
         prefersDark: this.isBrowser && this.getPrefersDark(),
@@ -151,7 +153,7 @@ Internal observables (RxJS for reactive logic)
     shareReplay(1)
   );
 
-  // Public API: Signals (converted from observables)
+  // Public API: Signals (converted from internal observables)
   readonly isSm = toSignal(this.isSm$, { requireSync: true });
   readonly isMd = toSignal(this.isMd$, { requireSync: true });
   readonly isLg = toSignal(this.isLg$, { requireSync: true });
@@ -259,7 +261,6 @@ Internal observables (RxJS for reactive logic)
   }
 
   private detectBrowser(): 'chrome' | 'firefox' | 'safari' | 'edge' | 'other' {
-    // Use Platform service for SSR safety, userAgent parsing for detection
     if (!this.cdkPlatform.isBrowser) return 'other';
     // eslint-disable-next-line no-undef
     const ua = navigator.userAgent.toLowerCase();
@@ -271,7 +272,6 @@ Internal observables (RxJS for reactive logic)
   }
 
   private detectOS(): 'windows' | 'macos' | 'linux' | 'ios' | 'android' | 'other' {
-    // Use Platform service for SSR safety, userAgent parsing for detection
     if (!this.cdkPlatform.isBrowser) return 'other';
     // eslint-disable-next-line no-undef
     const ua = navigator.userAgent.toLowerCase();
