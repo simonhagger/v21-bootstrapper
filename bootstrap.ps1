@@ -71,44 +71,17 @@ pnpm add -D @playwright/test 2>&1 | Out-Null
 
 # Post-scaffold: copy curated templates (app core, features/, shared/, config files)
 try {
-  $tplRoot = Join-Path $PSScriptRoot "templates\\web-app\\src"
-  $rootTpl = Join-Path $PSScriptRoot "templates\\root"
+  $tplRoot = Join-Path $PSScriptRoot "templates\web-app\src"
+  $rootTpl = Join-Path $PSScriptRoot "templates\root"
   $appRoot = Join-Path (Get-Location) "src"
   $projRoot = Get-Location
 
   Write-Host "==> Applying curated templates"
 
-  # Copy src-level files (styles, tailwind config)
-  $srcFiles = @('styles.scss', 'tailwind.css')
-  foreach ($f in $srcFiles) {
-    $srcFile = Join-Path $tplRoot $f
-    $dstFile = Join-Path $appRoot $f
-    if (Test-Path $srcFile) {
-      Copy-Item -Path $srcFile -Destination $dstFile -Force
-      Write-Host "   - $f updated"
-    }
-  }
-
-  # Copy core app files (app.ts has layout integration, app.routes.ts has feature routing)
-  $coreFiles = @('app.ts','app.routes.ts')
-  foreach ($f in $coreFiles) {
-    $srcFile = Join-Path $tplRoot (Join-Path "app" $f)
-    $dstFile = Join-Path $appRoot (Join-Path "app" $f)
-    if (Test-Path $srcFile) {
-      Copy-Item -Path $srcFile -Destination $dstFile -Force
-      Write-Host "   - app/$f updated"
-    }
-  }
-
-  # Copy features/ and shared/
-  $dirs = @('features','shared')
-  foreach ($d in $dirs) {
-    $srcDir = Join-Path $tplRoot (Join-Path "app" $d)
-    $dstDir = Join-Path $appRoot (Join-Path "app" $d)
-    if (Test-Path $srcDir) {
-      Copy-Item -Path $srcDir -Destination $dstDir -Recurse -Force
-      Write-Host "   - app/$d copied"
-    }
+  # Copy entire src/ to ensure coherent app scaffold (future-proof new files)
+  if (Test-Path $tplRoot) {
+    Copy-Item -Path (Join-Path $tplRoot '*') -Destination $appRoot -Recurse -Force
+    Write-Host "   - src/ (entire folder) copied"
   }
 
   # Copy root config files (Prettier, ESLint, VSCode settings, git config, Playwright)
@@ -187,20 +160,16 @@ try {
   pnpm exec husky init | Out-Null
 
   Write-Host "==> Applying pre-commit hooks"
-  $huskyTpl = Join-Path $PSScriptRoot "templates\\root\\.husky"
+  $huskyTpl = Join-Path $PSScriptRoot "templates\root\.husky"
   $huskyDst = Join-Path $projRoot ".husky"
 
   if (Test-Path $huskyTpl) {
-    # Copy hook files (pre-commit, commit-msg, pre-push)
-    Get-ChildItem -Path $huskyTpl -File | ForEach-Object {
-      $srcHook = $_.FullName
-      $dstHook = Join-Path $huskyDst $_.Name
-      Copy-Item -Path $srcHook -Destination $dstHook -Force
-      Write-Host "   - $($_.Name) installed"
-    }
+    # Copy entire .husky directory to capture new hooks/configs
+    Copy-Item -Path $huskyTpl -Destination $huskyDst -Recurse -Force
+    Write-Host "   - .husky/ copied"
 
     # Stage hooks and git config files
-    git add .husky/pre-commit .husky/commit-msg .husky/pre-push | Out-Null
+    git add .husky | Out-Null
     git add .gitignore .gitattributes | Out-Null
 
     # Normalize line endings according to .gitattributes rules
@@ -313,16 +282,10 @@ try {
   # Create docs folder
   New-Item -ItemType Directory -Force -Path $docsDst | Out-Null
 
-  # Copy consolidated 9-document set from templates/root/docs/
-  $docFiles = @('GETTING_STARTED.md', 'ARCHITECTURE.md', 'DEVELOPMENT.md', 'TESTING.md', 'E2E_TESTING.md', 'STYLING.md', 'API.md', 'VERIFICATION.md', 'TROUBLESHOOTING.md')
-
-  foreach ($doc in $docFiles) {
-    $srcPath = Join-Path $docsTemplateSrc $doc
-    $dstPath = Join-Path $docsDst $doc
-    if (Test-Path $srcPath) {
-      Copy-Item -Path $srcPath -Destination $dstPath -Force
-      Write-Host "   - $doc"
-    }
+  # Copy entire docs folder to keep future additions without code changes
+  if (Test-Path $docsTemplateSrc) {
+    Copy-Item -Path (Join-Path $docsTemplateSrc '*') -Destination $docsDst -Recurse -Force
+    Write-Host "   - docs/ (all files)"
   }
 
   # Copy README.md to project root (from templates/root/)
@@ -333,7 +296,7 @@ try {
     Write-Host "   - README.md (root)"
   }
 
-  Write-Host "   Total: 10 documentation files (1 in root + 9 in docs/)"
+  Write-Host "   Documentation copied"
 } catch {
   Write-Warning "Documentation copy encountered an issue: $_"
 }

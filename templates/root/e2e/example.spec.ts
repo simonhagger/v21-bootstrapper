@@ -21,7 +21,7 @@ test.describe('Home Page', () => {
 
   test('should load and display home page', async ({ page }) => {
     // Check page title
-    await expect(page).toHaveTitle(/.*[Hh]ome.*/);
+    await expect(page).toHaveTitle(/DemoV21App/);
 
     // Verify main content is visible
     const mainContent = page.locator('main');
@@ -30,11 +30,11 @@ test.describe('Home Page', () => {
 
   test('should display responsive demo section', async ({ page }) => {
     // Look for demo panel
-    const demoPanel = page.locator('text=Responsive Design Demo');
+    const demoPanel = page.locator('text=Responsive Service Demo');
     await expect(demoPanel).toBeVisible();
 
     // Verify breakpoint info is displayed
-    const breakpointInfo = page.locator('text=/Breakpoint|bp-/');
+    const breakpointInfo = page.locator('.breakpoint-badge');
     await expect(breakpointInfo).toBeVisible();
   });
 
@@ -84,8 +84,8 @@ test.describe('Navigation', () => {
   test('should navigate to home from any page', async ({ page }) => {
     await page.goto('/');
 
-    // Verify we're on home page
-    await expect(page).toHaveURL(/\/$/);
+    // Verify we're on home page (redirects to /home)
+    await expect(page).toHaveURL(/\/home/);
   });
 
   test('should show 404 for unknown routes', async ({ page }) => {
