@@ -38,6 +38,20 @@ import { ThemeService } from '../../shared/services/theme.service';
         --mat-sys-primary: var(--color-accent) !important;
         --mat-sys-on-primary: var(--color-accent-contrast) !important;
       }
+
+      /* Integration callout: Use Material surface with elevated styling */
+      .integration-callout {
+        background-color: var(--mat-sys-surface-container);
+        color: var(--mat-sys-on-surface);
+        @apply rounded-lg p-6;
+      }
+
+      /* Info boxes: Use Material system variables for automatic dark mode */
+      .info-box {
+        background-color: var(--mat-sys-surface-dim);
+        color: var(--mat-sys-on-surface-variant);
+        @apply p-3 rounded text-sm;
+      }
     `,
   ],
   template: `
@@ -62,7 +76,7 @@ import { ThemeService } from '../../shared/services/theme.service';
       }
 
       <!-- Integration example callout -->
-      <mat-card class="mb-6 bg-blue-50">
+      <mat-card class="mb-6 integration-callout">
         <mat-card-header>
           <mat-card-title class="flex items-center gap-2">
             <mat-icon>palette</mat-icon>
@@ -176,13 +190,13 @@ import { ThemeService } from '../../shared/services/theme.service';
               classes and design tokens.
             </p>
             <div class="flex flex-col gap-3">
-              <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+              <div class="info-box">
                 <strong>Material:</strong> Theming configured in <code>src/styles.scss</code>
               </div>
-              <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+              <div class="info-box">
                 <strong>Tailwind:</strong> Design tokens in <code>src/tailwind.css</code>
               </div>
-              <div class="p-3 rounded text-sm bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+              <div class="info-box">
                 <strong>Integration:</strong> Use <code>mat.theme-overrides()</code> to apply
                 Tailwind tokens to Material
               </div>
