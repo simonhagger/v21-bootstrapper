@@ -188,8 +188,82 @@ Write-Host ""
 # Show modified files
 if ($changes.Modified.Count -gt 0) {
   Write-Host "Modified Files:" -ForegroundColor Yellow
-  $changes.Modified | ForEach-Object {
-    Write-Host "  · $($_.RelativePath)" -ForegroundColor White
+  
+  foreach ($file in $changes.Modified) {
+    $displayPath = $file.RelativePath
+    
+    # Check if this is package.json and analyze dependencies
+    if ($file.Name -eq 'package.json') {
+      Write-Host "  · $displayPath" -ForegroundColor White -NoNewline
+      Write-Host "  ⚠ DEPENDENCY CHANGES" -ForegroundColor Magenta
+      
+      try {
+        $templatePkg = Get-Content -Path $file.FullPath -Raw | ConvertFrom-Json
+        $deploymentPkg = Get-Content -Path $file.DeploymentPath -Raw | ConvertFrom-Json
+        
+        # Compare dependencies
+        $templateDeps = @{}
+        $deploymentDeps = @{}
+        
+        if ($templatePkg.dependencies) {
+          $templatePkg.dependencies.PSObject.Properties | ForEach-Object {
+            $templateDeps[$_.Name] = $_.Value
+          }
+        }
+        
+        if ($deploymentPkg.dependencies) {
+          $deploymentPkg.dependencies.PSObject.Properties | ForEach-Object {
+            $deploymentDeps[$_.Name] = $_.Value
+          }
+        }
+        
+        # Find additions
+        $added = @()
+        foreach ($key in $templateDeps.Keys) {
+          if (-not $deploymentDeps.ContainsKey($key)) {
+            $added += "      + $key@$($templateDeps[$key])"
+          }
+        }
+        
+        # Find updates
+        $updated = @()
+        foreach ($key in $templateDeps.Keys) {
+          if ($deploymentDeps.ContainsKey($key) -and $templateDeps[$key] -ne $deploymentDeps[$key]) {
+            $updated += "      ~ $key`: $($deploymentDeps[$key]) → $($templateDeps[$key])"
+          }
+        }
+        
+        # Find removals
+        $removed = @()
+        foreach ($key in $deploymentDeps.Keys) {
+          if (-not $templateDeps.ContainsKey($key)) {
+            $removed += "      - $key"
+          }
+        }
+        
+        # Display changes
+        if ($added.Count -gt 0) {
+          Write-Host "    Added dependencies:" -ForegroundColor Green
+          $added | ForEach-Object { Write-Host $_ -ForegroundColor Green }
+        }
+        
+        if ($updated.Count -gt 0) {
+          Write-Host "    Updated dependencies:" -ForegroundColor Cyan
+          $updated | ForEach-Object { Write-Host $_ -ForegroundColor Cyan }
+        }
+        
+        if ($removed.Count -gt 0) {
+          Write-Host "    Removed dependencies:" -ForegroundColor Red
+          $removed | ForEach-Object { Write-Host $_ -ForegroundColor Red }
+        }
+      }
+      catch {
+        Write-Host "    (Could not parse package.json for detailed analysis)" -ForegroundColor DarkGray
+      }
+    }
+    else {
+      Write-Host "  · $displayPath" -ForegroundColor White
+    }
   }
   Write-Host ""
 }
@@ -376,9 +450,34 @@ if ($Action -in @('upgrade', 'upgrade-force')) {
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
   Write-Host "Applied: $applied files" -ForegroundColor Green
   Write-Host ""
+  
+  # Check if package.json was modified
+  $pkgJsonModified = $changes.Modified | Where-Object { $_.Name -eq 'package.json' }
+  
+  if ($pkgJsonModified) {
+    Write-Host "⚠ Dependency Changes Detected" -ForegroundColor Magenta
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Magenta
+    Write-Host "package.json was updated. Next steps:" -ForegroundColor Yellow
+    Write-Host "  1. cd $DeploymentPath" -ForegroundColor White
+    Write-Host "  2. git diff package.json           # Review dependency changes" -ForegroundColor White
+    Write-Host "  3. pnpm install                    # Install new/updated dependencies" -ForegroundColor White
+    Write-Host "  4. pnpm test                       # Verify compatibility" -ForegroundColor White
+    Write-Host "  5. pnpm dev                        # Test in development" -ForegroundColor White
+    Write-Host "  6. git add . && git commit         # Commit when satisfied" -ForegroundColor White
+    Write-Host ""
+  }
+  
   Write-Host "Next steps:" -ForegroundColor Cyan
   Write-Host "  1. Review changes: git diff" -ForegroundColor White
-  Write-Host "  2. Test deployment: npm install && npm start" -ForegroundColor White
-  Write-Host "  3. Commit changes: git add . && git commit -m 'chore: upgrade to latest templates'" -ForegroundColor White
+  
+  if (-not $pkgJsonModified) {
+    Write-Host "  2. Test deployment: npm install && npm start" -ForegroundColor White
+  }
+  else {
+    Write-Host "  2. Install dependencies: pnpm install" -ForegroundColor White
+    Write-Host "  3. Test deployment: pnpm test && pnpm dev" -ForegroundColor White
+  }
+  
+  Write-Host "  $(if ($pkgJsonModified) { '4' } else { '3' }). Commit changes: git add . && git commit -m 'chore: upgrade to latest templates'" -ForegroundColor White
   Write-Host ""
 }

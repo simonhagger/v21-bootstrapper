@@ -509,7 +509,326 @@ Then bootstrap separately.
 
 ---
 
-## 📞 Support
+## � Upgrading Deployed Apps
+
+As the bootstrap templates evolve with improvements, best practices, and fixes, you can upgrade existing deployed applications **without recreating them from scratch**. The `upgrade-deployment.ps1` script compares your deployed app against the latest templates and applies updates incrementally while preserving your git history and local customizations.
+
+### Why Use the Upgrade Tool?
+
+- ✅ **Preserve Git History** – Keep all commits, branches, and local changes
+- ✅ **Incremental Updates** – Apply only what changed in templates
+- ✅ **Safe Filtering** – Skips `node_modules`, `.git`, `dist`, and other generated files
+- ✅ **Review Before Apply** – See what will change before committing
+- ✅ **Dependency Detection** – Identifies package.json changes automatically
+
+### Quick Upgrade Workflow
+
+```powershell
+# 1. Compare your deployed app against latest templates
+cd E:\ANGULAR\v21\tools\bootstrap
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action compare
+
+# 2. Generate detailed HTML report (optional)
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action report
+# Opens: E:\workspace\my-app\UPGRADE_REPORT.html
+
+# 3. Apply updates (interactive - prompts for each file)
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action upgrade
+
+# 4. Or apply all updates automatically
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action upgrade-force
+```
+
+### Action Modes
+
+| Mode | Description | Use When |
+|------|-------------|----------|
+| `compare` | Show differences without changes | First check, understanding drift |
+| `report` | Generate HTML report | Sharing with team, documentation |
+| `upgrade` | Interactive mode (prompts per file) | Careful review, selective updates |
+| `upgrade-force` | Apply all automatically | Trust templates, quick updates |
+
+### Handling Dependency Changes
+
+When templates add, remove, or update dependencies, the upgrade script detects `package.json` changes and alerts you:
+
+**Example output:**
+```
+Modified Files:
+  · package.json                          ⚠ DEPENDENCY CHANGES DETECTED
+  · src/app/features/home/home.page.ts
+```
+
+**After upgrading, check for dependency changes:**
+
+```powershell
+# Navigate to your deployed app
+cd E:\workspace\my-app
+
+# Review what changed in package.json
+git diff package.json
+
+# If dependencies changed, reinstall
+pnpm install
+
+# Verify everything works
+pnpm test
+pnpm dev
+```
+
+### Common Upgrade Scenarios
+
+#### Scenario 1: Template Code Updates (No Dependencies)
+
+Template files like components, services, or documentation were improved:
+
+```powershell
+# Compare first
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action compare
+
+# See: 3 files modified (home.page.ts, THEMING_GUIDE.md, README.md)
+
+# Apply updates
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action upgrade-force
+
+# Commit changes
+cd E:\workspace\my-app
+git add .
+git commit -m "chore: upgrade templates - theming guide improvements"
+git push
+```
+
+**Result:** Code updated, no dependency changes, ready to go.
+
+#### Scenario 2: New Dependencies Added
+
+Bootstrap templates now include a new library (e.g., `@angular/cdk` for accessibility):
+
+```powershell
+# Upgrade detects package.json change
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action compare
+
+# Output shows:
+# Modified Files:
+#   · package.json          ⚠ DEPENDENCY CHANGES
+
+# Apply upgrade
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action upgrade-force
+
+# Navigate to app and reinstall
+cd E:\workspace\my-app
+pnpm install
+
+# Verify new dependency works
+pnpm test
+pnpm dev
+```
+
+**Result:** New dependency installed, app updated to use it.
+
+#### Scenario 3: Dependency Version Updates
+
+A critical security patch or feature upgrade in a dependency:
+
+```powershell
+# After upgrade-force
+cd E:\workspace\my-app
+
+# Check what versions changed
+git diff package.json
+
+# Example output:
+# -    "vitest": "^4.0.17",
+# +    "vitest": "^4.1.2",
+
+# Install updated versions
+pnpm install
+
+# Run tests to verify compatibility
+pnpm test
+```
+
+**Result:** Dependencies updated, tested, verified.
+
+#### Scenario 4: Configuration File Changes
+
+Updates to `angular.json`, `tsconfig.json`, or other config files:
+
+```powershell
+# Upgrade applies config changes
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action upgrade-force
+
+# Review config changes
+cd E:\workspace\my-app
+git diff angular.json
+git diff tsconfig.json
+
+# Rebuild to verify configs work
+pnpm build
+
+# Test in development
+pnpm dev
+```
+
+**Result:** Configuration updated, build verified.
+
+### Enhanced Upgrade Script (Dependency Detection)
+
+The upgrade script now includes special handling for `package.json`:
+
+```powershell
+Modified Files:
+  · package.json                          ⚠ DEPENDENCY CHANGES DETECTED
+    Added:
+      - @angular/cdk@^21.1.0
+      - date-fns@^4.1.0
+    Updated:
+      - vitest: ^4.0.17 → ^4.1.2
+    Removed:
+      - moment (deprecated)
+
+Next steps after upgrade:
+  1. cd E:\workspace\my-app
+  2. pnpm install              # Install dependency changes
+  3. pnpm test                 # Verify compatibility
+  4. git diff package.json     # Review changes
+  5. git commit                # Commit when satisfied
+```
+
+### Best Practices for Upgrades
+
+**Before Upgrading:**
+1. ✅ Commit all local changes: `git add . && git commit`
+2. ✅ Ensure clean working tree: `git status`
+3. ✅ Create a backup branch: `git checkout -b pre-upgrade-backup`
+4. ✅ Run compare mode first: `upgrade-deployment.ps1 -Action compare`
+
+**During Upgrade:**
+1. ✅ Review the report: `upgrade-deployment.ps1 -Action report`
+2. ✅ Use interactive mode for major changes: `-Action upgrade`
+3. ✅ Use force mode for minor updates: `-Action upgrade-force`
+
+**After Upgrading:**
+1. ✅ Review changes: `git diff`
+2. ✅ Check package.json specifically: `git diff package.json`
+3. ✅ Reinstall if needed: `pnpm install`
+4. ✅ Run full test suite: `pnpm test`
+5. ✅ Test development server: `pnpm dev`
+6. ✅ Commit with descriptive message
+7. ✅ Push to remote: `git push`
+
+### Rollback if Needed
+
+If an upgrade causes issues:
+
+```powershell
+# Option 1: Revert the commit
+git revert HEAD
+
+# Option 2: Reset to before upgrade
+git reset --hard pre-upgrade-backup
+
+# Option 3: Cherry-pick specific files back
+git checkout HEAD~1 -- src/specific/file.ts
+```
+
+### Upgrade Frequency
+
+**Recommended schedule:**
+- **Weekly**: For active projects with frequent template improvements
+- **Monthly**: For stable projects in maintenance mode
+- **Before major releases**: Ensure latest best practices applied
+- **After bootstrap updates**: When you improve templates for new projects
+
+### Example: Complete Upgrade Session
+
+```powershell
+# 1. Prepare
+cd E:\ANGULAR\v21\tools\bootstrap
+git pull  # Get latest template updates
+
+# 2. Backup deployed app
+cd E:\workspace\my-app
+git checkout -b upgrade-$(Get-Date -Format 'yyyy-MM-dd')
+git add .
+git commit -m "chore: checkpoint before template upgrade"
+
+# 3. Compare changes
+cd E:\ANGULAR\v21\tools\bootstrap
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action compare
+
+# Output analysis:
+# ✓ Unchanged: 45 files
+# ⚠ Modified: 3 files (home.page.ts, package.json, THEMING_GUIDE.md)
+# ✚ New: 1 file (upgrade-deployment.ps1)
+
+# 4. Generate report for review
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action report
+# Review E:\workspace\my-app\UPGRADE_REPORT.html in browser
+
+# 5. Apply upgrade
+.\upgrade-deployment.ps1 -DeploymentPath "E:\workspace\my-app" -Action upgrade-force
+
+# 6. Handle dependency changes
+cd E:\workspace\my-app
+git diff package.json  # See new @angular/cdk dependency
+pnpm install
+
+# 7. Verify
+pnpm test
+pnpm dev
+
+# 8. Commit
+git add .
+git commit -m "chore: upgrade templates - add CDK, update theming guide"
+git push origin upgrade-2026-01-22
+
+# 9. Merge via PR or direct
+git checkout main
+git merge upgrade-2026-01-22
+git push
+```
+
+### Troubleshooting Upgrades
+
+**Issue: "File conflicts after upgrade"**
+```powershell
+# Check what conflicts
+git status
+
+# Resolve manually or keep your version
+git checkout --ours path/to/file.ts    # Keep your changes
+git checkout --theirs path/to/file.ts  # Use template version
+```
+
+**Issue: "App won't build after upgrade"**
+```powershell
+# Clean install dependencies
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+
+# Clear Angular cache
+rm -rf .angular
+
+# Rebuild
+pnpm build
+```
+
+**Issue: "Tests failing after upgrade"**
+```powershell
+# Update test snapshots if needed
+pnpm test -- -u
+
+# Check for breaking changes in dependencies
+git diff package.json
+
+# Revert specific dependency
+pnpm add package-name@previous-version
+```
+
+---
+
+## �📞 Support
 
 Each generated app includes documentation:
 
