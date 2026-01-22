@@ -13,7 +13,8 @@ import { Observable } from 'rxjs';
  *
  * **CDK Integration:**
  * - BreakpointObserver: Tailwind CSS v4 breakpoint detection (xs/sm/md/lg/xl/2xl)
- * - Platform service: Browser, OS, and device detection (Chrome, Safari, Edge, Firefox; Windows, macOS, Linux, iOS, Android)
+ * - Platform service: SSR-safe platform checks (isBrowser, etc.)
+ * - UserAgent parsing: Reliable browser and OS detection with SSR checks
  *
  * **Tailwind Breakpoints:**
  * - xs: default (< 640px)
@@ -228,19 +229,27 @@ export class ResponsiveService {
   }
 
   private detectBrowser(): 'chrome' | 'firefox' | 'safari' | 'edge' | 'other' {
-    if (this.cdkPlatform.EDGE) return 'edge';
-    if (this.cdkPlatform.CHROME) return 'chrome';
-    if (this.cdkPlatform.FIREFOX) return 'firefox';
-    if (this.cdkPlatform.SAFARI) return 'safari';
+    // Use Platform service for SSR safety, userAgent parsing for detection
+    if (!this.cdkPlatform.isBrowser) return 'other';
+    // eslint-disable-next-line no-undef
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.includes('edg/')) return 'edge';
+    if (ua.includes('chrome')) return 'chrome';
+    if (ua.includes('firefox')) return 'firefox';
+    if (ua.includes('safari') && !ua.includes('chrome')) return 'safari';
     return 'other';
   }
 
   private detectOS(): 'windows' | 'macos' | 'linux' | 'ios' | 'android' | 'other' {
-    if (this.cdkPlatform.WIN) return 'windows';
-    if (this.cdkPlatform.MAC) return 'macos';
-    if (this.cdkPlatform.LINUX) return 'linux';
-    if (this.cdkPlatform.IOS) return 'ios';
-    if (this.cdkPlatform.ANDROID) return 'android';
+    // Use Platform service for SSR safety, userAgent parsing for detection
+    if (!this.cdkPlatform.isBrowser) return 'other';
+    // eslint-disable-next-line no-undef
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.includes('win')) return 'windows';
+    if (ua.includes('mac')) return 'macos';
+    if (ua.includes('linux')) return 'linux';
+    if (ua.includes('iphone') || ua.includes('ipad')) return 'ios';
+    if (ua.includes('android')) return 'android';
     return 'other';
   }
 
