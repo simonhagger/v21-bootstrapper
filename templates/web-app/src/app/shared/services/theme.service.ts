@@ -43,7 +43,7 @@ export class ThemeService {
    */
   private applyTheme(scheme: ColorScheme): void {
     const html = document.documentElement;
-    
+
     if (scheme === 'dark') {
       html.classList.add('dark');
     } else if (scheme === 'light') {
