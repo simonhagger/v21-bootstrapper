@@ -127,6 +127,14 @@ try {
     Write-Host "   - .vscode/ copied"
   }
 
+  # Copy .github directory (workflows, PR template, CODEOWNERS)
+  $githubSrc = Join-Path $rootTpl ".github"
+  $githubDst = Join-Path $projRoot ".github"
+  if (Test-Path $githubSrc) {
+    Copy-Item -Path $githubSrc -Destination $githubDst -Recurse -Force
+    Write-Host "   - .github/ copied (CI workflows, PR template, CODEOWNERS)"
+  }
+
   # Copy tools/scripts directory (verification and generation scripts)
   $toolsScriptsSrc = Join-Path $PSScriptRoot "templates\\tools-scripts"
   $toolsScriptsDst = Join-Path $projRoot "tools\\scripts"
