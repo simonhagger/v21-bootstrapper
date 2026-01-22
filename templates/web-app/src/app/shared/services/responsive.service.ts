@@ -196,6 +196,7 @@ export class ResponsiveService {
   }
 
   private detectTouch(): boolean {
+    // eslint-disable-next-line no-undef
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }
 
@@ -206,6 +207,7 @@ export class ResponsiveService {
   }
 
   private detectBrowser(): 'chrome' | 'firefox' | 'safari' | 'edge' | 'other' {
+    // eslint-disable-next-line no-undef
     const ua = navigator.userAgent.toLowerCase();
     if (ua.includes('edg/')) return 'edge';
     if (ua.includes('chrome')) return 'chrome';
@@ -215,6 +217,7 @@ export class ResponsiveService {
   }
 
   private detectOS(): 'windows' | 'macos' | 'linux' | 'ios' | 'android' | 'other' {
+    // eslint-disable-next-line no-undef
     const ua = navigator.userAgent.toLowerCase();
     if (ua.includes('win')) return 'windows';
     if (ua.includes('mac')) return 'macos';
