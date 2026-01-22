@@ -189,6 +189,13 @@ git push origin feature/my-feature    # Pre-push hook runs all verifiers
 # CI validates all gates before merge
 ```
 
+## Progressive QA Hardening
+
+- **Baseline (default):** format:check, lint, typecheck, test, build, verification gates.
+- **Optional local gates (commented in Husky):** strict lint (`--max-warnings=0`), prettier check, coverage, audit, outdated report.
+- **Optional CI gates (commented in .github/workflows/ci.yml):** coverage run, strict lint, audit, outdated report, bundle size budget.
+- **How to enable:** uncomment the gate in Husky and/or CI, then (for CI) add the check to branch protection. See [docs/QUALITY_GATES.md](docs/QUALITY_GATES.md) for stepwise guidance.
+
 ## Development Workflow Example
 
 ```bash
