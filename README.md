@@ -72,6 +72,7 @@ pnpm gen:feature Dashboard --route dashboard
 | Husky            | 9.1.7   | Git hooks             |
 | commitlint       | 20.3.1  | Conventional commits  |
 | Vitest           | 4.0.17  | Testing               |
+| GitHub Actions   | n/a     | Server-side CI (mirrors local gates) |
 
 ### Code Quality
 
@@ -111,6 +112,43 @@ Generated apps include these **verification gates**:
 3. **Feature routes** – Validates route providers and loaders
 4. **Cross-feature imports** – Prevents feature isolation violations
 5. **Raw colors** – Detects hardcoded colors
+6. **GitHub Actions** – CI workflow runs the same checks on push/PR (format, lint, typecheck, test, build, all gates)
+
+## 🛰️ CI/CD & Git Setup
+
+### Configure Git Remote (new scaffold)
+
+```powershell
+# From the generated app directory
+git init -b main
+git remote add origin https://github.com/<org>/<repo>.git
+git add .
+git commit -m "chore: initial scaffold"
+git push -u origin main
+```
+
+### Enable GitHub Actions (server-side checks)
+
+- The scaffold ships with [.github/workflows/ci.yml](.github/workflows/ci.yml) which mirrors local Husky hooks:
+    - format:check, lint, typecheck, test, build
+    - verification gates: structure, app-routes, feature-routes, no-cross-feature-imports, no-raw-colors
+- CI runs on push/PR to `main` and `develop` and uploads build artifacts.
+
+### Branch Protection (recommended)
+
+Configure in GitHub Settings → Branches:
+- Require pull request before merge (1–2 approvals)
+- Require status check: `Validate Code Quality` (from ci.yml)
+- Require conversation resolution; block force-push/deletion
+
+### CODEOWNERS (optional, off by default)
+
+- The scaffold ships `.github/CODEOWNERS` fully commented as examples. Uncomment and replace with real handles when ready.
+- Enable “Require review from Code Owners” in branch protection after you set real owners.
+
+### PR Template
+
+- `.github/pull_request_template.md` guides submitters on testing, architecture compliance, performance, and deployment notes.
 
 All gates run automatically on:
 
