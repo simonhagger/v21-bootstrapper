@@ -163,13 +163,12 @@ import { MatCardModule } from '@angular/material/card';
     }
 
     mat-card-header {
-      padding: var(--spacing-md);
-      @apply border-b;
+      @apply px-6 py-6 border-b;
       border-color: var(--mat-sys-outline);
     }
 
     mat-card-content {
-      padding: var(--spacing-md);
+      @apply px-6 py-6;
     }
   `,
 })
@@ -179,7 +178,7 @@ export class CustomCardComponent {
 }
 ```
 
-Where `--spacing-md` is defined in `tailwind.css`:
+Where `px-6 py-6` uses Tailwind's standard spacing scale (1.5rem). You can also define custom spacing tokens in `tailwind.css` if needed:
 
 ```css
 @theme {
@@ -484,9 +483,7 @@ export class FilterChipComponent {
 
     label {
       color: var(--mat-sys-on-background);
-      font-weight: 500;
-      margin-bottom: var(--spacing-sm);
-      display: block;
+      @apply font-medium mb-2 block;
     }
 
     ::ng-deep .mat-mdc-form-field {
@@ -503,7 +500,7 @@ export class FormGroupComponent {
 }
 ```
 
-Where spacing tokens are from `tailwind.css @theme`:
+Where spacing tokens are from `tailwind.css @theme` (optional customization):
 
 ```css
 @theme {
