@@ -8,16 +8,34 @@ import { Observable } from 'rxjs';
 /**
  * Responsive Service
  *
- * Provides breakpoint detection aligned with Tailwind CSS v4 standard breakpoints.
+ * Provides comprehensive responsive design and platform detection using Angular CDK.
  * Applies semantic classes to <html> element for responsive styling and platform detection.
  *
- * Tailwind Breakpoints:
+ * **CDK Integration:**
+ * - BreakpointObserver: Tailwind CSS v4 breakpoint detection (xs/sm/md/lg/xl/2xl)
+ * - Platform service: Browser, OS, and device detection (Chrome, Safari, Edge, Firefox; Windows, macOS, Linux, iOS, Android)
+ *
+ * **Tailwind Breakpoints:**
  * - xs: default (< 640px)
  * - sm: 640px
  * - md: 768px
  * - lg: 1024px
  * - xl: 1280px
  * - 2xl: 1536px
+ *
+ * **Available Observables:**
+ * Breakpoints: isSm$, isMd$, isLg$, isXl$, is2xl$, currentBreakpoint$
+ * Devices: isMobile$, isTablet$, isDesktop$
+ * Orientation: isPortrait$, isLandscape$
+ * Complete state: state$ (all properties in ResponsiveState)
+ *
+ * **HTML Classes Applied:**
+ * Breakpoints: bp-xs, bp-sm, bp-md, bp-lg, bp-xl, bp-2xl
+ * Devices: mobile, tablet, desktop
+ * Orientation: orientation-portrait, orientation-landscape
+ * Platform: platform-[os], browser-[browser], os-[os]
+ * Touch: touch-enabled, touch-disabled
+ * Color scheme: prefers-dark, prefers-light
  */
 
 export type TailwindBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';

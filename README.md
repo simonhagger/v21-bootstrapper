@@ -124,10 +124,12 @@ Every bootstrapped app includes reusable services for common requirements:
 - Works seamlessly with Material Angular automatic dark mode
 - See docs: [THEMING_GUIDE.md](templates/root/docs/THEMING_GUIDE.md)
 
-**ResponsiveService** – Responsive design helpers using Angular CDK Layout
-- Tailwind CSS-aligned breakpoints (xs, sm, md, lg, xl, 2xl)
+**ResponsiveService** – Responsive design helpers using Angular CDK Layout & Platform
+- Tailwind CSS-aligned breakpoints (xs, sm, md, lg, xl, 2xl) via CDK BreakpointObserver
 - Device classification (mobile, tablet, desktop)
-- Orientation, touch, platform, browser, OS detection
+- Browser detection (Chrome, Safari, Edge, Firefox) via CDK Platform service
+- OS detection (Windows, macOS, Linux, iOS, Android) via CDK Platform service
+- Orientation, touch, and color scheme detection
 - Applies semantic classes to `<html>` element for CSS selectors
 - Observable-based for reactive component logic
 - Home page demo: Live breakpoint and platform detection example
