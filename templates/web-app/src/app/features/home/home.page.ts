@@ -230,20 +230,32 @@ import { ResponsiveService } from '../../shared/services/responsive.service';
 
               <!-- Touch & Color Scheme -->
               <div>
-                <p class="text-xs font-semibold mb-2 opacity-70">Capabilities</p>
-                <div class="flex gap-2">
-                  <span class="status-indicator" [class.active]="state.isTouchEnabled">
-                    <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
-                      >touch_app</mat-icon
-                    >
-                    Touch
-                  </span>
-                  <span class="status-indicator" [class.active]="state.prefersDark">
-                    <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
-                      >dark_mode</mat-icon
-                    >
-                    Dark Mode
-                  </span>
+                <p class="text-xs font-semibold mb-2 opacity-70">Capabilities & Theme</p>
+                <div class="flex gap-2 flex-col">
+                  <div class="flex gap-2">
+                    <span class="status-indicator" [class.active]="state.isTouchEnabled">
+                      <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
+                        >touch_app</mat-icon
+                      >
+                      Touch
+                    </span>
+                  </div>
+                  <div class="flex gap-2 text-xs">
+                    <span class="text-opacity-70">
+                      <strong>System:</strong>
+                      <span class="status-indicator" [class.active]="state.prefersDark">
+                        {{ state.prefersDark ? 'Dark' : 'Light' }} Preference
+                      </span>
+                    </span>
+                  </div>
+                  <div class="flex gap-2 text-xs">
+                    <span class="text-opacity-70">
+                      <strong>Applied:</strong>
+                      <span class="status-indicator" [class.active]="themeScheme() === 'dark'">
+                        {{ themeScheme() === 'auto' ? (state.prefersDark ? 'Dark' : 'Light') + ' (auto)' : themeScheme() | titlecase }}
+                      </span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -409,6 +421,9 @@ export class HomePage {
   readonly theme = inject(ThemeService);
   readonly responsive = inject(ResponsiveService);
   readonly themeSource = this.theme.getThemeSource();
+
+  // Expose current theme scheme as a signal for the template
+  readonly themeScheme = this.theme.scheme;
 
   constructor() {
     void this.store.init();
