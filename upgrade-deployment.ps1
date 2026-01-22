@@ -66,13 +66,13 @@ function Get-FileHashSimple {
 # Helper function to check if path should be skipped
 function Test-SkipPath {
   param([string]$RelativePath)
-  
+
   foreach ($pattern in $skipPatterns) {
     if ($RelativePath -like $pattern) {
       return $true
     }
   }
-  
+
   # Also skip if path contains any of these segments
   $skipSegments = @('node_modules', '.git', 'dist', '.angular', 'coverage')
   foreach ($segment in $skipSegments) {
@@ -80,14 +80,14 @@ function Test-SkipPath {
       return $true
     }
   }
-  
+
   return $false
 }
 
 # Helper function to get relative path
 function Get-RelativePath {
   param([string]$FullPath, [string]$BasePath)
-  
+
   $relative = $FullPath -replace [regex]::Escape($BasePath), ''
   return $relative.TrimStart('\', '/')
 }
@@ -114,7 +114,7 @@ Write-Host ""
 $templateFiles = @()
 Get-ChildItem -Path $TemplatePath -Recurse -File | ForEach-Object {
   $relativePath = Get-RelativePath -FullPath $_.FullName -BasePath $TemplatePath
-  
+
   if (-not (Test-SkipPath -RelativePath $relativePath)) {
     $templateFiles += @{
       FullPath = $_.FullName
@@ -136,14 +136,14 @@ $changes = @{
 
 foreach ($templateFile in $templateFiles) {
   $deploymentFile = Join-Path -Path $DeploymentPath -ChildPath $templateFile.RelativePath
-  
+
   if (-not (Test-Path $deploymentFile)) {
     $changes.New += $templateFile
   }
   else {
     $templateHash = Get-FileHashSimple -FilePath $templateFile.FullPath
     $deploymentHash = Get-FileHashSimple -FilePath $deploymentFile
-    
+
     if ($templateHash -ne $deploymentHash) {
       $changes.Modified += @{
         FullPath = $templateFile.FullPath
@@ -161,10 +161,10 @@ foreach ($templateFile in $templateFiles) {
 # Check for files in deployment not in templates
 Get-ChildItem -Path $DeploymentPath -Recurse -File | ForEach-Object {
   $relativePath = Get-RelativePath -FullPath $_.FullName -BasePath $DeploymentPath
-  
+
   if (-not (Test-SkipPath -RelativePath $relativePath)) {
     $templateEquivalent = Join-Path -Path $TemplatePath -ChildPath $relativePath
-    
+
     if (-not (Test-Path $templateEquivalent)) {
       $changes.Deleted += @{
         FullPath = $_.FullName
@@ -188,35 +188,35 @@ Write-Host ""
 # Show modified files
 if ($changes.Modified.Count -gt 0) {
   Write-Host "Modified Files:" -ForegroundColor Yellow
-  
+
   foreach ($file in $changes.Modified) {
     $displayPath = $file.RelativePath
-    
+
     # Check if this is package.json and analyze dependencies
     if ($file.Name -eq 'package.json') {
       Write-Host "  · $displayPath" -ForegroundColor White -NoNewline
       Write-Host "  ⚠ DEPENDENCY CHANGES" -ForegroundColor Magenta
-      
+
       try {
         $templatePkg = Get-Content -Path $file.FullPath -Raw | ConvertFrom-Json
         $deploymentPkg = Get-Content -Path $file.DeploymentPath -Raw | ConvertFrom-Json
-        
+
         # Compare dependencies
         $templateDeps = @{}
         $deploymentDeps = @{}
-        
+
         if ($templatePkg.dependencies) {
           $templatePkg.dependencies.PSObject.Properties | ForEach-Object {
             $templateDeps[$_.Name] = $_.Value
           }
         }
-        
+
         if ($deploymentPkg.dependencies) {
           $deploymentPkg.dependencies.PSObject.Properties | ForEach-Object {
             $deploymentDeps[$_.Name] = $_.Value
           }
         }
-        
+
         # Find additions
         $added = @()
         foreach ($key in $templateDeps.Keys) {
@@ -224,7 +224,7 @@ if ($changes.Modified.Count -gt 0) {
             $added += "      + $key@$($templateDeps[$key])"
           }
         }
-        
+
         # Find updates
         $updated = @()
         foreach ($key in $templateDeps.Keys) {
@@ -232,7 +232,7 @@ if ($changes.Modified.Count -gt 0) {
             $updated += "      ~ $key`: $($deploymentDeps[$key]) → $($templateDeps[$key])"
           }
         }
-        
+
         # Find removals
         $removed = @()
         foreach ($key in $deploymentDeps.Keys) {
@@ -240,18 +240,18 @@ if ($changes.Modified.Count -gt 0) {
             $removed += "      - $key"
           }
         }
-        
+
         # Display changes
         if ($added.Count -gt 0) {
           Write-Host "    Added dependencies:" -ForegroundColor Green
           $added | ForEach-Object { Write-Host $_ -ForegroundColor Green }
         }
-        
+
         if ($updated.Count -gt 0) {
           Write-Host "    Updated dependencies:" -ForegroundColor Cyan
           $updated | ForEach-Object { Write-Host $_ -ForegroundColor Cyan }
         }
-        
+
         if ($removed.Count -gt 0) {
           Write-Host "    Removed dependencies:" -ForegroundColor Red
           $removed | ForEach-Object { Write-Host $_ -ForegroundColor Red }
@@ -289,7 +289,7 @@ if ($changes.Deleted.Count -gt 0) {
 # Generate report
 if ($Action -eq 'report') {
   $reportPath = Join-Path -Path $DeploymentPath -ChildPath 'UPGRADE_REPORT.html'
-  
+
   $html = @"
 <!DOCTYPE html>
 <html>
@@ -320,7 +320,7 @@ if ($Action -eq 'report') {
   <div class="container">
     <h1>Deployment Upgrade Report</h1>
     <p class="timestamp">Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')</p>
-    
+
     <div class="summary">
       <div class="stat stat-unchanged">
         <div class="stat-number">$($changes.Unchanged.Count)</div>
@@ -339,7 +339,7 @@ if ($Action -eq 'report') {
         <div class="stat-label">Deployment Only</div>
       </div>
     </div>
-    
+
     <h2>Modified Files</h2>
     <table>
       <tr><th>File Path</th></tr>
@@ -349,7 +349,7 @@ if ($Action -eq 'report') {
         "<tr><td>No modified files</td></tr>"
       })
     </table>
-    
+
     <h2>New Files</h2>
     <table>
       <tr><th>File Path</th></tr>
@@ -359,7 +359,7 @@ if ($Action -eq 'report') {
         "<tr><td>No new files</td></tr>"
       })
     </table>
-    
+
     <h2>Files in Deployment Only</h2>
     <table>
       <tr><th>File Path</th></tr>
@@ -373,7 +373,7 @@ if ($Action -eq 'report') {
 </body>
 </html>
 "@
-  
+
   $html | Out-File -Path $reportPath -Encoding UTF8
   Write-Host "Report saved to: $reportPath" -ForegroundColor Green
   Write-Host ""
@@ -382,78 +382,78 @@ if ($Action -eq 'report') {
 # Upgrade
 if ($Action -in @('upgrade', 'upgrade-force')) {
   $totalUpdates = $changes.Modified.Count + $changes.New.Count
-  
+
   if ($totalUpdates -eq 0) {
     Write-Host "✓ Deployment is already up to date!" -ForegroundColor Green
     exit 0
   }
-  
+
   Write-Host "Preparing to apply $totalUpdates updates..." -ForegroundColor Cyan
   Write-Host ""
-  
+
   $confirmAll = $Action -eq 'upgrade-force'
   $applied = 0
-  
+
   # Apply modified files
   foreach ($file in $changes.Modified) {
     $shouldApply = $confirmAll
-    
+
     if (-not $confirmAll) {
       Write-Host "Update: $($file.RelativePath)?" -ForegroundColor Yellow
       $response = Read-Host "  [Y]es / [N]o / [A]ll / [S]kip remaining (Y/N/A/S)"
-      
+
       switch ($response.ToUpper()) {
         'Y' { $shouldApply = $true }
         'A' { $shouldApply = $true; $confirmAll = $true }
         'S' { break }
       }
     }
-    
+
     if ($shouldApply) {
       Copy-Item -Path $file.FullPath -Destination $file.DeploymentPath -Force
       Write-Host "✓ Updated: $($file.RelativePath)" -ForegroundColor Green
       $applied++
     }
   }
-  
+
   # Apply new files
   foreach ($file in $changes.New) {
     $shouldApply = $confirmAll
-    
+
     if (-not $confirmAll) {
       Write-Host "Add: $($file.RelativePath)?" -ForegroundColor Blue
       $response = Read-Host "  [Y]es / [N]o / [A]ll / [S]kip remaining (Y/N/A/S)"
-      
+
       switch ($response.ToUpper()) {
         'Y' { $shouldApply = $true }
         'A' { $shouldApply = $true; $confirmAll = $true }
         'S' { break }
       }
     }
-    
+
     if ($shouldApply) {
       $destinationFile = Join-Path -Path $DeploymentPath -ChildPath $file.RelativePath
       $destinationDir = Split-Path -Parent $destinationFile
-      
+
       if (-not (Test-Path $destinationDir)) {
         New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null
       }
-      
+
       Copy-Item -Path $file.FullPath -Destination $destinationFile -Force
       Write-Host "✓ Added: $($file.RelativePath)" -ForegroundColor Blue
       $applied++
     }
   }
-  
+
   Write-Host ""
   Write-Host "Upgrade Complete" -ForegroundColor Green
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
   Write-Host "Applied: $applied files" -ForegroundColor Green
   Write-Host ""
-  
+
   # Check if package.json was modified
   $pkgJsonModified = $changes.Modified | Where-Object { $_.Name -eq 'package.json' }
-  
+
   if ($pkgJsonModified) {
     Write-Host "⚠ Dependency Changes Detected" -ForegroundColor Magenta
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Magenta
@@ -466,10 +466,10 @@ if ($Action -in @('upgrade', 'upgrade-force')) {
     Write-Host "  6. git add . && git commit         # Commit when satisfied" -ForegroundColor White
     Write-Host ""
   }
-  
+
   Write-Host "Next steps:" -ForegroundColor Cyan
   Write-Host "  1. Review changes: git diff" -ForegroundColor White
-  
+
   if (-not $pkgJsonModified) {
     Write-Host "  2. Test deployment: npm install && npm start" -ForegroundColor White
   }
@@ -477,7 +477,7 @@ if ($Action -in @('upgrade', 'upgrade-force')) {
     Write-Host "  2. Install dependencies: pnpm install" -ForegroundColor White
     Write-Host "  3. Test deployment: pnpm test && pnpm dev" -ForegroundColor White
   }
-  
+
   Write-Host "  $(if ($pkgJsonModified) { '4' } else { '3' }). Commit changes: git add . && git commit -m 'chore: upgrade to latest templates'" -ForegroundColor White
   Write-Host ""
 }
