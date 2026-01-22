@@ -96,6 +96,8 @@ Test demo-v21-app → If all pass, push both repos to GitHub
    - Browser detection (Chrome, Firefox, Safari, Edge)
    - OS detection (Windows, macOS, Linux, iOS, Android)
    - Applies semantic HTML classes: `bp-*`, `browser-*`, `platform-*`
+   - **Public API**: Signals - `isMobile()`, `currentBreakpoint()`, `state()`, etc.
+   - **Internal**: RxJS observables for reactive logic, converted to signals via `toSignal()`
 
 ### Feature Structure
 ```
@@ -258,8 +260,10 @@ pnpm gen:feature      # Scaffold new feature with proper structure
 
 ### Responsive Service Pattern
 - Combine CDK BreakpointObserver (breakpoints) + userAgent (browser/OS)
-- Export observables for reactive components: `isMd$`, `isMobile$`, `currentBreakpoint$`
+- Use RxJS observables internally for reactive logic
+- Expose Signals via `toSignal()` for component consumption: `isMd()`, `isMobile()`, `state()`
 - Apply semantic HTML classes for CSS targeting: `bp-md`, `mobile`, `browser-safari`
+- Components access via signals: `responsive.isMobile()`, `responsive.currentBreakpoint()`
 
 ---
 
