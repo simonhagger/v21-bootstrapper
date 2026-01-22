@@ -32,6 +32,8 @@ import { ThemeService } from '../../shared/services/theme.service';
   ],
   styles: [
     `
+      @import "tailwindcss" reference;
+
       /* Example: Override Material theme tokens for a specific button */
       #custom-brand-button {
         /* Override Material primary color with a custom Tailwind token */

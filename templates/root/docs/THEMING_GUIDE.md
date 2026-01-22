@@ -149,6 +149,8 @@ import { MatCardModule } from '@angular/material/card';
     </mat-card>
   `,
   styles: `
+    @import "tailwindcss" reference;
+
     :host {
       display: block;
     }
@@ -229,6 +231,8 @@ Dark mode is handled **automatically** via the `.dark` class on the `<html>` ele
     </div>
   `,
   styles: `
+    @import "tailwindcss" reference;
+
     div {
       @apply px-4 py-2 rounded font-medium;
     }
@@ -337,6 +341,370 @@ html.dark {
   --mat-sys-surface: oklch(0.15 0 0);
 }
 ```
+
+---
+
+## Advanced Theming Utilities & Mixins
+
+### Golden Rule
+
+**Never hardcode values that might need to be flexible to theme changes.** Always use framework conventions: Tailwind utilities and Material system variables. This ensures your application respects theme changes globally without requiring component updates.
+
+### Tailwind CSS 4 Utilities
+
+#### `@apply` – Compose Utility Classes
+
+Combine multiple Tailwind utilities into a single declaration:
+
+```scss
+// ✅ Good: Use @apply with @reference in component styles
+@Component({
+  styles: `
+    @import "tailwindcss" reference;
+
+    button {
+      @apply px-4 py-2 rounded font-medium transition-colors;
+    }
+  `
+})
+
+// ❌ Wrong: Missing @reference directive
+@Component({
+  styles: `
+    button {
+      @apply px-4 py-2 rounded;  // ERROR: Cannot apply unknown utility class
+    }
+  `
+})
+
+// ❌ Wrong: Hardcoding values
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: color 200ms ease-in-out;
+}
+```
+
+**Critical for Tailwind CSS 4:** When using `@apply` in component styles (not in `tailwind.css`), you **must** include `@import "tailwindcss" reference;` at the top of your styles block. This tells Tailwind to reference the main CSS file without duplicating it.
+
+#### `@layer` – Organize Custom Styles
+
+When adding custom component-like styles, use `@layer components` to integrate with Tailwind's cascade:
+
+```css
+/* In tailwind.css or component styles */
+@layer components {
+  .card-elevated {
+    @apply rounded-lg shadow-lg p-6 bg-surface;
+  }
+
+  .badge-primary {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-sm font-medium;
+    background-color: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+  }
+}
+```
+
+Use cases:
+- Reusable component-like classes
+- Design system patterns used across multiple components
+- Semantic class names that abstract utility combinations
+
+#### `theme()` Function – Access Theme Values
+
+Reference theme tokens programmatically:
+
+```scss
+// Access Tailwind theme values in custom CSS
+.custom-border {
+  border-color: theme('colors.primary');  // From @theme definition
+  border-width: theme('borderWidth.2');   // From Tailwind defaults
+}
+```
+
+### Material Angular Mixins
+
+#### `mat.theme-overrides()` – Component-Level Theme Customization
+
+Apply theme overrides at the component level without redefining the entire theme:
+
+```typescript
+@Component({
+  selector: 'app-branded-card',
+  template: `
+    <mat-card>
+      <mat-card-header>
+        <h2>{{ title }}</h2>
+      </mat-card-header>
+      <mat-card-content>
+        <ng-content></ng-content>
+      </mat-card-content>
+    </mat-card>
+  `,
+  styles: `
+    @import "tailwindcss" reference;
+
+    :host {
+      // Override colors for this component only
+      @include mat.theme-overrides((
+        primary: var(--color-brand),
+        on-primary: var(--color-brand-contrast),
+      ));
+    }
+
+    mat-card {
+      background-color: var(--mat-sys-surface);
+      color: var(--mat-sys-on-surface);
+    }
+  `,
+  standalone: true,
+  imports: [MatCardModule],
+})
+export class BrandedCardComponent {
+  @Input() title: string = '';
+}
+```
+
+Use cases:
+- Component-specific brand colors
+- Feature-specific theme overrides
+- Isolated component styling without global impact
+
+#### `mat.define-palette()` – Create Custom Palettes
+
+Define custom color palettes for your brand:
+
+```scss
+// In styles.scss
+@use '@angular/material' as mat;
+
+// Define brand palette from Tailwind tokens
+$brand-palette: mat.define-palette(
+  (
+    0: #000000,
+    10: #2a1a42,    // oklch(0.3 0.15 285) - dark brand
+    25: #4a2a72,
+    40: #6a3fa2,
+    50: #7a4fb2,
+    60: #8a5fc2,
+    70: #9a6fd2,
+    80: #aa7fe2,
+    90: #ba8ff2,
+    95: #d4a8ff,
+    99: #f5f0ff,
+    100: #ffffff,
+  )
+);
+
+@include mat.theme(
+  (
+    color: (
+      primary: $brand-palette,
+      tertiary: mat.$blue-palette,
+    ),
+  )
+);
+```
+
+Use cases:
+- Brand-specific color system
+- Multi-tenant applications with different themes
+- Sophisticated color gradations for accessibility
+
+#### `mat.density()` – Adjust Component Density
+
+Control spacing and sizing of Material components:
+
+```typescript
+@Component({
+  selector: 'app-compact-list',
+  template: `
+    <mat-list>
+      <mat-list-item *ngFor="let item of items">{{ item }}</mat-list-item>
+    </mat-list>
+  `,
+  styles: `
+    @import "tailwindcss" reference;
+
+    :host {
+      // Compact mode: -1 reduces spacing/sizing
+      @include mat.density(-1);
+    }
+  `,
+  standalone: true,
+  imports: [MatListModule, CommonModule],
+})
+export class CompactListComponent {
+  @Input() items: string[] = [];
+}
+```
+
+Density levels:
+- `-2` – Maximum compression
+- `-1` – Compact
+- `0` – Default (no change)
+- `1+` – Spacious (rarely used)
+
+#### `mat.typography()` – Customize Typography
+
+Override the global typography system per component or theme:
+
+```scss
+// Global customization in styles.scss
+@include mat.typography(
+  (
+    font-family: 'Segoe UI, Roboto, sans-serif',
+    headline-large: (
+      size: 2rem,
+      line-height: 2.5rem,
+      weight: 700,
+      letter-spacing: -0.01562em,
+    ),
+  )
+);
+
+// Or per component
+@Component({
+  styles: `
+    :host {
+      @include mat.typography((
+        body-medium: (
+          size: 1rem,
+          line-height: 1.5rem,
+          weight: 500,
+        ),
+      ));
+    }
+  `,
+})
+export class CustomTypographyComponent {}
+```
+
+---
+
+## Golden Rule in Practice
+
+### ❌ Anti-Patterns: Hardcoded Values
+
+```typescript
+// WRONG: Hardcoded spacing
+.card {
+  padding: 16px;              // Should use Tailwind @apply px-4
+  margin-bottom: 12px;        // Should use Tailwind @apply mb-3
+}
+
+// WRONG: Hardcoded colors
+.status-success {
+  color: #22c55e;             // Should use var(--mat-sys-success)
+  background: #dcfce7;        // Should use Material palette
+}
+
+// WRONG: Hardcoded shadows
+.elevated {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  // Should use @apply shadow-md
+}
+
+// WRONG: Hardcoded borders
+.divider {
+  border-color: #e5e7eb;      // Should use var(--mat-sys-outline-variant)
+  border-width: 1px;          // Should use @apply border
+}
+
+// WRONG: Hardcoded font sizing
+h1 {
+  font-size: 2rem;            // Should use mat-headline-large or @apply text-2xl
+  font-weight: 700;           // Should use font-bold or var(--mat-sys-headline-large-weight)
+}
+```
+
+### ✅ Golden Rule Pattern: Theme-First Approach
+
+```typescript
+@Component({
+  selector: 'app-card',
+  template: `
+    <div class="card">
+      <h2>{{ title }}</h2>
+      <p>{{ content }}</p>
+      <div class="card-actions">
+        <button mat-button>Cancel</button>
+        <button mat-raised-button color="primary">Submit</button>
+      </div>
+    </div>
+  `,
+  styles: `
+    @import "tailwindcss" reference;
+
+    // ✅ ALL properties reference framework conventions
+    .card {
+      @apply rounded-lg p-6 transition-all duration-200;
+      background-color: var(--mat-sys-surface);
+      color: var(--mat-sys-on-surface);
+    }
+
+    .card h2 {
+      @extend .mat-headline-medium;
+      color: var(--mat-sys-on-surface);
+      margin-bottom: 1rem;  // Using Tailwind token from @theme if defined
+    }
+
+    .card p {
+      @extend .mat-body-medium;
+      color: var(--mat-sys-on-surface-variant);
+      @apply mb-6;  // Margin uses Tailwind scale (mb-6 = 1.5rem)
+    }
+
+    .card-actions {
+      @apply flex gap-3 justify-end pt-4 border-t;
+      border-color: var(--mat-sys-outline-variant);
+    }
+
+    // Elevation: Use Tailwind shadow utilities
+    .card.elevated {
+      @apply shadow-lg;  // Tailwind's shadow-lg, not hardcoded
+    }
+
+    // Dark mode: Automatic via Material system variables
+    // No additional styles needed—--mat-sys-* variables adapt automatically
+  `,
+  standalone: true,
+  imports: [CommonModule, MatButtonModule],
+})
+export class CardComponent {
+  @Input() title: string = '';
+  @Input() content: string = '';
+  @Input() elevated: boolean = false;
+}
+```
+
+### Framework Convention Checklist
+
+Before writing any CSS, ask:
+
+| Value Type | Framework Convention | Example |
+|-----------|---------------------|---------|
+| **Colors** | Material system variables | `var(--mat-sys-primary)`, `var(--mat-sys-outline)` |
+| **Spacing** | Tailwind utilities or @theme tokens | `@apply px-4 py-2` or `var(--spacing-md)` |
+| **Shadows** | Tailwind utilities | `@apply shadow-md`, `@apply shadow-lg` |
+| **Borders** | Tailwind utilities | `@apply border`, `@apply border-b` |
+| **Border Color** | Material outline variables | `var(--mat-sys-outline)`, `var(--mat-sys-outline-variant)` |
+| **Border Radius** | Tailwind utilities | `@apply rounded`, `@apply rounded-lg` |
+| **Typography** | Material typography classes | `mat-headline-large`, `mat-body-medium` |
+| **Font Weight** | Tailwind utilities | `@apply font-medium`, `@apply font-semibold` |
+| **Transitions** | Tailwind utilities | `@apply transition-all duration-200` |
+| **Opacity** | Tailwind utilities | `@apply opacity-75` or CSS `opacity: 0.75` |
+
+### Why This Matters
+
+When you follow framework conventions:
+
+1. **Automatic dark mode** – Material variables switch; no additional code needed
+2. **Consistent design system** – All spacing, colors, typography follow the same rules
+3. **Easy maintenance** – Theme changes propagate automatically to all components
+4. **Accessibility** – Material system variables account for contrast, WCAG compliance
+5. **Performance** – CSS variables are more efficient than inline styles or multiple selectors
 
 ---
 
@@ -477,6 +845,8 @@ export class FilterChipComponent {
     </div>
   `,
   styles: `
+    @import "tailwindcss" reference;
+
     :host {
       display: block;
     }
