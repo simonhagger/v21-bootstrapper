@@ -150,6 +150,14 @@ Configure in GitHub Settings → Branches:
 
 - `.github/pull_request_template.md` guides submitters on testing, architecture compliance, performance, and deployment notes.
 
+### Progressive QA (opt-in)
+
+- Baseline (on by default): format:check, lint, typecheck, test, build, verification gates (structure, routes, imports, colors).
+- Optional Husky gates (commented): strict lint (`--max-warnings=0`), prettier check, coverage, audit, outdated report.
+- Optional CI gates (commented in `.github/workflows/ci.yml`): coverage, strict lint, audit, outdated report, bundle size budget.
+- Enable by uncommenting the steps (local and/or CI) and, for CI, marking the check as required in branch protection.
+- Docs: [templates/root/docs/GITHUB_ACTIONS.md](templates/root/docs/GITHUB_ACTIONS.md), [templates/root/docs/QUALITY_GATES.md](templates/root/docs/QUALITY_GATES.md)
+
 All gates run automatically on:
 
 - Every commit (pre-commit hook)
