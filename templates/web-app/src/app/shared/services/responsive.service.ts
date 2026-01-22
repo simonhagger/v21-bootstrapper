@@ -1,6 +1,7 @@
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { Platform } from '@angular/cdk/platform';
 import { map, shareReplay, distinctUntilChanged } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
@@ -38,6 +39,7 @@ export interface ResponsiveState {
 @Injectable({ providedIn: 'root' })
 export class ResponsiveService {
   private breakpointObserver = inject(BreakpointObserver);
+  private cdkPlatform = inject(Platform);
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
 
@@ -196,6 +198,7 @@ export class ResponsiveService {
   }
 
   private detectTouch(): boolean {
+    if (!this.cdkPlatform.isBrowser) return false;
     // eslint-disable-next-line no-undef
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }
@@ -207,23 +210,19 @@ export class ResponsiveService {
   }
 
   private detectBrowser(): 'chrome' | 'firefox' | 'safari' | 'edge' | 'other' {
-    // eslint-disable-next-line no-undef
-    const ua = navigator.userAgent.toLowerCase();
-    if (ua.includes('edg/')) return 'edge';
-    if (ua.includes('chrome')) return 'chrome';
-    if (ua.includes('firefox')) return 'firefox';
-    if (ua.includes('safari') && !ua.includes('chrome')) return 'safari';
+    if (this.cdkPlatform.EDGE) return 'edge';
+    if (this.cdkPlatform.CHROME) return 'chrome';
+    if (this.cdkPlatform.FIREFOX) return 'firefox';
+    if (this.cdkPlatform.SAFARI) return 'safari';
     return 'other';
   }
 
   private detectOS(): 'windows' | 'macos' | 'linux' | 'ios' | 'android' | 'other' {
-    // eslint-disable-next-line no-undef
-    const ua = navigator.userAgent.toLowerCase();
-    if (ua.includes('win')) return 'windows';
-    if (ua.includes('mac')) return 'macos';
-    if (ua.includes('linux')) return 'linux';
-    if (ua.includes('iphone') || ua.includes('ipad')) return 'ios';
-    if (ua.includes('android')) return 'android';
+    if (this.cdkPlatform.WIN) return 'windows';
+    if (this.cdkPlatform.MAC) return 'macos';
+    if (this.cdkPlatform.LINUX) return 'linux';
+    if (this.cdkPlatform.IOS) return 'ios';
+    if (this.cdkPlatform.ANDROID) return 'android';
     return 'other';
   }
 
