@@ -7,6 +7,13 @@
 
 ## ⚠️ CRITICAL OPERATIONAL CONSTRAINTS (Lessons Learned)
 
+### 0. NO Direct Commits to Main (ENFORCED BY GIT HOOK)
+- **Pre-commit hook blocks ALL commits to main/develop branches**
+- Violating this is the #1 mistake in rapid development
+- Proper flow: feature branch → commit → merge → push
+- If hook rejects your commit, you're on the right track (error means you're on main)
+- Force-bypass only with `git commit --no-verify` if absolutely unavoidable (emergency only)
+
 ### 1. Deliberate Change Management
 - **NO rapid-fire commits to main branch** without validation
 - **ALWAYS test locally before pushing to GitHub**
@@ -39,14 +46,39 @@
 
 ## 1. Git & Branch Workflow
 
+### HARD RULE: No Direct Commits to Main
+- **Cannot commit TO main** - Pre-commit hook will reject
+- **Can only push FROM main** - After merging feature branches
+- This prevents accidental direct commits and enforces feature branch discipline
+
+### Correct Workflow (MUST FOLLOW)
+```bash
+# 1. Create feature branch for ANY changes
+git checkout -b feature/descriptive-name
+
+# 2. Make changes, commit to feature branch
+git add files
+git commit -m "type: description"
+
+# 3. When ready, merge to main locally
+git checkout main
+git merge feature/descriptive-name
+git branch -d feature/descriptive-name
+
+# 4. ONLY THEN push to GitHub
+git push origin main
+```
+
+### Why This Matters
+- Prevents muscle memory of committing directly to main
+- Forces every change through a feature branch (audit trail)
+- All pushes are "clean" merges from feature work
+- If something breaks, you can immediately roll back to previous commit on main
+
 ### Branch Strategy
-- **Main Branch Only for GitHub**: All commits pushed to GitHub must be from `main` branch only
-- **Feature Branches Local Only**: Work on feature branches (`feature/e2e-testing`, etc.) locally without pushing to remote
-- **Merge Before Push**: 
-  1. Complete feature work and testing locally
-  2. Switch to `main` and merge feature branch
-  3. Delete local feature branch
-  4. Then push `main` to GitHub
+- **Main Branch**: Only receives merges from feature branches; pushed to GitHub
+- **Feature Branches**: Local only; deleted after merge (`feature/e2e-tests`, `feature/fix-responsive`)
+- **Develop Branch** (if used): Same protection - cannot commit directly
 
 ### Commit Messages
 - Use conventional commits format: `type: description`

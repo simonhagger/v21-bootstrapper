@@ -1,5 +1,20 @@
 #!/usr/bin/env sh
 
+# Prevent commits directly to main/develop branches
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "develop" ]; then
+  echo "❌ ERROR: Cannot commit directly to '$BRANCH' branch"
+  echo ""
+  echo "Proper workflow:"
+  echo "  1. Create a feature branch:  git checkout -b feature/your-feature"
+  echo "  2. Make changes and commit:  git commit -m 'feat: your message'"
+  echo "  3. Merge to main locally:    git checkout main && git merge feature/your-feature"
+  echo "  4. Push from main:           git push origin main"
+  echo ""
+  echo "To force (not recommended):   git commit --no-verify"
+  exit 1
+fi
+
 pnpm exec prettier --write . --ignore-unknown
 pnpm exec eslint . --fix
 
