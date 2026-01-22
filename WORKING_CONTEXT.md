@@ -303,7 +303,50 @@ Ensures exact versions from `pnpm-lock.yaml`
 
 ---
 
-## 12. File Organization (Key Locations)
+## 12. Development Environment & Operational Notes
+
+### Platform & Shell
+- **Operating System**: Windows
+- **IDE**: VS Code
+- **Shell**: PowerShell (pwsh)
+  - ✅ Use PowerShell commands (`Get-ChildItem`, `Copy-Item`, `Remove-Item`, etc.)
+  - ❌ Bash commands will NOT work (`ls`, `cp`, `rm`, `grep`, `tail`, etc.)
+  - Use PowerShell equivalents or native Windows commands
+
+### Critical Command Rules
+1. **ALWAYS verify current directory before running commands**
+   - Use `Get-Location` or check terminal context
+   - Change directory explicitly: `cd "e:\ANGULAR\v21\tools\bootstrap"`
+   - Never assume current directory
+
+2. **Server processes block terminals**
+   - Starting dev server (`pnpm dev`) blocks the terminal
+   - Cannot run additional commands in same terminal while server is running
+   - To test server responses (curl, etc.), use a different terminal
+   - Use `isBackground: true` in run_in_terminal for long-running processes
+
+3. **PowerShell Syntax Conventions**
+   - Parameters use `-ParameterName` format
+   - File paths with spaces: Use quotes `"e:\path with spaces\file.txt"`
+   - Pipe operations: `|` works but different from bash
+   - Command chaining: Use `;` between commands
+   - Recursion: `-Recurse` flag (not `-r`)
+   - Force operations: `-Force` flag (not `-f`)
+
+### Example Corrections
+```powershell
+# ❌ Bash (won't work)
+ls -la | grep "pattern" | tail -10
+rm -rf ./folder
+
+# ✅ PowerShell equivalent
+Get-ChildItem -Recurse | Where-Object { $_.Name -match "pattern" } | Select-Object -First 10
+Remove-Item -Path ".\folder" -Recurse -Force
+```
+
+---
+
+## 13. File Organization (Key Locations)
 
 ```
 e:\ANGULAR\v21\tools\bootstrap/
@@ -330,18 +373,21 @@ e:\workspace\demo-v21-app/           # Real project for validation
 
 ---
 
-## Next Context Recovery
+## 14. Next Context Recovery
 
 **When resuming work:**
 1. Read this document first
-2. Check current git status: `git status`
-3. Identify which branch you're on
-4. Review recent commit history: `git log --oneline -10`
-5. Run `pnpm verify` to validate current state
-6. Check demo-v21-app for any pending upgrades
+2. **Verify current directory**: `Get-Location` (CRITICAL)
+3. Check current git status: `git status`
+4. Identify which branch you're on
+5. Review recent commit history: `git log --oneline -10`
+6. Run `pnpm verify` to validate current state
+7. Check demo-v21-app for any pending upgrades
 
 ---
 
 **Document Owner**: Development Workflow System  
-**Last Session**: January 22, 2026 - E2E Testing Feature Implementation  
-**Status**: Active - Bootstrap system production-ready, E2E feature complete (local branch)
+**Last Session**: January 22, 2026 - E2E Testing + Signals Refactor  
+**Status**: Active - Bootstrap system production-ready, E2E + signals features on local branch
+**Environment**: Windows, VS Code, PowerShell
+
