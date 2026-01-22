@@ -232,7 +232,7 @@ import { ResponsiveService } from '../../shared/services/responsive.service';
               <p class="text-xs font-semibold mb-2 opacity-70">Capabilities & Theme</p>
               <div class="flex gap-2 flex-col">
                 <div class="flex gap-2">
-                  <span class="status-indicator" [class.active]="responsive.state()?.isTouchEnabled">
+                  <span class="status-indicator" [class.active]="responsive.state().isTouchEnabled">
                     <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
                       >touch_app</mat-icon
                     >
@@ -242,8 +242,8 @@ import { ResponsiveService } from '../../shared/services/responsive.service';
                 <div class="flex gap-2 text-xs">
                   <span class="text-opacity-70">
                     <strong>System:</strong>
-                    <span class="status-indicator" [class.active]="responsive.state()?.prefersDark">
-                      {{ responsive.state()?.prefersDark ? 'Dark' : 'Light' }} Preference
+                    <span class="status-indicator" [class.active]="responsive.state().prefersDark">
+                      {{ responsive.state().prefersDark ? 'Dark' : 'Light' }} Preference
                     </span>
                   </span>
                 </div>
@@ -251,7 +251,7 @@ import { ResponsiveService } from '../../shared/services/responsive.service';
                   <span class="text-opacity-70">
                     <strong>Applied:</strong>
                     <span class="status-indicator" [class.active]="themeScheme() !== 'auto'">
-                      {{ themeScheme() === 'auto' ? (responsive.state()?.prefersDark ? 'Dark' : 'Light') + ' (auto)' : (themeScheme() | titlecase) }}
+                      {{ themeScheme() === 'auto' ? (responsive.state().prefersDark ? 'Dark' : 'Light') + ' (auto)' : (themeScheme() | titlecase) }}
                     </span>
                   </span>
                 </div>
