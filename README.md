@@ -230,7 +230,7 @@ my-app/
     ├── ARCHITECTURE.md            # Architecture and design
     ├── PATTERNS.md                # Common development patterns
     ├── TESTING_GUIDE.md           # Testing approach and examples
-    ├── THEMING_GUIDE.md           # Theming with Tailwind + Material Design 3
+    ├── THEMING_GUIDE.md           # Theming with Tailwind CSS 4 and Material Angular
     ├── API_GUIDE.md               # Backend API integration
     ├── AI_AGENT_GUIDE.md          # AI-assisted development prompts
     ├── GITHUB_ACTIONS.md          # CI/CD workflow setup and administration
@@ -250,7 +250,7 @@ Each generated app includes comprehensive documentation:
 - **ARCHITECTURE.md** – System architecture and design principles
 - **PATTERNS.md** – Common development patterns
 - **TESTING_GUIDE.md** – Testing approach and examples
-- **THEMING_GUIDE.md** – Theming with Tailwind CSS 4 and Material Design 3
+- **THEMING_GUIDE.md** – Theming with Tailwind CSS 4 and Material Angular
 - **API_GUIDE.md** – Backend API integration
 - **AI_AGENT_GUIDE.md** – Prompts and context for AI-assisted development
 - **GITHUB_ACTIONS.md** – GitHub Actions CI workflow setup and branch protection
