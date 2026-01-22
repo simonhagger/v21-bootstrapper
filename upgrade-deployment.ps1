@@ -379,7 +379,13 @@ if ($changes.Deleted.Count -gt 0) {
 
 # Generate report
 if ($Action -eq 'report') {
-  $reportPath = Join-Path -Path $DeploymentPath -ChildPath 'UPGRADE_REPORT.html'
+  # Create .upgrade directory for reports
+  $upgradeDir = Join-Path -Path $DeploymentPath -ChildPath '.upgrade'
+  if (-not (Test-Path $upgradeDir)) {
+    New-Item -ItemType Directory -Path $upgradeDir -Force | Out-Null
+  }
+  
+  $reportPath = Join-Path -Path $upgradeDir -ChildPath 'report.html'
 
   $html = @"
 <!DOCTYPE html>

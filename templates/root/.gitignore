@@ -55,8 +55,8 @@ Thumbs.db
 *.tsbuildinfo
 .eslintcache
 
-# Build artifacts from upgrade script
-UPGRADE_REPORT.html
+# Upgrade script artifacts
+.upgrade/
 
 # Package manager lockfiles (keep pnpm-lock.yaml only)
 package-lock.json
