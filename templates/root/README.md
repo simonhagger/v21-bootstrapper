@@ -83,6 +83,7 @@ docs/                      # Developer documentation (8 guides)
 | `pnpm lint:fix` | Auto-fix linting issues |
 | `pnpm typecheck` | TypeScript type checking |
 | `pnpm verify:*` | Run specific verification gates |
+| **Quality Hardening** | Optional gates are commented out; see docs/QUALITY_GATES.md to enable over time |
 
 ### Feature Management
 
@@ -160,6 +161,8 @@ All documentation lives in the `docs/` folder. Start with **ARCHITECTURE.md** to
 | **[docs/API.md](docs/API.md)** | Backend API integration patterns and examples |
 | **[docs/VERIFICATION.md](docs/VERIFICATION.md)** | Verification gates: what they check and how to pass |
 | **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** | Solutions to common problems by category |
+| **[docs/GITHUB_ACTIONS.md](docs/GITHUB_ACTIONS.md)** | CI setup, branch protection, CODEOWNERS (commented by default) |
+| **[docs/QUALITY_GATES.md](docs/QUALITY_GATES.md)** | Optional hardening gates (coverage, lint warnings, audit, bundle budgets) |
 | **[tools/scripts/README.md](tools/scripts/README.md)** | Verification and feature generation scripts |
 
 ## Getting Started

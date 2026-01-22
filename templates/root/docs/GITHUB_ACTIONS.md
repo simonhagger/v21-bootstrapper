@@ -24,6 +24,13 @@ This project includes automated CI/CD pipelines using GitHub Actions that mirror
    - Raw color detection
 7. **Artifact Upload** - Saves build output for review
 
+**Optional (commented out by default):**
+- Coverage run: `pnpm test:coverage`
+- Lint strict: `pnpm lint --max-warnings=0`
+- Dependency audit: `pnpm audit --prod`
+- Outdated report: `pnpm outdated`
+- Bundle budget example: `size-limit` action
+
 **Cache Strategy:**
 - pnpm store is cached per lock file hash
 - Significantly reduces installation time on subsequent runs
@@ -136,6 +143,13 @@ git commit -m "chore: update lock file"
   uses: codecov/codecov-action@v4
   with:
     files: ./coverage/coverage-final.json
+```
+
+### Enforce Zero Lint Warnings
+
+```yaml
+- name: Lint (no warnings)
+  run: pnpm lint --max-warnings=0
 ```
 
 ### Add Deployment Step

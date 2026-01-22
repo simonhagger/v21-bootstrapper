@@ -78,3 +78,21 @@ jobs:
           name: build-output
           path: dist/
           retention-days: 7
+
+      # Optional hardening gates (disabled by default). Uncomment to enable.
+      # - name: Run tests with coverage
+      #   run: pnpm test:coverage
+
+      # - name: Enforce zero lint warnings
+      #   run: pnpm lint --max-warnings=0
+
+      # - name: Dependency audit (npm advisory database)
+      #   run: pnpm audit --prod
+
+      # - name: Check for outdated dependencies
+      #   run: pnpm outdated || true  # non-blocking report
+
+      # - name: Bundle size budget (example)
+      #   uses: andresz1/size-limit-action@v1
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
