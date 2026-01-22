@@ -38,13 +38,15 @@ Creates a complete Angular 21 application with:
 # Navigate to desired parent directory
 cd C:\workspace
 
-# Run bootstrap
-pwsh E:\ANGULAR\v21\tools\bootstrap\bootstrap.ps1 -Name my-app -Force
+# Run bootstrap (creates C:\workspace\my-app)
+pwsh E:\ANGULAR\v21\tools\bootstrap\bootstrap.ps1 -Name my-app
 
 # Start development
 cd my-app
 pnpm dev
 ```
+
+**Safe to use against existing directories**: You can run bootstrap multiple times in the same parent directory. Each app gets its own folder. Use `-Force` only if you want to regenerate an existing app.
 
 ### Generate a Feature
 
@@ -208,17 +210,20 @@ pwsh bootstrap.ps1 [options]
 ### Examples
 
 ```powershell
-# Create app in current directory
-pwsh bootstrap.ps1 -Name my-app -TargetPath $PWD -Force
+# Create app in current directory (creates ./my-app)
+pwsh bootstrap.ps1 -Name my-app -TargetPath $PWD
+
+# Create in existing projects folder (creates C:\projects\my-app)
+pwsh bootstrap.ps1 -Name my-app -TargetPath "C:\projects"
+
+# Regenerate existing app (use -Force only for this)
+pwsh bootstrap.ps1 -Name my-app -TargetPath "C:\projects" -Force
 
 # Use specific Angular version
-pwsh bootstrap.ps1 -Name my-app -Cli 18
-
-# Create with full paths
-pwsh bootstrap.ps1 -Name dashboard -TargetPath "C:\projects\dashboard" -Force
+pwsh bootstrap.ps1 -Name my-app -Cli 18 -TargetPath "C:\projects"
 ```
 
-**Note**: If TargetPath ends with the app name, it's automatically detected and normalized to prevent redundant nesting (e.g., `dashboard/dashboard`).
+**Note**: TargetPath is the **parent directory** where the app folder will be created. The app is created at `TargetPath\Name`. If TargetPath ends with the app name, it's automatically normalized to prevent redundant nesting (e.g., `dashboard/dashboard`).
 
 ---
 
