@@ -5,6 +5,48 @@
 
 ---
 
+## 📍 CURRENT STATE (January 22, 2026)
+
+### Repository Status
+**Bootstrap Repository** (`e:\ANGULAR\v21\tools\bootstrap`):
+- **Latest Commit:** `87b8c43` - "feat: improve bootstrap robustness and test alignment"
+- **Status:** Pushed to GitHub (origin/main)
+- **Key Changes:** Full-folder copying, Husky fixes, Playwright config, E2E alignment
+
+**Demo App** (`E:\workspace\demo-v21-app`):
+- **Latest Commit:** `d62999b` - "chore: align E2E tests and Playwright config with app behavior"
+- **Status:** Force-pushed to GitHub (fresh baseline)
+- **Remote:** https://github.com/simonhagger/demo-v21-app.git
+- **Tests:** All passing (2 unit + 24 E2E across 3 browsers)
+
+### Critical Architectural Decisions
+1. **Full-Folder Copying Strategy**: Bootstrap now copies entire directories (src/, docs/, .husky/, .github/, .vscode/, tools/scripts/, e2e/) instead of individual files. This future-proofs template synchronization and eliminates file-tracking issues.
+
+2. **Husky Pre-commit Hook Fix**: Hook now detects initial commits (no HEAD) and skips branch guard while using `git add .` instead of `git add -u`. Critical for first-time scaffolds.
+
+3. **Playwright Reporter Configuration**: Set to `[['html', { open: 'never' }], ['line']]` to prevent terminal blocking after E2E runs.
+
+4. **E2E Test Alignment**: Tests now match actual app behavior (title: `/DemoV21App/`, URL: `/\/home/`, component text: "Responsive Service Demo").
+
+### Testing Strategy
+- **Unit Tests:** Vitest-based, run via pre-push hook and `pnpm test`
+- **E2E Tests:** Playwright across chromium/firefox/webkit, 24 tests total
+- **Quality Gates:** Pre-commit runs tests + architecture verifications
+- **All tests pass out-of-box** on fresh scaffolds (validated Jan 22, 2026)
+
+### Known Relationships
+- Bootstrap `templates/` directory contains source-of-truth for all scaffold files
+- `upgrade-deployment.ps1` syncs templates → demo app (detects user modifications via git)
+- Demo app serves as reference implementation and validation target
+- Both repos use conventional commits, Husky hooks, and architectural verifications
+
+### Future Considerations
+- Consider documenting full-folder copy strategy in bootstrap README.md
+- May need to update file counts in documentation (now copying entire folders)
+- Demo app can be used as baseline for regression testing future bootstrap changes
+
+---
+
 ## ⚠️ CRITICAL OPERATIONAL CONSTRAINTS (Lessons Learned)
 
 ### 0. NEVER Delete/Modify File System Without Permission (CRITICAL SAFETY)
