@@ -5,7 +5,7 @@ A **one-command production-ready Angular workspace bootstrapper** that generates
 ## ✨ What It Does
 
 ```powershell
-pwsh bootstrap.ps1 -Name my-app -TargetPath "C:\workspace" -Force
+pwsh bootstrap.ps1 -Name my-app -TargetPath "C:\workspace"
 ```
 
 Creates a complete Angular 21 application with:
