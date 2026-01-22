@@ -212,6 +212,29 @@ describe('UserProfileData', () => {
 });
 ```
 
+### Running E2E Tests
+
+When developing features, validate complete user workflows with E2E tests:
+
+```bash
+# Interactive UI mode (best for development)
+pnpm e2e:ui
+
+# Run in headless mode
+pnpm e2e
+
+# Debug with browser DevTools
+pnpm e2e:debug
+```
+
+**When to run E2E tests:**
+- Before creating a pull request (feature-complete validation)
+- After major navigation/routing changes
+- Before committing critical user workflows
+- On CI automatically for all commits
+
+See [Testing Guide](./TESTING.md) for E2E testing commands and patterns. For comprehensive E2E documentation, see [E2E Testing Guide](./E2E_TESTING.md).
+
 ## Code Quality
 
 ### Before Committing

@@ -123,6 +123,8 @@ pnpm build            # Build for production
 pnpm test             # Run tests once
 pnpm test:watch       # Run tests in watch mode
 pnpm test:coverage    # Coverage report
+pnpm e2e              # Run E2E tests (headless)
+pnpm e2e:ui           # Run E2E tests (interactive UI)
 ```
 
 ### Quality Gates
@@ -158,6 +160,34 @@ Your project has **5 automatic verification gates** that run on pre-push:
 | **No raw colors** | No hardcoded colors in code | Use Tailwind classes or theme colors |
 
 See [docs/VERIFICATION.md](../docs/VERIFICATION.md) for detailed information.
+
+## Testing Your Feature
+
+### Unit Tests
+
+Unit tests validate components and services in isolation:
+
+```bash
+pnpm test             # Run once
+pnpm test:watch       # Watch mode
+pnpm test:coverage    # With coverage report
+```
+
+See [docs/TESTING.md](../docs/TESTING.md) for unit testing patterns.
+
+### End-to-End Tests
+
+E2E tests validate complete user workflows across your entire application:
+
+```bash
+pnpm e2e              # Run headless (CI mode)
+pnpm e2e:ui           # Interactive UI (best for development)
+pnpm e2e:debug        # Debug with browser DevTools
+```
+
+Test files are in `e2e/` directory and follow the feature structure. Add tests as you build features.
+
+See [docs/TESTING.md](../docs/TESTING.md) and [docs/E2E_TESTING.md](../docs/E2E_TESTING.md) for testing guides.
 
 ## Styling Your Feature
 

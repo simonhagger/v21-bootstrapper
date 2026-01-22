@@ -228,14 +228,114 @@ beforeEach(() => {
 });
 ```
 
+## End-to-End (E2E) Testing
+
+E2E testing validates user workflows across the entire application using Playwright.
+
+### Running E2E Tests
+
+```bash
+# Run all tests headless (CI mode)
+pnpm e2e
+
+# Interactive UI mode (recommended for development)
+pnpm e2e:ui
+
+# Debug mode with trace
+pnpm e2e:debug
+
+# Run specific browser
+pnpm e2e --project=chromium
+pnpm e2e --project=firefox
+pnpm e2e --project=webkit
+```
+
+### E2E Test Structure
+
+Tests are located in `e2e/` directory and organized by feature:
+
+```
+e2e/
+├── example.spec.ts          # Template tests (reference)
+├── home.spec.ts             # Home page workflows
+├── feature.spec.ts          # Feature-specific tests
+└── shared/                  # Reusable helpers
+    └── test-utils.ts
+```
+
+### Writing E2E Tests
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('user can navigate to home page', async ({ page }) => {
+  // Arrange
+  await page.goto('http://localhost:4200');
+
+  // Act
+  await page.click('text=Home');
+
+  // Assert
+  await expect(page).toHaveTitle(/Home/);
+});
+
+test('responsive design adjusts for mobile', async ({ page, context }) => {
+  // Set mobile viewport
+  await context.clearCookies();
+  await page.goto('http://localhost:4200', { waitUntil: 'networkidle' });
+  await page.setViewportSize({ width: 375, height: 667 });
+
+  // Assert mobile layout
+  const menu = page.locator('[data-test="mobile-menu"]');
+  await expect(menu).toBeVisible();
+});
+```
+
+### Multi-Browser Testing
+
+Tests run automatically on:
+- **Chromium** (Chrome/Edge)
+- **Firefox**
+- **WebKit** (Safari)
+
+Configure in `playwright.config.ts` if running browser-specific tests.
+
+### Test Artifacts
+
+Test results and traces are generated in:
+- `test-results/` - Failure artifacts
+- `playwright-report/` - HTML test report
+- `.upgrade/` - Upgrade reports
+
+These are excluded from git and should not be committed.
+
+View the report:
+```bash
+npx playwright show-report
+```
+
+### For Comprehensive E2E Testing Guide
+
+See [E2E Testing Guide](./E2E_TESTING.md) for:
+- Advanced selectors and patterns
+- Fixtures and reusable test setup
+- Authentication testing
+- API mocking
+- Visual regression testing
+- Performance testing with metrics
+
 ## CI Integration
 
-The `pnpm verify` script includes `pnpm test:ci`, ensuring all tests pass before merge.
+The `pnpm verify` script includes:
+- `pnpm test:ci` - Unit tests
+- `pnpm e2e` - E2E tests (CI mode, headless)
 
-Pre-push hooks do not run tests (to keep local iteration fast), but CI will catch failures.
+All tests must pass before merge. Pre-push hooks do not run tests to keep local iteration fast.
 
 ## Resources
 
 - [Angular Testing Guide](https://angular.dev/guide/testing)
 - [Vitest Documentation](https://vitest.dev)
 - [Angular Testing API](https://angular.dev/api/core/testing)
+- [Playwright Documentation](https://playwright.dev)
+- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
