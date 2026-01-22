@@ -154,8 +154,8 @@ import { MatCardModule } from '@angular/material/card';
     }
 
     mat-card {
-      background-color: var(--color-surface);
-      color: var(--color-on-surface);
+      background-color: var(--mat-sys-surface);
+      color: var(--mat-sys-on-surface);
     }
 
     mat-card.elevated {
@@ -163,18 +163,28 @@ import { MatCardModule } from '@angular/material/card';
     }
 
     mat-card-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid var(--color-outline);
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--mat-sys-outline);
     }
 
     mat-card-content {
-      padding: 1.5rem;
+      padding: var(--spacing-md);
     }
   `,
 })
 export class CustomCardComponent {
   @Input() title: string = '';
   @Input() elevated: boolean = false;
+}
+```
+
+Where `--spacing-md` is defined in `tailwind.css`:
+
+```css
+@theme {
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-sm: 0.75rem;
 }
 ```
 
@@ -465,7 +475,7 @@ export class FilterChipComponent {
       <mat-form-field appearance="outline" class="w-full">
         <input matInput [placeholder]="placeholder" />
       </mat-form-field>
-      <p *ngIf="hint" class="text-xs text-gray-500 mt-1">{{ hint }}</p>
+      <p *ngIf="hint" class="text-xs mt-1" style="color: var(--mat-sys-on-surface-variant);">{{ hint }}</p>
     </div>
   `,
   styles: `
@@ -474,7 +484,10 @@ export class FilterChipComponent {
     }
 
     label {
-      color: var(--color-on-background);
+      color: var(--mat-sys-on-background);
+      font-weight: 500;
+      margin-bottom: var(--spacing-sm);
+      display: block;
     }
 
     ::ng-deep .mat-mdc-form-field {
@@ -488,6 +501,16 @@ export class FormGroupComponent {
   @Input() label: string = '';
   @Input() placeholder: string = '';
   @Input() hint: string = '';
+}
+```
+
+Where spacing tokens are from `tailwind.css @theme`:
+
+```css
+@theme {
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
 }
 ```
 
