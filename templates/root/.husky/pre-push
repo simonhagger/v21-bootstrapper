@@ -9,3 +9,9 @@ pnpm verify:app-routes
 pnpm verify:feature-routes
 pnpm verify:no-cross-feature-imports
 pnpm verify:no-raw-colors
+
+# Optional hardening (disabled by default)
+# pnpm test:coverage
+# pnpm lint --max-warnings=0
+# pnpm audit --prod
+# pnpm outdated || true  # informational only

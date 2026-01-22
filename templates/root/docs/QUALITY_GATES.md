@@ -34,9 +34,9 @@ These gates are optional and **disabled by default**. Enable them gradually as y
 - Require PR approvals + status checks in branch protection.
 
 ## How to turn on a gate
-1) Uncomment the relevant step in `.github/workflows/ci.yml`.
+1) Uncomment the relevant step in `.github/workflows/ci.yml` **and/or** `.husky/pre-commit` / `.husky/pre-push`.
 2) If needed, adjust project config (coverage thresholds, budgets).
-3) Enable/require the check in branch protection (GitHub Settings → Branches).
+3) For CI gates, enable/require the check in branch protection (GitHub Settings → Branches).
 
 ## Notes
 - CODEOWNERS ships commented; enable when you have real owners.

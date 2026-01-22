@@ -6,4 +6,8 @@ pnpm exec eslint . --fix
 # Re-stage files that were modified by formatting/linting
 git add -u
 
+# Optional hardening (disabled by default)
+# pnpm exec eslint . --max-warnings=0
+# pnpm exec prettier --check . --ignore-unknown
+
 
