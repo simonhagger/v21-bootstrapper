@@ -207,6 +207,12 @@ my-app/
 │       ├── verify-no-raw-colors.mjs
 │       ├── generate-feature.mjs
 │       └── _workspace.mjs
+├── .github/
+│   ├── workflows/                 # GitHub Actions
+│   │   ├── ci.yml                 # CI pipeline (mirrors local gates)
+│   │   └── release.yml            # Release automation
+│   ├── CODEOWNERS                 # Code review assignment (commented by default)
+│   └── pull_request_template.md   # PR submission guide
 ├── .husky/                        # Git hooks
 │   ├── pre-commit
 │   ├── commit-msg
@@ -220,14 +226,17 @@ my-app/
 ├── vitest.config.ts
 └── docs/
     ├── README.md                  # Project overview
-    ├── DEVELOPMENT_GUIDE.md       # Daily workflows
-    ├── ARCHITECTURE.md            # Architecture docs
-    ├── PATTERNS.md                # Common patterns
-    ├── TESTING_GUIDE.md           # Testing documentation
-    ├── THEMING_GUIDE.md           # Theming documentation
-    ├── API_GUIDE.md               # Backend integration
-    ├── AI_AGENT_GUIDE.md          # For AI-assisted development
-    └── VERIFICATION_SYSTEM.md     # Verification gates reference
+    ├── DEVELOPMENT_GUIDE.md       # Daily development workflows
+    ├── ARCHITECTURE.md            # Architecture and design
+    ├── PATTERNS.md                # Common development patterns
+    ├── TESTING_GUIDE.md           # Testing approach and examples
+    ├── THEMING_GUIDE.md           # Theming with Tailwind + Material Design 3
+    ├── API_GUIDE.md               # Backend API integration
+    ├── AI_AGENT_GUIDE.md          # AI-assisted development prompts
+    ├── GITHUB_ACTIONS.md          # CI/CD workflow setup and administration
+    ├── QUALITY_GATES.md           # Progressive QA hardening roadmap
+    ├── VERIFICATION_SYSTEM.md     # Verification gates and validation rules
+    └── VERIFICATION_QUICK_REF.md  # Quick reference for verification gates
 ```
 
 ---
@@ -238,13 +247,16 @@ Each generated app includes comprehensive documentation:
 
 - **README.md** – Project overview and getting started
 - **DEVELOPMENT_GUIDE.md** – Daily development workflows
-- **ARCHITECTURE.md** – System architecture and structure
+- **ARCHITECTURE.md** – System architecture and design principles
 - **PATTERNS.md** – Common development patterns
 - **TESTING_GUIDE.md** – Testing approach and examples
-- **THEMING_GUIDE.md** – Theming with Tailwind + Material
+- **THEMING_GUIDE.md** – Theming with Tailwind CSS 4 and Material Design 3
 - **API_GUIDE.md** – Backend API integration
-- **AI_AGENT_GUIDE.md** – Prompts for AI-assisted development
+- **AI_AGENT_GUIDE.md** – Prompts and context for AI-assisted development
+- **GITHUB_ACTIONS.md** – GitHub Actions CI workflow setup and branch protection
+- **QUALITY_GATES.md** – Progressive QA hardening roadmap (5-step progression)
 - **VERIFICATION_SYSTEM.md** – Verification gates and validation rules
+- **VERIFICATION_QUICK_REF.md** – Quick reference card for pre-push validation
 
 ---
 
