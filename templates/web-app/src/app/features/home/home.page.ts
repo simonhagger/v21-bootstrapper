@@ -54,6 +54,13 @@ import { ThemeService } from '../../shared/services/theme.service';
         color: var(--mat-sys-on-surface-variant);
         @apply p-3 rounded text-sm;
       }
+
+      /* Inline code: Use Material system variables instead of hardcoded colors */
+      code {
+        background-color: var(--mat-sys-surface-container-high);
+        color: var(--mat-sys-on-surface);
+        @apply px-1 py-0.5 rounded text-sm;
+      }
     `,
   ],
   template: `
@@ -109,10 +116,10 @@ import { ThemeService } from '../../shared/services/theme.service';
           </div>
           <p class="text-xs mt-3 opacity-70">
             💡 The right button overrides Material tokens via CSS variables in
-            <code class="px-1 py-0.5 bg-white rounded">home.page.ts</code> styles. Define custom
-            tokens in <code class="px-1 py-0.5 bg-white rounded">src/tailwind.css</code> and use
-            <code class="px-1 py-0.5 bg-white rounded">mat.theme-overrides()</code> in
-            <code class="px-1 py-0.5 bg-white rounded">src/styles.scss</code>
+            <code>home.page.ts</code> styles. Define custom
+            tokens in <code>src/tailwind.css</code> and use
+            <code>mat.theme-overrides()</code> in
+            <code>src/styles.scss</code>
           </p>
         </mat-card-content>
       </mat-card>
