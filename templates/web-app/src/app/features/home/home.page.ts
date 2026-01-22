@@ -208,7 +208,7 @@ import { ResponsiveService } from '../../shared/services/responsive.service';
 
               <!-- Platform & Browser -->
               <div>
-                <p class="text-xs font-semibold mb-2 opacity-70">Platform Info</p>
+                <p class="text-xs font-semibold mb-2 opacity-70">Platform Detection (CDK)</p>
                 <div class="flex flex-col gap-1 text-sm">
                   <span>
                     <strong>Browser:</strong>
@@ -223,6 +223,9 @@ import { ResponsiveService } from '../../shared/services/responsive.service';
                     {{ state.platform }}
                   </span>
                 </div>
+                <p class="text-xs mt-2 opacity-60">
+                  Detected via Angular CDK Platform service
+                </p>
               </div>
 
               <!-- Touch & Color Scheme -->
@@ -249,8 +252,11 @@ import { ResponsiveService } from '../../shared/services/responsive.service';
               💡
               <strong>Usage:</strong>
               Inject <code>ResponsiveService</code> to access <code>state$</code> observable for
-              component logic, or use CSS class selectors on <code>&lt;html&gt;</code> (e.g.,
-              <code>html.bp-lg .sidebar {{ '{' }} {{ '}' }}</code>) for responsive styling.
+              component logic, or use CSS class selectors on <code>&lt;html&gt;</code>:
+              <code>html.bp-lg .sidebar {{ '{' }} {{ '}' }}</code>,
+              <code>html.platform-mobile .desktop-only {{ '{' }} display: none; {{ '}' }}</code>, or
+              <code>html.browser-safari</code> for browser-specific styles. Detection uses Angular
+              CDK Layout (breakpoints) and Platform service (browser/OS).
             </p>
           </mat-card-content>
         </mat-card>
