@@ -127,6 +127,15 @@ The repository enforces quality at every step:
 | **Pre-push** | Before push | Tests, structure, routes, imports |
 | **CI** | On pull request | All gates must pass |
 
+## CI/CD (GitHub Actions)
+
+- Server-side checks run on push/PR to `main` and `develop` via [ .github/workflows/ci.yml ](.github/workflows/ci.yml)
+- Steps match local hooks: format check, lint, typecheck, test, build, and all five verification gates
+- Uses pnpm cache for faster runs and uploads build artifacts
+- To enforce merges, enable branch protection and require the `Validate Code Quality` check
+- CODEOWNERS is shipped as commented examples; uncomment and add real handles when you are ready to enforce code-owner reviews (see [ .github/CODEOWNERS ](.github/CODEOWNERS))
+- More detail: [ docs/GITHUB_ACTIONS.md ](docs/GITHUB_ACTIONS.md)
+
 ### Verification System
 
 Automatic verification prevents common mistakes:
