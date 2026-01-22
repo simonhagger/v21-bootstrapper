@@ -196,12 +196,14 @@ Each generated app includes comprehensive documentation:
 pwsh bootstrap.ps1 [options]
 ```
 
-| Parameter     | Default                     | Description                    |
-| ------------- | --------------------------- | ------------------------------ |
-| `-Name`       | `"acme-web"`                | App name (used as folder name) |
-| `-Cli`        | `21`                        | Angular CLI major version      |
-| `-TargetPath` | `"E:\ANGULAR\bootstrapped"` | Parent directory for app       |
-| `-Force`      | `$false`                    | Overwrite if target exists     |
+| Parameter     | Default                     | Description                              |
+| ------------- | --------------------------- | ---------------------------------------- |
+| `-Name`       | `"acme-web"`                | App name (used as folder name)           |
+| `-Cli`        | `21`                        | Angular CLI major version                |
+| `-TargetPath` | `"E:\ANGULAR\bootstrapped"` | Parent directory for app                 |
+| `-Force`      | `$false`                    | Overwrite if app folder already exists   |
+
+**Important**: `-Force` only deletes the specific app folder (TargetPath/Name), not the entire TargetPath directory. This prevents accidental data loss when bootstrapping multiple apps in the same parent directory.
 
 ### Examples
 
@@ -383,13 +385,14 @@ Post-bootstrap verification runs all checks and confirms "ready for development"
 
 ## 🚫 What Gets Reset
 
-When using `-Force` to overwrite an existing target:
+When using `-Force` to overwrite an existing app:
 
-- All files in TargetPath are deleted
-- All git history is removed
-- Fresh app is created from scratch
+- **Only the existing app folder at TargetPath/Name is deleted**
+- Other files and folders in TargetPath are **not affected**
+- Git history within that folder is removed
+- Fresh app is created from scratch at that location
 
-Use `-Force` with caution on existing projects!
+Use `-Force` only when you want to regenerate the specific app, not to clear the entire parent directory.
 
 ---
 

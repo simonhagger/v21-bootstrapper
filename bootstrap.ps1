@@ -23,24 +23,26 @@ Require-Cmd node
 Require-Cmd pnpm
 
 # Prepare target directory
-if (Test-Path $TargetPath) {
+# Only delete the specific app folder if it already exists, not the entire TargetPath
+$appPath = Join-Path $TargetPath $Name
+
+if (Test-Path $appPath) {
   if ($Force) {
-    Write-Host "==> Clearing target directory: $TargetPath"
+    Write-Host "==> Removing existing app folder: $appPath"
     try {
-      Get-ChildItem -Path $TargetPath -Recurse -Force | Remove-Item -Recurse -Force -ErrorAction Stop
-      $remainingItems = @(Get-ChildItem -Path $TargetPath -Recurse -Force)
-      if ($remainingItems.Count -gt 0) {
-        throw "Unable to clear all items from $TargetPath. Found $($remainingItems.Count) remaining items."
-      }
+      Remove-Item -Path $appPath -Recurse -Force -ErrorAction Stop
     } catch {
-      Write-Error "Failed to clear target directory: $_"
+      Write-Error "Failed to remove existing app folder: $_"
       exit 1
     }
   } else {
-    throw "TargetPath exists. Use -Force to overwrite: $TargetPath"
+    throw "App folder already exists at $appPath. Use -Force to overwrite"
   }
 } else {
-  New-Item -ItemType Directory -Force -Path $TargetPath | Out-Null
+  # Ensure parent TargetPath exists
+  if (-not (Test-Path $TargetPath)) {
+    New-Item -ItemType Directory -Force -Path $TargetPath | Out-Null
+  }
 }
 Push-Location $TargetPath
 
