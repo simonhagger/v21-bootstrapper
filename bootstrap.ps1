@@ -66,6 +66,9 @@ pnpm exec ng add @angular/material `
   --typography=true `
   --animations=true 2>&1 | Out-Null
 
+Write-Host "==> Adding Playwright for E2E testing"
+pnpm add -D @playwright/test 2>&1 | Out-Null
+
 # Post-scaffold: copy curated templates (app core, features/, shared/, config files)
 try {
   $tplRoot = Join-Path $PSScriptRoot "templates\\web-app\\src"
@@ -108,8 +111,8 @@ try {
     }
   }
 
-  # Copy root config files (Prettier, ESLint, VSCode settings, git config)
-  $rootFiles = @('.prettierrc.json', 'eslint.config.mjs', 'commitlint.config.cjs', '.gitattributes', '.gitignore')
+  # Copy root config files (Prettier, ESLint, VSCode settings, git config, Playwright)
+  $rootFiles = @('.prettierrc.json', 'eslint.config.mjs', 'commitlint.config.cjs', '.gitattributes', '.gitignore', 'playwright.config.ts')
   foreach ($f in $rootFiles) {
     $srcFile = Join-Path $rootTpl $f
     $dstFile = Join-Path $projRoot $f
@@ -142,6 +145,14 @@ try {
     New-Item -ItemType Directory -Force -Path $toolsScriptsDst | Out-Null
     Copy-Item -Path (Join-Path $toolsScriptsSrc "*") -Destination $toolsScriptsDst -Recurse -Force
     Write-Host "   - tools/scripts/ copied (verification + generation scripts)"
+  }
+
+  # Copy e2e directory (Playwright tests)
+  $e2eSrc = Join-Path $rootTpl "e2e"
+  $e2eDst = Join-Path $projRoot "e2e"
+  if (Test-Path $e2eSrc) {
+    Copy-Item -Path $e2eSrc -Destination $e2eDst -Recurse -Force
+    Write-Host "   - e2e/ copied (Playwright E2E test examples and fixtures)"
   }
 
 } catch {
@@ -261,6 +272,12 @@ try {
   pkg.scripts['test:watch'] = 'vitest';
   pkg.scripts['test:coverage'] = 'vitest run --coverage';
 
+  // E2E test scripts
+  pkg.scripts.e2e = 'playwright test';
+  pkg.scripts['e2e:ui'] = 'playwright test --ui';
+  pkg.scripts['e2e:debug'] = 'playwright test --debug';
+  pkg.scripts['e2e:report'] = 'playwright show-report';
+
   // Verification scripts (run tools/scripts/*.mjs)
   pkg.scripts['verify:structure'] = 'node tools/scripts/verify-structure.mjs';
   pkg.scripts['verify:app-routes'] = 'node tools/scripts/verify-app-routes.mjs';
@@ -277,6 +294,7 @@ try {
   Write-Host "   - Build/dev scripts: dev, build, typecheck"
   Write-Host "   - Format/lint scripts: format, format:check, lint, lint:fix"
   Write-Host "   - Test scripts: test, test:watch, test:coverage"
+  Write-Host "   - E2E scripts: e2e, e2e:ui, e2e:debug, e2e:report"
   Write-Host "   - Verification scripts: verify (all), verify:structure, verify:app-routes, verify:feature-routes, verify:no-cross-feature-imports, verify:no-raw-colors"
   Write-Host "   - Feature generation: gen:feature"
 
