@@ -33,7 +33,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
  * **Usage in Components:**
  * ```typescript
  * readonly responsive = inject(ResponsiveService);
- * 
+ *
  * // Access signals directly in template or component
  * {{ responsive.isMobile() ? 'Mobile' : 'Desktop' }}
  * {{ responsive.currentBreakpoint() }}
@@ -119,6 +119,14 @@ Internal observables (RxJS for reactive logic)
         if (result.breakpoints[this.TAILWIND_BREAKPOINTS.xl]) return 'xl';
         if (result.breakpoints[this.TAILWIND_BREAKPOINTS.lg]) return 'lg';
         if (result.breakpoints[this.TAILWIND_BREAKPOINTS.md]) return 'md';
+        if (result.breakpoints[this.TAILWIND_BREAKPOINTS.sm]) return 'sm';
+        return 'xs';
+      }),
+      distinctUntilChanged(),
+      shareReplay(1)
+    );
+
+  // Complete responsive state
   private readonly state$: Observable<ResponsiveState> = this.currentBreakpoint$.pipe(
     map(breakpoint => {
       const isMobile = !this.checkMatch(this.TAILWIND_BREAKPOINTS.sm);
@@ -149,28 +157,21 @@ Internal observables (RxJS for reactive logic)
   readonly isLg = toSignal(this.isLg$, { requireSync: true });
   readonly isXl = toSignal(this.isXl$, { requireSync: true });
   readonly is2xl = toSignal(this.is2xl$, { requireSync: true });
-  
+
   readonly isMobile = toSignal(this.isMobile$, { requireSync: true });
   readonly isTablet = toSignal(this.isTablet$, { requireSync: true });
   readonly isDesktop = toSignal(this.isDesktop$, { requireSync: true });
-  
+
   readonly isPortrait = toSignal(this.isPortrait$, { requireSync: true });
   readonly isLandscape = toSignal(this.isLandscape$, { requireSync: true });
-  
+
   readonly currentBreakpoint = toSignal(this.currentBreakpoint$, { requireSync: true });
   readonly state = toSignal(this.state$, { requireSync: true });
 
   // Computed signals for convenience
   readonly platform = computed(() => this.state()?.platform ?? 'desktop');
   readonly browser = computed(() => this.state()?.browser ?? 'other');
-  readonly os = computed(() => this.state()?.os ?? 'other'      platform: (isDesktop ? 'desktop' : isTablet ? 'tablet' : 'mobile') as 'mobile' | 'tablet' | 'desktop',
-        browser: this.detectBrowser(),
-        os: this.detectOS(),
-        prefersDark: this.isBrowser && this.getPrefersDark(),
-      };
-    }),
-    shareReplay(1)
-  );
+  readonly os = computed(() => this.state()?.os ?? 'other');
 
   constructor() {
     if (this.isBrowser) {
