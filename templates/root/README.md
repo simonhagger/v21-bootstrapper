@@ -5,10 +5,11 @@ Production-ready Angular 21 workspace with **Tailwind CSS 4.1.18** and **Angular
 ## What You Get
 
 ✅ **Instant productivity** – Zero configuration needed  
-✅ **Code quality** – Automatic formatting, linting, and testing  
+✅ **Code quality** – Automatic formatting, linting, unit testing, and E2E testing  
 ✅ **Architectural integrity** – Enforced via git hooks and verification gates  
 ✅ **Feature scaffolding** – Generate features with routes, state, data access in seconds  
-✅ **Comprehensive guides** – Documentation for every aspect of development
+✅ **Comprehensive guides** – Documentation for every aspect of development  
+✅ **E2E Testing** – Multi-browser testing with Playwright (Chrome, Firefox, Safari)
 
 ## Quick Start
 
@@ -50,11 +51,16 @@ src/app/
 tools/
 └── scripts/               # Verification and feature generation
 
-docs/                      # Developer documentation (8 guides)
+e2e/                       # End-to-end tests (Playwright)
+├── example.spec.ts        # Example tests
+└── *.spec.ts              # Feature-specific E2E tests
+
+docs/                      # Developer documentation (9 guides)
 ├── GETTING_STARTED.md     # Zero-to-first-feature onboarding
 ├── ARCHITECTURE.md        # Non-negotiable architectural rules
 ├── DEVELOPMENT.md         # Daily development workflows
-├── TESTING.md             # Testing patterns and guidelines
+├── TESTING.md             # Unit and E2E testing patterns
+├── E2E_TESTING.md         # Comprehensive E2E testing guide
 ├── STYLING.md             # Tailwind + Material theming
 ├── API.md                 # Backend API integration patterns
 ├── VERIFICATION.md        # Verification gates system
@@ -69,9 +75,12 @@ docs/                      # Developer documentation (8 guides)
 |---------|---------|
 | `pnpm dev` | Start development server (port 4200) |
 | `pnpm build` | Build for production |
-| `pnpm test` | Run unit tests |
-| `pnpm test:watch` | Run tests in watch mode |
-| `pnpm test:coverage` | Run tests with coverage report |
+| `pnpm test` | Run unit tests (Vitest) |
+| `pnpm test:watch` | Run unit tests in watch mode |
+| `pnpm test:coverage` | Run unit tests with coverage report |
+| `pnpm e2e` | Run E2E tests headless (all browsers) |
+| `pnpm e2e:ui` | Run E2E tests with interactive UI |
+| `pnpm e2e:debug` | Run E2E tests with debugging tools |
 
 ### Quality Gates
 
@@ -100,7 +109,8 @@ docs/                      # Developer documentation (8 guides)
 | **Language** | TypeScript (strict mode) |
 | **Styling** | Tailwind CSS 4.1.18 + Angular Material 21.1.0 |
 | **Package Manager** | pnpm |
-| **Testing** | Vitest 4.0.17 (jsdom environment) |
+| **Unit Testing** | Vitest 4.0.17 (jsdom environment) |
+| **E2E Testing** | Playwright 1.57.0 (Chrome, Firefox, WebKit) |
 | **Linting** | ESLint 9.39.2 (flat config, TypeScript strict) |
 | **Formatting** | Prettier 3.8.1 (with Tailwind plugin) |
 | **Git Hooks** | Husky 9.1.7 (pre-commit, commit-msg, pre-push) |
@@ -131,7 +141,8 @@ The repository enforces quality at every step:
 ## CI/CD (GitHub Actions)
 
 - Server-side checks run on push/PR to `main` and `develop` via [ .github/workflows/ci.yml ](.github/workflows/ci.yml)
-- Steps match local hooks: format check, lint, typecheck, test, build, and all five verification gates
+- Steps match local hooks: format check, lint, typecheck, unit tests, E2E tests, build, and all five verification gates
+- E2E tests run on all browsers (Chrome, Firefox, WebKit) to catch cross-browser issues
 - Uses pnpm cache for faster runs and uploads build artifacts
 - To enforce merges, enable branch protection and require the `Validate Code Quality` check
 - CODEOWNERS is shipped as commented examples; uncomment and add real handles when you are ready to enforce code-owner reviews (see [ .github/CODEOWNERS ](.github/CODEOWNERS))
@@ -156,7 +167,8 @@ All documentation lives in the `docs/` folder. Start with **ARCHITECTURE.md** to
 | **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | Non-negotiable architectural rules (READ THIS FIRST) |
 | **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** | Zero-to-first-feature onboarding in 10 minutes |
 | **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** | Daily development workflows and best practices |
-| **[docs/TESTING.md](docs/TESTING.md)** | Testing patterns, utilities, and coverage guidance |
+| **[docs/TESTING.md](docs/TESTING.md)** | Unit and E2E testing patterns, utilities, and coverage guidance |
+| **[docs/E2E_TESTING.md](docs/E2E_TESTING.md)** | Comprehensive E2E testing with Playwright (advanced patterns, fixtures, API mocking) |
 | **[docs/STYLING.md](docs/STYLING.md)** | Tailwind CSS + Angular Material integration |
 | **[docs/API.md](docs/API.md)** | Backend API integration patterns and examples |
 | **[docs/VERIFICATION.md](docs/VERIFICATION.md)** | Verification gates: what they check and how to pass |
@@ -265,6 +277,12 @@ pnpm gen:feature Dashboard --route dashboard
 # Edit the generated feature files
 # Hot reload automatically updates your browser
 
+# Run unit tests as you develop
+pnpm test:watch
+
+# Run E2E tests to validate workflows (interactive UI mode)
+pnpm e2e:ui
+
 # When ready to commit
 git add src/app/features/dashboard
 git commit -m "feat: add dashboard feature"
@@ -279,6 +297,7 @@ git push origin feature/dashboard
 
 # Pre-push hook runs:
 # ✓ Unit tests
+# ✓ E2E tests (headless)
 # ✓ Structure verification
 # ✓ Route verification
 # ✓ Feature isolation verification
@@ -297,7 +316,8 @@ git push origin feature/dashboard
 ```bash
 # Development
 pnpm dev              # Start dev server
-pnpm test:watch       # Run tests in watch mode
+pnpm test:watch       # Run unit tests in watch mode
+pnpm e2e:ui           # Run E2E tests in interactive UI mode
 
 # Quality
 pnpm verify           # Run all gates
@@ -340,7 +360,8 @@ pnpm gen:feature FeatureName --route feature-name
 - [Angular Material Documentation](https://material.angular.io)
 - [ESLint Documentation](https://eslint.org)
 - [Vitest Documentation](https://vitest.dev)
+- [Playwright Documentation](https://playwright.dev) – Multi-browser E2E testing
 
 ---
 
-**Ready to develop?** Start with `pnpm dev` and read [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)! 🚀
+**Ready to develop?** Start with `pnpm dev` and read [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)! 🚀
