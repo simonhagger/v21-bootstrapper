@@ -35,14 +35,14 @@ Creates a complete Angular 21 application with:
 ### Create an App
 
 ```powershell
-# Navigate to desired parent directory
-cd C:\workspace
+# From the bootstrap directory, run:
+pwsh bootstrap.ps1 -Name my-app -TargetPath "C:\workspace"
 
-# Run bootstrap (creates C:\workspace\my-app)
-pwsh E:\ANGULAR\v21\tools\bootstrap\bootstrap.ps1 -Name my-app
+# Or from elsewhere, reference the bootstrap.ps1 with a path:
+pwsh ./path/to/bootstrap.ps1 -Name my-app -TargetPath "C:\workspace"
 
 # Start development
-cd my-app
+cd C:\workspace\my-app
 pnpm dev
 ```
 
@@ -221,6 +221,9 @@ pwsh bootstrap.ps1 -Name my-app -TargetPath "C:\projects" -Force
 
 # Use specific Angular version
 pwsh bootstrap.ps1 -Name my-app -Cli 18 -TargetPath "C:\projects"
+
+# Running from a different directory? Use a relative or absolute path to bootstrap.ps1:
+pwsh ../bootstrap.ps1 -Name my-app -TargetPath "C:\projects"
 ```
 
 **Note**: TargetPath is the **parent directory** where the app folder will be created. The app is created at `TargetPath\Name`. If TargetPath ends with the app name, it's automatically normalized to prevent redundant nesting (e.g., `dashboard/dashboard`).
