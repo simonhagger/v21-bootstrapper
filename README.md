@@ -118,12 +118,22 @@ Generated apps include these **verification gates**:
 
 ### Configure Git Remote (new scaffold)
 
+The bootstrap script automatically initializes git and creates the first commit, so your working tree is clean.
+
+1. **Create a new repository** on GitHub and note the URL (`https://github.com/<org>/<repo>.git`)
+2. **Add the remote** and push:
+
 ```powershell
 # From the generated app directory
-git init -b main
 git remote add origin https://github.com/<org>/<repo>.git
+git push -u origin main
+```
+
+**If you made local changes** before pushing:
+
+```powershell
 git add .
-git commit -m "chore: initial scaffold"
+git commit -m "your commit message"
 git push -u origin main
 ```
 
