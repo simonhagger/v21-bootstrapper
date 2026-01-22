@@ -7,27 +7,43 @@
 
 ## ⚠️ CRITICAL OPERATIONAL CONSTRAINTS (Lessons Learned)
 
-### 0. NO Direct Commits to Main (ENFORCED BY GIT HOOK)
+### 0. NEVER Delete/Modify File System Without Permission (CRITICAL SAFETY)
+- **NEVER execute Remove-Item, Move-Item, Rename-Item, or Copy-Item -Recurse without explicit user approval**
+- File system operations are DANGEROUS and potentially catastrophic
+- Even if an error suggests a folder is blocking something, **ALWAYS ASK FIRST**
+- Operations that REQUIRE permission:
+  - `Remove-Item -Recurse` (deletes entire directories)
+  - `Remove-Item -Force` (bypasses confirmations)
+  - Moving/renaming workspace folders
+  - Copying large directory trees
+- Correct approach when facing file system issues:
+  1. Stop and analyze the actual error
+  2. Read relevant code to understand the root cause
+  3. **ASK the user** how to proceed
+  4. Never assume a folder is "safe" to delete
+- EXCEPTION: Only modify files inside the bootstrap templates directory that are part of active development
+
+### 1. NO Direct Commits to Main (ENFORCED BY GIT HOOK)
 - **Pre-commit hook blocks ALL commits to main/develop branches**
 - Violating this is the #1 mistake in rapid development
 - Proper flow: feature branch → commit → merge → push
 - If hook rejects your commit, you're on the right track (error means you're on main)
 - Force-bypass only with `git commit --no-verify` if absolutely unavoidable (emergency only)
 
-### 1. Deliberate Change Management
+### 2. Deliberate Change Management
 - **NO rapid-fire commits to main branch** without validation
 - **ALWAYS test locally before pushing to GitHub**
 - Verify not just code compilation, but **actual UI/UX behavior**
 - Wait for user feedback on changes before proceeding
 - When unsure about next steps, **ask instead of assume**
 
-### 2. Demo App Update Process
+### 3. Demo App Update Process
 - **ONLY mechanism for demo app updates**: `upgrade-deployment.ps1` script
 - Never manually copy files or apply changes directly to deployed app
 - Always use the established upgrade script to maintain consistency
 - This ensures demo app state is always traceable to bootstrap templates
 
-### 3. PowerShell Command Usage
+### 4. PowerShell Command Usage
 - **NEVER use Unix commands** like `head`, `tail`, `grep`, etc.
 - Always use **PowerShell native equivalents**:
   - `head -n 20` → `Select-Object -First 20`
@@ -42,12 +58,25 @@
 - If you need tail behavior, redirect to file then read: `pnpm verify > out.txt; Get-Content out.txt -Tail 25`
 - **NEVER pipe long-running commands to `Select-Object -Last`**
 
-### 4. Pace & Control
+### 5. Pace & Control
 - Stop frantic changes and rapid iteration
 - Bootstrap and demo app are **critical infrastructure**, not sandboxes
 - Each change needs careful consideration of downstream impact
 - Document decisions and get confirmation before execution
 - Prefer thorough validation over speed
+
+### 6. Workspace Management (NEVER Move/Copy node_modules)
+- **NEVER copy, move, or rename entire Angular workspaces** without explicit user approval
+- node_modules can be GBs of files - copying them is extremely slow and wastes disk space
+- If workspace restructuring is needed, **ALWAYS ASK** how to proceed
+- Operations that trigger this rule:
+  - `Copy-Item -Recurse` on workspace folders
+  - `Rename-Item` on locked/in-use directories
+  - Creating duplicate workspaces for "testing"
+- Correct approach: Ask user first, then either:
+  - Delete node_modules before copying, run `pnpm install` after
+  - Use git operations to reset workspace in place
+  - Let user handle the workspace management directly
 
 ---
 
