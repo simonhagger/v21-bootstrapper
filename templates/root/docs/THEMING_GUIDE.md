@@ -164,7 +164,8 @@ import { MatCardModule } from '@angular/material/card';
 
     mat-card-header {
       padding: var(--spacing-md);
-      border-bottom: 1px solid var(--mat-sys-outline);
+      @apply border-b;
+      border-color: var(--mat-sys-outline);
     }
 
     mat-card-content {
@@ -230,9 +231,7 @@ Dark mode is handled **automatically** via the `.dark` class on the `<html>` ele
   `,
   styles: `
     div {
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      font-weight: 500;
+      @apply px-4 py-2 rounded font-medium;
     }
 
     .status-success {
