@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HomeStore } from './home.state';
 import { ThemeService } from '../../shared/services/theme.service';
+import { ResponsiveService } from '../../shared/services/responsive.service';
 
 /**
  * Home page component
@@ -60,6 +61,32 @@ import { ThemeService } from '../../shared/services/theme.service';
         background-color: var(--mat-sys-surface-container-high);
         color: var(--mat-sys-on-surface);
         @apply px-1 py-0.5 rounded text-sm;
+      }
+
+      /* Responsive indicator badge */
+      .breakpoint-badge {
+        background-color: var(--mat-sys-primary-container);
+        color: var(--mat-sys-on-primary-container);
+        @apply px-3 py-1 rounded-full text-sm font-semibold inline-block;
+      }
+
+      /* Status indicator */
+      .status-indicator {
+        background-color: var(--mat-sys-surface-container);
+        color: var(--mat-sys-on-surface);
+        @apply px-2 py-1 rounded text-xs;
+      }
+
+      .status-indicator.active {
+        background-color: var(--mat-sys-success-container);
+        color: var(--mat-sys-on-success-container);
+      }
+
+      .status-indicator:not(.active) {
+        background-color: var(--mat-sys-surface-dim);
+        color: var(--mat-sys-on-surface-variant);
+        opacity: 0.5;
+        @apply line-through;
       }
     `,
   ],
@@ -123,6 +150,111 @@ import { ThemeService } from '../../shared/services/theme.service';
           </p>
         </mat-card-content>
       </mat-card>
+
+      <!-- Responsive service demo -->
+      @if (responsive.state$ | async; as state) {
+        <mat-card class="mb-6">
+          <mat-card-header>
+            <mat-card-title class="flex items-center gap-2">
+              <mat-icon>devices</mat-icon>
+              Responsive Service Demo
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="pt-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <!-- Breakpoint Info -->
+              <div>
+                <p class="text-xs font-semibold mb-2 opacity-70">Current Breakpoint</p>
+                <span class="breakpoint-badge">{{ state.breakpoint }}</span>
+                <p class="text-xs mt-2 opacity-60">
+                  Resize your window to see breakpoint changes in real-time
+                </p>
+              </div>
+
+              <!-- Device Type -->
+              <div>
+                <p class="text-xs font-semibold mb-2 opacity-70">Device Classification</p>
+                <div class="flex gap-2">
+                  <span class="status-indicator" [class.active]="state.isMobile"
+                    >Mobile</span
+                  >
+                  <span class="status-indicator" [class.active]="state.isTablet"
+                    >Tablet</span
+                  >
+                  <span class="status-indicator" [class.active]="state.isDesktop"
+                    >Desktop</span
+                  >
+                </div>
+              </div>
+
+              <!-- Orientation -->
+              <div>
+                <p class="text-xs font-semibold mb-2 opacity-70">Orientation</p>
+                <div class="flex gap-2">
+                  <span class="status-indicator" [class.active]="state.isPortrait">
+                    <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
+                      >phone_iphone</mat-icon
+                    >
+                    Portrait
+                  </span>
+                  <span class="status-indicator" [class.active]="state.isLandscape">
+                    <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
+                      >landscape</mat-icon
+                    >
+                    Landscape
+                  </span>
+                </div>
+              </div>
+
+              <!-- Platform & Browser -->
+              <div>
+                <p class="text-xs font-semibold mb-2 opacity-70">Platform Info</p>
+                <div class="flex flex-col gap-1 text-sm">
+                  <span>
+                    <strong>Browser:</strong>
+                    {{ state.browser }}
+                  </span>
+                  <span>
+                    <strong>OS:</strong>
+                    {{ state.os }}
+                  </span>
+                  <span>
+                    <strong>Platform:</strong>
+                    {{ state.platform }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Touch & Color Scheme -->
+              <div>
+                <p class="text-xs font-semibold mb-2 opacity-70">Capabilities</p>
+                <div class="flex gap-2">
+                  <span class="status-indicator" [class.active]="state.isTouchEnabled">
+                    <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
+                      >touch_app</mat-icon
+                    >
+                    Touch
+                  </span>
+                  <span class="status-indicator" [class.active]="state.prefersDark">
+                    <mat-icon class="text-xs mr-1" [style.display]="'inline-block'"
+                      >dark_mode</mat-icon
+                    >
+                    Dark Mode
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-xs mt-4 opacity-70 p-3 bg-opacity-10 rounded">
+              💡
+              <strong>Usage:</strong>
+              Inject <code>ResponsiveService</code> to access <code>state$</code> observable for
+              component logic, or use CSS class selectors on <code>&lt;html&gt;</code> (e.g.,
+              <code>html.bp-lg .sidebar {{ '{' }} {{ '}' }}</code>) for responsive styling.
+            </p>
+          </mat-card-content>
+        </mat-card>
+      }
 
       <!-- Grid layout using Tailwind -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -269,6 +401,7 @@ import { ThemeService } from '../../shared/services/theme.service';
 export class HomePage {
   readonly store = inject(HomeStore);
   readonly theme = inject(ThemeService);
+  readonly responsive = inject(ResponsiveService);
   readonly themeSource = this.theme.getThemeSource();
 
   constructor() {
