@@ -11,6 +11,8 @@ export default [
       '**/.angular/**',
       'tailwind.config.ts',
       'vitest.config.ts',
+      'playwright.config.ts',
+      'e2e/**',
       'src/test.ts',
       '**/*.spec.ts',
     ],
